@@ -1,0 +1,95 @@
+<!-- TIMELINE YEAR SCRUBBER: Horizontal year dots with click-to-animate milestone reveal -->
+<!-- Pattern: Year selector row; click dot to crossfade between milestone panels -->
+<!-- Requires: CSS only (progressive-enhance with JS for keyboard nav) -->
+<!-- Ref: https://report.adidas-group.com/2020/en/ -->
+
+<section class="tys-section" style="position:relative;padding:100px 40px;max-width:1400px;margin:0 auto">
+  <header class="tys-head" style="margin-bottom:40px">
+    <span class="tys-eyebrow" data-eyebrow="optional" style="font-size:12px;letter-spacing:3px;text-transform:uppercase">[EYEBROW]</span>
+    <h2 class="tys-title" style="font-size:clamp(28px,3.6vw,56px);font-weight:700;margin:10px 0 0">[HEADLINE]</h2>
+  </header>
+
+  <div class="tys-stage" style="position:relative;min-height:340px">
+    <div class="tys-panel is-active" data-year="0" style="position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;opacity:1">
+      <div class="tys-panel-media" style="aspect-ratio:4/3;background-size:cover;background-position:center;border-radius:4px"></div>
+      <div class="tys-panel-copy">
+        <span class="tys-year" style="font-size:14px;letter-spacing:3px;font-weight:700">[YEAR_1]</span>
+        <h3 style="font-size:clamp(24px,2.4vw,34px);font-weight:700;margin:8px 0 16px">[TITLE_1]</h3>
+        <p style="font-size:16px;line-height:1.6;margin:0">[BODY_1]</p>
+      </div>
+    </div>
+    <div class="tys-panel" data-year="1" style="position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;opacity:0;pointer-events:none">
+      <div class="tys-panel-media" style="aspect-ratio:4/3;background-size:cover;background-position:center;border-radius:4px"></div>
+      <div class="tys-panel-copy">
+        <span class="tys-year" style="font-size:14px;letter-spacing:3px;font-weight:700">[YEAR_2]</span>
+        <h3 style="font-size:clamp(24px,2.4vw,34px);font-weight:700;margin:8px 0 16px">[TITLE_2]</h3>
+        <p style="font-size:16px;line-height:1.6;margin:0">[BODY_2]</p>
+      </div>
+    </div>
+    <div class="tys-panel" data-year="2" style="position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;opacity:0;pointer-events:none">
+      <div class="tys-panel-media" style="aspect-ratio:4/3;background-size:cover;background-position:center;border-radius:4px"></div>
+      <div class="tys-panel-copy">
+        <span class="tys-year" style="font-size:14px;letter-spacing:3px;font-weight:700">[YEAR_3]</span>
+        <h3 style="font-size:clamp(24px,2.4vw,34px);font-weight:700;margin:8px 0 16px">[TITLE_3]</h3>
+        <p style="font-size:16px;line-height:1.6;margin:0">[BODY_3]</p>
+      </div>
+    </div>
+    <div class="tys-panel" data-year="3" style="position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;opacity:0;pointer-events:none">
+      <div class="tys-panel-media" style="aspect-ratio:4/3;background-size:cover;background-position:center;border-radius:4px"></div>
+      <div class="tys-panel-copy">
+        <span class="tys-year" style="font-size:14px;letter-spacing:3px;font-weight:700">[YEAR_4]</span>
+        <h3 style="font-size:clamp(24px,2.4vw,34px);font-weight:700;margin:8px 0 16px">[TITLE_4]</h3>
+        <p style="font-size:16px;line-height:1.6;margin:0">[BODY_4]</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tys-rail" role="tablist" style="position:relative;display:flex;align-items:center;justify-content:space-between;margin-top:60px">
+    <div class="tys-rail-line" aria-hidden="true" style="position:absolute;left:0;right:0;top:50%;height:1px;background:currentColor;opacity:0.18"></div>
+    <button class="tys-dot is-active" data-target="0" role="tab" aria-selected="true" type="button" style="position:relative;background:transparent;border:0;padding:6px;cursor:pointer;font-size:13px;letter-spacing:2px;font-weight:600">
+      <span class="tys-dot-mark" aria-hidden="true" style="display:block;width:12px;height:12px;border-radius:50%;background:currentColor;margin:0 auto 10px"></span>[YEAR_1]
+    </button>
+    <button class="tys-dot" data-target="1" role="tab" aria-selected="false" type="button" style="position:relative;background:transparent;border:0;padding:6px;cursor:pointer;font-size:13px;letter-spacing:2px;font-weight:600;opacity:0.55">
+      <span class="tys-dot-mark" aria-hidden="true" style="display:block;width:12px;height:12px;border-radius:50%;background:currentColor;margin:0 auto 10px"></span>[YEAR_2]
+    </button>
+    <button class="tys-dot" data-target="2" role="tab" aria-selected="false" type="button" style="position:relative;background:transparent;border:0;padding:6px;cursor:pointer;font-size:13px;letter-spacing:2px;font-weight:600;opacity:0.55">
+      <span class="tys-dot-mark" aria-hidden="true" style="display:block;width:12px;height:12px;border-radius:50%;background:currentColor;margin:0 auto 10px"></span>[YEAR_3]
+    </button>
+    <button class="tys-dot" data-target="3" role="tab" aria-selected="false" type="button" style="position:relative;background:transparent;border:0;padding:6px;cursor:pointer;font-size:13px;letter-spacing:2px;font-weight:600;opacity:0.55">
+      <span class="tys-dot-mark" aria-hidden="true" style="display:block;width:12px;height:12px;border-radius:50%;background:currentColor;margin:0 auto 10px"></span>[YEAR_4]
+    </button>
+  </div>
+</section>
+
+<style>
+.tys-section .tys-panel { transition: opacity 0.4s ease; }
+.tys-section .tys-dot { transition: opacity 0.25s ease; }
+.tys-section .tys-dot.is-active { opacity: 1 !important; }
+@media (max-width: 760px) {
+  .tys-section .tys-panel { grid-template-columns: 1fr !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tys-section .tys-panel, .tys-section .tys-dot { transition: none !important; }
+}
+</style>
+
+<script>
+const root = document.querySelector('.tys-section');
+const dots = root.querySelectorAll('.tys-dot');
+const panels = root.querySelectorAll('.tys-panel');
+
+dots.forEach(dot => {
+  dot.addEventListener('click', () => {
+    const idx = dot.dataset.target;
+    dots.forEach(d => { d.classList.remove('is-active'); d.setAttribute('aria-selected', 'false'); });
+    dot.classList.add('is-active');
+    dot.setAttribute('aria-selected', 'true');
+    panels.forEach(p => {
+      const active = p.dataset.year === idx;
+      p.classList.toggle('is-active', active);
+      p.style.opacity = active ? '1' : '0';
+      p.style.pointerEvents = active ? 'auto' : 'none';
+    });
+  });
+});
+</script>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atelier — User Account (4 Alternatives)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #0e0e10; color: #ccc; }
+  .page-controls {
+    position: sticky; top: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+    padding: 14px 24px; background: #0e0e10; border-bottom: 1px solid #222;
+  }
+  .page-controls h1 { font-size: 14px; font-weight: 600; color: #fff; margin-right: 12px; }
+  .mode-toggle { display: flex; border-radius: 8px; overflow: hidden; border: 1px solid #333; }
+  .mode-btn { padding: 7px 16px; border: none; font-size: 12px; font-weight: 500; font-family: inherit; cursor: pointer; background: transparent; color: #888; transition: all 0.15s; }
+  .mode-btn.active { background: #fff; color: #000; }
+  .alt-grid { display: grid; grid-template-columns: 1fr 1fr; min-height: calc(100vh - 49px); }
+  .alt { position: relative; overflow-y: auto; border: 1px solid #1a1a1a; transition: background 0.3s; }
+  .alt-label { position: sticky; top: 0; z-index: 10; padding: 8px 14px; font-size: 11px; font-weight: 600; letter-spacing: 0.03em; backdrop-filter: blur(12px); }
+
+  /* Palettes */
+  .alt-a{--bg:#F8F9FA;--sf:#F1F3F5;--card:#FFF;--bd:#E2E5E9;--t1:#1A1D21;--t2:#5F6B7A;--t3:#9CA3AF;--ac:#6366F1;--ach:#5457E5;--lbg:rgba(99,102,241,.08);--lc:#6366F1;}
+  .dark .alt-a{--bg:#111113;--sf:#19191B;--card:#222225;--bd:#2E2E32;--t1:#EDEDEF;--t2:#A0A0A6;--t3:#63636E;--ac:#818CF8;--ach:#9BA3FB;--lbg:rgba(129,140,248,.1);--lc:#818CF8;}
+  .alt-b{--bg:#FAF9F7;--sf:#F3F1EE;--card:#FFF;--bd:#E8E5E0;--t1:#1C1917;--t2:#6B6560;--t3:#A8A29E;--ac:#B45309;--ach:#A14A08;--lbg:rgba(180,83,9,.08);--lc:#B45309;}
+  .dark .alt-b{--bg:#121110;--sf:#1C1A18;--card:#252320;--bd:#33302C;--t1:#E7E5E4;--t2:#A8A29E;--t3:#6B6560;--ac:#F59E0B;--ach:#FBBF24;--lbg:rgba(245,158,11,.1);--lc:#F59E0B;}
+  .alt-c{--bg:#F8FAF8;--sf:#F0F4F0;--card:#FFF;--bd:#DDE5DD;--t1:#1A1F1A;--t2:#5C6B5C;--t3:#94A394;--ac:#4A7C59;--ach:#3D6B4A;--lbg:rgba(74,124,89,.08);--lc:#4A7C59;}
+  .dark .alt-c{--bg:#101210;--sf:#171A17;--card:#1F231F;--bd:#2C322C;--t1:#E4E9E4;--t2:#94A394;--t3:#5C6B5C;--ac:#6EAA7E;--ach:#84BB92;--lbg:rgba(110,170,126,.1);--lc:#6EAA7E;}
+  .alt-d{--bg:#FAF8F9;--sf:#F4F0F2;--card:#FFF;--bd:#E8E1E4;--t1:#1F1A1C;--t2:#6B5F64;--t3:#A89BA0;--ac:#9F5474;--ach:#8D4766;--lbg:rgba(159,84,116,.08);--lc:#9F5474;}
+  .dark .alt-d{--bg:#121011;--sf:#1A1719;--card:#242022;--bd:#332D30;--t1:#E9E4E6;--t2:#A89BA0;--t3:#6B5F64;--ac:#D4809E;--ach:#E098B2;--lbg:rgba(212,128,158,.1);--lc:#D4809E;}
+  .alt { background: var(--bg); color: var(--t1); }
+  .alt-label { background: var(--lbg); color: var(--lc); }
+
+  /* Shared small components */
+  .u-avatar { border-radius: 50%; background: var(--ac); display: flex; align-items: center; justify-content: center; font-weight: 600; color: #fff; flex-shrink: 0; }
+  .u-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: 600; }
+  .u-badge.entra { background: rgba(59,130,246,.08); color: #3b82f6; }
+  .u-btn { padding: 7px 14px; border-radius: 7px; font-size: 12px; font-weight: 500; font-family: inherit; cursor: pointer; border: 1px solid var(--bd); background: var(--card); color: var(--t2); transition: all .15s; }
+  .u-btn:hover { background: var(--sf); color: var(--t1); }
+  .u-btn.primary { background: var(--ac); color: #fff; border-color: var(--ac); }
+  .u-btn.danger { background: transparent; color: #dc2626; border-color: rgba(220,38,38,.2); }
+  .u-btn.danger:hover { background: rgba(220,38,38,.06); }
+  .u-stat-val { font-size: 22px; font-weight: 700; color: var(--t1); }
+  .u-stat-label { font-size: 11px; color: var(--t3); font-weight: 500; margin-top: 2px; }
+  .u-bar-track { height: 6px; border-radius: 3px; background: var(--sf); overflow: hidden; }
+  .u-bar-fill { height: 100%; border-radius: 3px; background: var(--ac); }
+  .u-section-title { font-size: 13px; font-weight: 600; color: var(--t1); margin-bottom: 12px; }
+  .u-info-label { font-size: 11px; font-weight: 500; color: var(--t3); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
+  .u-info-val { font-size: 13px; color: var(--t1); font-weight: 500; }
+
+  /* ═══ A — CENTERED CARD STACK ═══
+     Profile hero at top, stacked cards below, minimal sidebar */
+  .a-shell { padding: 20px; max-width: 480px; margin: 30px auto 0; }
+  .a-hero {
+    text-align: center; padding: 28px 20px 20px; border-radius: 14px;
+    background: var(--card); border: 1px solid var(--bd); margin-bottom: 12px;
+  }
+  .a-hero .u-avatar { width: 56px; height: 56px; font-size: 20px; margin: 0 auto 12px; }
+  .a-hero-name { font-size: 17px; font-weight: 700; margin-bottom: 2px; }
+  .a-hero-email { font-size: 12px; color: var(--t3); margin-bottom: 10px; }
+  .a-cards { display: flex; flex-direction: column; gap: 10px; }
+  .a-card {
+    padding: 16px; border-radius: 12px; background: var(--card);
+    border: 1px solid var(--bd);
+  }
+  .a-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .a-stat { text-align: center; padding: 12px 8px; border-radius: 8px; background: var(--sf); }
+  .a-storage-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; }
+  .a-storage-label { color: var(--t2); }
+  .a-storage-val { color: var(--t1); font-weight: 600; }
+  .a-danger { padding: 14px 16px; border-radius: 12px; border: 1px solid rgba(220,38,38,.12); background: rgba(220,38,38,.03); display: flex; align-items: center; justify-content: space-between; }
+  .a-danger-text { font-size: 13px; font-weight: 500; color: var(--t2); }
+
+  /* ═══ B — SIDEBAR TABS ═══
+     Persistent left nav, tabbed content, Notion-style */
+  .b-shell { display: flex; height: 100%; min-height: 480px; }
+  .b-nav { width: 180px; border-right: 1px solid var(--bd); background: var(--sf); padding: 16px 8px; display: flex; flex-direction: column; }
+  .b-nav-logo { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--t1); padding: 0 10px; margin-bottom: 20px; }
+  .b-nav-logo svg { width: 16px; height: 16px; color: var(--ac); }
+  .b-nav-item {
+    display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 7px;
+    font-size: 13px; color: var(--t3); font-weight: 500; cursor: pointer; transition: all .1s; margin-bottom: 2px;
+  }
+  .b-nav-item:hover { background: var(--card); color: var(--t2); }
+  .b-nav-item.active { background: var(--card); color: var(--t1); font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,.03); }
+  .b-nav-item svg { width: 15px; height: 15px; }
+  .b-nav-sep { height: 1px; background: var(--bd); margin: 12px 10px; }
+  .b-nav-footer { margin-top: auto; padding: 10px; display: flex; align-items: center; gap: 8px; }
+  .b-nav-footer .u-avatar { width: 24px; height: 24px; font-size: 10px; }
+  .b-nav-footer-name { font-size: 12px; color: var(--t2); font-weight: 500; }
+
+  .b-content { flex: 1; padding: 24px; overflow-y: auto; }
+  .b-content-title { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+  .b-content-desc { font-size: 12px; color: var(--t3); margin-bottom: 20px; }
+  .b-form-group { margin-bottom: 16px; }
+  .b-form-label { font-size: 12px; font-weight: 500; color: var(--t2); margin-bottom: 6px; }
+  .b-form-input {
+    width: 100%; padding: 9px 12px; border-radius: 7px; border: 1px solid var(--bd);
+    background: var(--sf); color: var(--t1); font-size: 13px; font-family: inherit; outline: none;
+  }
+  .b-form-input:focus { border-color: var(--ac); }
+  .b-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .b-entra-bar {
+    display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px;
+    background: rgba(59,130,246,.05); border: 1px solid rgba(59,130,246,.12); margin-bottom: 16px;
+  }
+  .b-entra-icon { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5px; width: 14px; height: 14px; }
+  .b-entra-icon div { border-radius: 1px; }
+  .b-entra-icon .r { background: #f25022; } .b-entra-icon .g { background: #7fba00; }
+  .b-entra-icon .b { background: #00a4ef; } .b-entra-icon .y { background: #ffb900; }
+  .b-entra-text { font-size: 12px; color: #3b82f6; font-weight: 500; }
+
+  /* ═══ C — SETTINGS GRID ═══
+     Dashboard-style: profile card + stats + settings tiles side by side */
+  .c-topbar { padding: 12px 20px; border-bottom: 1px solid var(--bd); background: var(--card); display: flex; align-items: center; justify-content: space-between; }
+  .c-logo { display: flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 600; color: var(--t1); }
+  .c-logo svg { width: 17px; height: 17px; color: var(--ac); }
+  .c-body { padding: 20px; }
+  .c-top-row { display: flex; gap: 10px; margin-bottom: 10px; }
+  .c-profile-card {
+    flex: 2; padding: 16px; border-radius: 12px; background: var(--card); border: 1px solid var(--bd);
+    display: flex; align-items: center; gap: 14px;
+  }
+  .c-profile-card .u-avatar { width: 44px; height: 44px; font-size: 16px; }
+  .c-profile-name { font-size: 15px; font-weight: 700; }
+  .c-profile-email { font-size: 12px; color: var(--t3); }
+  .c-profile-right { margin-left: auto; display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
+  .c-stats-row { flex: 3; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .c-stat-tile { padding: 14px; border-radius: 10px; background: var(--card); border: 1px solid var(--bd); text-align: center; }
+  .c-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .c-tile {
+    padding: 16px; border-radius: 12px; background: var(--card); border: 1px solid var(--bd);
+  }
+  .c-tile-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .c-tile-icon { width: 28px; height: 28px; border-radius: 7px; background: var(--sf); display: flex; align-items: center; justify-content: center; }
+  .c-tile-icon svg { width: 14px; height: 14px; color: var(--t3); }
+  .c-tile-title { font-size: 13px; font-weight: 600; }
+  .c-tile-desc { font-size: 12px; color: var(--t3); line-height: 1.5; }
+  .c-storage-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--t3); margin-bottom: 6px; }
+  .c-storage-meta span { color: var(--t1); font-weight: 600; }
+
+  /* ═══ D — FULL-WIDTH SECTIONS ═══
+     Linear-settings-style: full width, scrolling sections, no sidebar */
+  .d-topbar { padding: 12px 20px; border-bottom: 1px solid var(--bd); background: var(--card); display: flex; align-items: center; justify-content: space-between; }
+  .d-logo { display: flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 600; color: var(--t1); }
+  .d-logo svg { width: 17px; height: 17px; color: var(--ac); }
+  .d-back { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--t3); cursor: pointer; }
+  .d-back svg { width: 13px; height: 13px; }
+  .d-back:hover { color: var(--t1); }
+  .d-body { padding: 24px 20px; }
+  .d-page-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+  .d-section { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--bd); }
+  .d-section:last-child { border-bottom: none; }
+  .d-section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .d-section-title { font-size: 14px; font-weight: 600; }
+  .d-row { display: flex; align-items: center; gap: 16px; margin-bottom: 10px; }
+  .d-row .u-avatar { width: 48px; height: 48px; font-size: 18px; }
+  .d-row-info { flex: 1; }
+  .d-row-name { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+  .d-row-email { font-size: 12px; color: var(--t3); }
+  .d-detail-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .d-detail-item {}
+  .d-stats-inline { display: flex; gap: 20px; }
+  .d-stat-item { display: flex; flex-direction: column; }
+  .d-entra {
+    display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 7px;
+    background: rgba(59,130,246,.05); border: 1px solid rgba(59,130,246,.1);
+  }
+  .d-entra-ms { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5px; width: 14px; height: 14px; }
+  .d-entra-ms div { border-radius: 1px; }
+  .d-entra-ms .r{background:#f25022} .d-entra-ms .g{background:#7fba00} .d-entra-ms .b{background:#00a4ef} .d-entra-ms .y{background:#ffb900}
+  .d-entra-text { font-size: 12px; color: #3b82f6; font-weight: 500; }
+  .d-storage-row { display: flex; align-items: center; gap: 16px; }
+  .d-storage-bar { flex: 1; }
+  .d-storage-text { font-size: 12px; color: var(--t2); white-space: nowrap; }
+  .d-danger { padding: 12px 16px; border-radius: 10px; border: 1px solid rgba(220,38,38,.12); display: flex; align-items: center; justify-content: space-between; }
+  .d-danger-text { font-size: 13px; color: var(--t2); }
+</style>
+</head>
+<body>
+<div class="page-controls">
+  <h1>User Account — 4 Alternatives</h1>
+  <div class="mode-toggle">
+    <button class="mode-btn active" onclick="setMode('light')">Light</button>
+    <button class="mode-btn" onclick="setMode('dark')">Dark</button>
+  </div>
+</div>
+<div class="alt-grid" id="grid">
+
+<!-- A — CENTERED CARD STACK (Cool Slate) -->
+<div class="alt alt-a">
+  <div class="alt-label">A — Card Stack &middot; Cool Slate</div>
+  <div class="a-shell">
+    <div class="a-hero">
+      <div class="u-avatar" style="width:56px;height:56px;font-size:20px;margin:0 auto 12px;">JD</div>
+      <div class="a-hero-name">Jane Doe</div>
+      <div class="a-hero-email">jane@example.com</div>
+      <div style="display:flex;justify-content:center;gap:6px;margin-top:8px;">
+        <span class="u-badge entra">Microsoft Entra</span>
+        <span class="u-badge" style="background:rgba(34,197,94,.08);color:#16a34a;">Verified</span>
+      </div>
+    </div>
+    <div class="a-cards">
+      <div class="a-card">
+        <div class="u-section-title">Usage</div>
+        <div class="a-stats">
+          <div class="a-stat"><div class="u-stat-val">12</div><div class="u-stat-label">Projects</div></div>
+          <div class="a-stat"><div class="u-stat-val">47</div><div class="u-stat-label">Screens</div></div>
+          <div class="a-stat"><div class="u-stat-val" style="color:#f59e0b;">3</div><div class="u-stat-label">Expiring</div></div>
+        </div>
+      </div>
+      <div class="a-card">
+        <div class="a-storage-row"><span class="a-storage-label">Storage</span><span class="a-storage-val">128 / 512 MB</span></div>
+        <div class="u-bar-track"><div class="u-bar-fill" style="width:25%;"></div></div>
+      </div>
+      <div class="a-danger">
+        <span class="a-danger-text">Delete account and all data</span>
+        <button class="u-btn danger" style="font-size:11px;padding:5px 10px;">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- B — SIDEBAR TABS (Warm Stone) -->
+<div class="alt alt-b">
+  <div class="alt-label">B — Sidebar Tabs &middot; Warm Stone</div>
+  <div class="b-shell">
+    <div class="b-nav">
+      <div class="b-nav-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>Atelier</div>
+      <div class="b-nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile</div>
+      <div class="b-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Security</div>
+      <div class="b-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>Usage</div>
+      <div class="b-nav-sep"></div>
+      <div class="b-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</div>
+      <div class="b-nav-footer"><div class="u-avatar" style="width:24px;height:24px;font-size:10px;">JD</div><span class="b-nav-footer-name">Jane Doe</span></div>
+    </div>
+    <div class="b-content">
+      <div class="b-content-title">Profile</div>
+      <div class="b-content-desc">Managed by Microsoft Entra ID</div>
+      <div class="b-entra-bar">
+        <div class="b-entra-icon"><div class="r"></div><div class="g"></div><div class="b"></div><div class="y"></div></div>
+        <span class="b-entra-text">Signed in via company.onmicrosoft.com</span>
+      </div>
+      <div class="b-form-row">
+        <div class="b-form-group"><div class="b-form-label">Display Name</div><input class="b-form-input" value="Jane Doe" readonly /></div>
+        <div class="b-form-group"><div class="b-form-label">Email</div><input class="b-form-input" value="jane@example.com" readonly /></div>
+      </div>
+      <div class="b-form-row">
+        <div class="b-form-group"><div class="b-form-label">Member Since</div><input class="b-form-input" value="March 2026" readonly /></div>
+        <div class="b-form-group"><div class="b-form-label">Last Login</div><input class="b-form-input" value="Today 14:32" readonly /></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- C — SETTINGS GRID (Sage) -->
+<div class="alt alt-c">
+  <div class="alt-label">C — Settings Grid &middot; Sage</div>
+  <div class="c-topbar">
+    <div class="c-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>Atelier</div>
+    <div class="u-avatar" style="width:28px;height:28px;font-size:11px;border-radius:50%;">JD</div>
+  </div>
+  <div class="c-body">
+    <div class="c-top-row">
+      <div class="c-profile-card">
+        <div class="u-avatar" style="width:44px;height:44px;font-size:16px;">JD</div>
+        <div><div class="c-profile-name">Jane Doe</div><div class="c-profile-email">jane@example.com</div></div>
+        <div class="c-profile-right"><span class="u-badge entra">Entra ID</span><button class="u-btn" style="font-size:11px;padding:4px 10px;margin-top:4px;">Edit</button></div>
+      </div>
+    </div>
+    <div class="c-stats-row" style="margin-bottom:10px;">
+      <div class="c-stat-tile"><div class="u-stat-val">12</div><div class="u-stat-label">Projects</div></div>
+      <div class="c-stat-tile"><div class="u-stat-val">47</div><div class="u-stat-label">Screens</div></div>
+      <div class="c-stat-tile"><div class="u-stat-val" style="color:#f59e0b;">3</div><div class="u-stat-label">Expiring</div></div>
+    </div>
+    <div class="c-tiles">
+      <div class="c-tile">
+        <div class="c-tile-header"><div class="c-tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg></div><span class="c-tile-title">Storage</span></div>
+        <div class="c-storage-meta"><span>128 MB</span> of 512 MB</div>
+        <div class="u-bar-track"><div class="u-bar-fill" style="width:25%;"></div></div>
+      </div>
+      <div class="c-tile">
+        <div class="c-tile-header"><div class="c-tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><span class="c-tile-title">Security</span></div>
+        <div class="c-tile-desc">Authentication managed by Entra ID. MFA status: enabled.</div>
+      </div>
+      <div class="c-tile">
+        <div class="c-tile-header"><div class="c-tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><span class="c-tile-title">Activity</span></div>
+        <div class="c-tile-desc">Last active today. 23 screens generated this week.</div>
+      </div>
+      <div class="c-tile" style="border-color:rgba(220,38,38,.12);">
+        <div class="c-tile-header"><div class="c-tile-icon" style="background:rgba(220,38,38,.06);"><svg viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></div><span class="c-tile-title" style="color:#dc2626;">Danger Zone</span></div>
+        <div class="c-tile-desc">Delete your account and all associated data permanently.</div>
+        <button class="u-btn danger" style="margin-top:8px;font-size:11px;">Delete Account</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- D — FULL-WIDTH SECTIONS (Dusty Rose) -->
+<div class="alt alt-d">
+  <div class="alt-label">D — Full-Width Sections &middot; Dusty Rose</div>
+  <div class="d-topbar">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="d-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>Atelier</div>
+      <div class="d-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Projects</div>
+    </div>
+    <div class="u-avatar" style="width:28px;height:28px;font-size:11px;border-radius:50%;">JD</div>
+  </div>
+  <div class="d-body">
+    <div class="d-page-title">Account</div>
+    <div class="d-section">
+      <div class="d-row">
+        <div class="u-avatar" style="width:48px;height:48px;font-size:18px;">JD</div>
+        <div class="d-row-info"><div class="d-row-name">Jane Doe</div><div class="d-row-email">jane@example.com</div></div>
+        <div class="d-entra"><div class="d-entra-ms"><div class="r"></div><div class="g"></div><div class="b"></div><div class="y"></div></div><span class="d-entra-text">Entra ID</span></div>
+      </div>
+    </div>
+    <div class="d-section">
+      <div class="d-section-title" style="margin-bottom:12px;">Details</div>
+      <div class="d-detail-grid">
+        <div><div class="u-info-label">Member Since</div><div class="u-info-val">March 2026</div></div>
+        <div><div class="u-info-label">Last Login</div><div class="u-info-val">Today 14:32</div></div>
+        <div><div class="u-info-label">Tenant</div><div class="u-info-val">company.onmicrosoft.com</div></div>
+      </div>
+    </div>
+    <div class="d-section">
+      <div class="d-section-header"><div class="d-section-title">Usage</div></div>
+      <div class="d-stats-inline" style="margin-bottom:14px;">
+        <div class="d-stat-item"><div class="u-stat-val">12</div><div class="u-stat-label">Projects</div></div>
+        <div class="d-stat-item"><div class="u-stat-val">47</div><div class="u-stat-label">Screens</div></div>
+        <div class="d-stat-item"><div class="u-stat-val" style="color:#f59e0b;">3</div><div class="u-stat-label">Expiring</div></div>
+      </div>
+      <div class="d-storage-row">
+        <div class="d-storage-text">128 MB / 512 MB</div>
+        <div class="d-storage-bar"><div class="u-bar-track"><div class="u-bar-fill" style="width:25%;"></div></div></div>
+      </div>
+    </div>
+    <div class="d-danger">
+      <span class="d-danger-text">Permanently delete account</span>
+      <button class="u-btn danger" style="font-size:11px;padding:5px 10px;">Delete</button>
+    </div>
+  </div>
+</div>
+
+</div>
+<script>
+function setMode(m) {
+  document.getElementById('grid').classList.toggle('dark', m === 'dark');
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.textContent.toLowerCase() === m));
+}
+</script>
+</body>
+</html>

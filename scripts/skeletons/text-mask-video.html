@@ -1,0 +1,37 @@
+<!-- TEXT MASK VIDEO: Background video clipped to the shape of large headline text -->
+<!-- Pattern: Full-bleed video fills the outline of a display-size headline via background-clip:text -->
+<!-- Requires: CSS only (video autoplays muted; respects reduced-motion) -->
+<!-- Ref: https://www.apple.com/shot-on-iphone/ -->
+<!-- Ref: https://www.nike.com/ -->
+<!-- Ref: https://www.framer.com/ -->
+
+<section class="tmv-section" style="position:relative;padding:140px 40px;max-width:1400px;margin:0 auto;text-align:center">
+  <header class="tmv-head" style="margin-bottom:40px;max-width:720px;margin-left:auto;margin-right:auto">
+    <span class="tmv-eyebrow" data-eyebrow="optional" style="font-size:12px;letter-spacing:3px;text-transform:uppercase">[EYEBROW]</span>
+  </header>
+
+  <h2 class="tmv-title" data-mask="true" style="font-size:clamp(56px,12vw,220px);font-weight:900;line-height:0.95;margin:0 auto;letter-spacing:-0.02em;position:relative">
+    <span class="tmv-clip" aria-hidden="true" style="position:relative;display:inline-block;background-image:var(--tmv-bg, none);background-size:cover;background-position:center;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[HEADLINE]</span>
+    <video class="tmv-video" data-video="true" autoplay muted loop playsinline preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;mix-blend-mode:normal;-webkit-mask-image:linear-gradient(#000,#000);mask-image:linear-gradient(#000,#000);display:none"></video>
+    <span class="tmv-srtext" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">[HEADLINE]</span>
+  </h2>
+
+  <p class="tmv-body" style="font-size:clamp(16px,1.4vw,20px);line-height:1.6;margin:40px auto 0;max-width:560px;opacity:0.75">[BODY]</p>
+</section>
+
+<style>
+.tmv-section .tmv-title { display: block; }
+@media (prefers-reduced-motion: reduce) {
+  .tmv-section .tmv-video { display: none !important; }
+}
+</style>
+
+<script>
+const tmvRoot = document.querySelector('.tmv-section');
+const tmvPrefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const tmvVideo = tmvRoot.querySelector('.tmv-video');
+if (tmvPrefersReduced && tmvVideo) {
+  tmvVideo.pause();
+  tmvVideo.removeAttribute('autoplay');
+}
+</script>

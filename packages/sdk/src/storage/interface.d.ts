@@ -1,0 +1,31 @@
+import { ProjectData } from "../models/project.js";
+import { ScreenData } from "../models/screen.js";
+import { DesignSystem } from "../models/design-system.js";
+import type { UIComponentData, ComponentCategory } from "../models/component.js";
+export interface StorageAdapter {
+    createProject(data: ProjectData): Promise<void>;
+    getProject(id: string): Promise<ProjectData | null>;
+    listProjects(): Promise<ProjectData[]>;
+    updateProject(id: string, data: Partial<ProjectData>): Promise<void>;
+    deleteProject(id: string): Promise<void>;
+    createScreen(projectId: string, data: ScreenData): Promise<void>;
+    getScreen(projectId: string, screenId: string): Promise<ScreenData | null>;
+    listScreens(projectId: string): Promise<ScreenData[]>;
+    updateScreen(projectId: string, screenId: string, data: Partial<ScreenData>): Promise<void>;
+    deleteScreen(projectId: string, screenId: string): Promise<void>;
+    setDesignSystem(projectId: string, ds: DesignSystem): Promise<void>;
+    getDesignSystem(projectId: string): Promise<DesignSystem | null>;
+    saveAsset(key: string, data: Buffer | string): Promise<string>;
+    getAsset(key: string): Promise<Buffer | string | null>;
+    deleteAsset(key: string): Promise<void>;
+    saveComponent(data: UIComponentData): Promise<void>;
+    getComponent(id: string): Promise<UIComponentData | null>;
+    listComponents(category?: ComponentCategory): Promise<UIComponentData[]>;
+    searchComponents(query: string): Promise<UIComponentData[]>;
+    deleteComponent(id: string): Promise<void>;
+    incrementComponentUsage(id: string): Promise<void>;
+    initialize(): Promise<void>;
+    close(): Promise<void>;
+}
+export type StorageBackend = "memory" | "sqlite";
+export declare function createStorage(backend?: StorageBackend, opts?: Record<string, unknown>): Promise<StorageAdapter>;

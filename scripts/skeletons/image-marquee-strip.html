@@ -1,0 +1,57 @@
+<!-- IMAGE MARQUEE STRIP: Full-bleed horizontal infinite-scroll of image tiles -->
+<!-- Pattern: Continuous looped image strip; hover pauses; subtle greyscale-to-color on hover -->
+<!-- Requires: CSS only (keyframes) -->
+<!-- Ref: https://www.nike.com/ -->
+<!-- Ref: https://www.wework.com/ -->
+<!-- Ref: https://www.rivian.com/ -->
+
+<section class="ims-section" style="position:relative;padding:80px 0;overflow:hidden">
+  <header class="ims-head" style="max-width:1400px;margin:0 auto 40px;padding:0 40px">
+    <span class="ims-eyebrow" data-eyebrow="optional" style="font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:600;opacity:0.65">[EYEBROW]</span>
+    <h2 class="ims-title" style="font-size:clamp(28px,3.6vw,56px);font-weight:700;margin:12px 0 0;letter-spacing:-0.02em;line-height:1.05;max-width:640px">[HEADLINE]</h2>
+  </header>
+
+  <div class="ims-viewport" style="position:relative;width:100%">
+    <div class="ims-track" data-track="true" style="display:flex;gap:20px;width:max-content;padding:0 20px;animation:ims-scroll 50s linear infinite">
+      <figure class="ims-tile" data-tile="0" style="flex:0 0 auto;width:clamp(280px,30vw,440px);margin:0;position:relative;overflow:hidden;border-radius:6px;aspect-ratio:4/5">
+        <div class="ims-media" style="width:100%;height:100%;background-size:cover;background-position:center;filter:grayscale(0.6)"></div>
+        <figcaption style="position:absolute;inset:auto 0 0 0;padding:16px 20px;background:linear-gradient(to top,rgba(0,0,0,0.75),transparent);color:#fff;font-size:14px;font-weight:600;letter-spacing:1px">[CAPTION_1]</figcaption>
+      </figure>
+      <figure class="ims-tile" data-tile="1" style="flex:0 0 auto;width:clamp(280px,30vw,440px);margin:0;position:relative;overflow:hidden;border-radius:6px;aspect-ratio:4/5">
+        <div class="ims-media" style="width:100%;height:100%;background-size:cover;background-position:center;filter:grayscale(0.6)"></div>
+        <figcaption style="position:absolute;inset:auto 0 0 0;padding:16px 20px;background:linear-gradient(to top,rgba(0,0,0,0.75),transparent);color:#fff;font-size:14px;font-weight:600;letter-spacing:1px">[CAPTION_2]</figcaption>
+      </figure>
+      <figure class="ims-tile" data-tile="2" style="flex:0 0 auto;width:clamp(280px,30vw,440px);margin:0;position:relative;overflow:hidden;border-radius:6px;aspect-ratio:4/5">
+        <div class="ims-media" style="width:100%;height:100%;background-size:cover;background-position:center;filter:grayscale(0.6)"></div>
+        <figcaption style="position:absolute;inset:auto 0 0 0;padding:16px 20px;background:linear-gradient(to top,rgba(0,0,0,0.75),transparent);color:#fff;font-size:14px;font-weight:600;letter-spacing:1px">[CAPTION_3]</figcaption>
+      </figure>
+      <figure class="ims-tile" data-tile="3" style="flex:0 0 auto;width:clamp(280px,30vw,440px);margin:0;position:relative;overflow:hidden;border-radius:6px;aspect-ratio:4/5">
+        <div class="ims-media" style="width:100%;height:100%;background-size:cover;background-position:center;filter:grayscale(0.6)"></div>
+        <figcaption style="position:absolute;inset:auto 0 0 0;padding:16px 20px;background:linear-gradient(to top,rgba(0,0,0,0.75),transparent);color:#fff;font-size:14px;font-weight:600;letter-spacing:1px">[CAPTION_4]</figcaption>
+      </figure>
+      <figure class="ims-tile" data-tile="4" style="flex:0 0 auto;width:clamp(280px,30vw,440px);margin:0;position:relative;overflow:hidden;border-radius:6px;aspect-ratio:4/5">
+        <div class="ims-media" style="width:100%;height:100%;background-size:cover;background-position:center;filter:grayscale(0.6)"></div>
+        <figcaption style="position:absolute;inset:auto 0 0 0;padding:16px 20px;background:linear-gradient(to top,rgba(0,0,0,0.75),transparent);color:#fff;font-size:14px;font-weight:600;letter-spacing:1px">[CAPTION_5]</figcaption>
+      </figure>
+      <figure class="ims-tile" aria-hidden="true" style="flex:0 0 auto;width:clamp(280px,30vw,440px);margin:0;position:relative;overflow:hidden;border-radius:6px;aspect-ratio:4/5"><div class="ims-media" style="width:100%;height:100%;background-size:cover;background-position:center;filter:grayscale(0.6)"></div></figure>
+      <figure class="ims-tile" aria-hidden="true" style="flex:0 0 auto;width:clamp(280px,30vw,440px);margin:0;position:relative;overflow:hidden;border-radius:6px;aspect-ratio:4/5"><div class="ims-media" style="width:100%;height:100%;background-size:cover;background-position:center;filter:grayscale(0.6)"></div></figure>
+      <figure class="ims-tile" aria-hidden="true" style="flex:0 0 auto;width:clamp(280px,30vw,440px);margin:0;position:relative;overflow:hidden;border-radius:6px;aspect-ratio:4/5"><div class="ims-media" style="width:100%;height:100%;background-size:cover;background-position:center;filter:grayscale(0.6)"></div></figure>
+      <figure class="ims-tile" aria-hidden="true" style="flex:0 0 auto;width:clamp(280px,30vw,440px);margin:0;position:relative;overflow:hidden;border-radius:6px;aspect-ratio:4/5"><div class="ims-media" style="width:100%;height:100%;background-size:cover;background-position:center;filter:grayscale(0.6)"></div></figure>
+      <figure class="ims-tile" aria-hidden="true" style="flex:0 0 auto;width:clamp(280px,30vw,440px);margin:0;position:relative;overflow:hidden;border-radius:6px;aspect-ratio:4/5"><div class="ims-media" style="width:100%;height:100%;background-size:cover;background-position:center;filter:grayscale(0.6)"></div></figure>
+    </div>
+  </div>
+</section>
+
+<style>
+@keyframes ims-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.ims-section .ims-track:hover { animation-play-state: paused; }
+.ims-section .ims-media { transition: filter 0.35s ease, transform 0.6s cubic-bezier(0.2,0.8,0.2,1); }
+.ims-section .ims-tile:hover .ims-media { filter: grayscale(0); transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) {
+  .ims-section .ims-track { animation: none !important; flex-wrap: wrap !important; justify-content: center !important; padding: 0 40px !important; }
+  .ims-section .ims-media { transition: none !important; }
+}
+</style>

@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit Wheel — Round 2 (Cards + Orbital Hybrids)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0e0e10; color: #fafafa; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+
+  h1 { text-align: center; padding: 40px 0 10px; font-size: 22px; font-weight: 600; color: #a78bfa; }
+  .subtitle { text-align: center; color: #71717a; font-size: 13px; margin-bottom: 50px; max-width: 500px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+
+  .examples { display: flex; flex-direction: column; gap: 90px; padding: 0 40px 100px; max-width: 1200px; margin: 0 auto; }
+
+  .example { display: flex; gap: 40px; align-items: flex-start; }
+  .example-info { width: 280px; flex-shrink: 0; }
+  .example-info h2 { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: #e4e4e7; }
+  .example-info .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; background: rgba(124,92,252,0.15); color: #a78bfa; margin-bottom: 8px; }
+  .example-info p { font-size: 12px; color: #71717a; line-height: 1.6; }
+  .example-info .pros { margin-top: 10px; font-size: 11px; color: #4ade80; }
+  .example-info .cons { font-size: 11px; color: #f87171; }
+
+  .demo-area {
+    flex: 1; background: #18181b; border-radius: 16px; border: 1px solid #27272a;
+    min-height: 380px; display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+
+  .selected-element {
+    background: #1e1b2e; border: 2px solid #7c5cfc; border-radius: 12px; padding: 20px 28px;
+    position: relative; cursor: pointer; user-select: none; transition: all 0.2s;
+  }
+  .selected-element:hover { background: #252040; }
+  .selected-element h3 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+  .selected-element p { font-size: 12px; color: #a1a1aa; }
+
+  /* ═══════════════════════════════════════════════════════════
+     OPTION A: Stacked Cards with Glow
+     Cards + orbital inspiration — vertical stack with gradient glow behind
+     ═══════════════════════════════════════════════════════════ */
+  .stack-a {
+    position: absolute; display: flex; flex-direction: column; gap: 4px;
+    opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateX(16px) scale(0.95);
+  }
+  .stack-a.show { opacity: 1; pointer-events: auto; transform: translateX(16px) scale(1); }
+  .stack-a::before {
+    content: ''; position: absolute; inset: -20px; border-radius: 24px;
+    background: radial-gradient(ellipse at center, rgba(124,92,252,0.08) 0%, transparent 70%);
+    pointer-events: none; z-index: -1;
+  }
+  .stack-a .item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 16px; border-radius: 11px;
+    background: #1c1c20; border: 1px solid #2a2a30;
+    cursor: pointer; transition: all 0.2s; color: #a1a1aa; white-space: nowrap;
+  }
+  .stack-a .item:hover {
+    background: rgba(124,92,252,0.12); border-color: #7c5cfc; color: #e4e4e7;
+    transform: translateX(4px); box-shadow: 0 0 16px rgba(124,92,252,0.15);
+  }
+  .stack-a .item svg { width: 14px; height: 14px; flex-shrink: 0; }
+  .stack-a .item span { font-size: 11px; font-weight: 500; }
+  .stack-a .divider { height: 1px; background: #27272a; margin: 2px 8px; }
+
+  /* ═══════════════════════════════════════════════════════════
+     OPTION B: Diamond Orbital
+     4 options in diamond formation with pulsing ring
+     ═══════════════════════════════════════════════════════════ */
+  .diamond-b {
+    position: absolute; opacity: 0; pointer-events: none;
+    transition: opacity 0.3s, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: scale(0.8);
+  }
+  .diamond-b.show { opacity: 1; pointer-events: auto; transform: scale(1); }
+  .diamond-b .ring {
+    width: 180px; height: 180px; border-radius: 50%;
+    border: 1px solid rgba(124,92,252,0.12);
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    animation: pulse-ring 3s ease-in-out infinite;
+  }
+  @keyframes pulse-ring { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
+  .diamond-b .dot {
+    width: 6px; height: 6px; border-radius: 50%; background: #7c5cfc;
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    box-shadow: 0 0 10px #7c5cfc60, 0 0 30px #7c5cfc20;
+  }
+  .diamond-b .node {
+    position: absolute; display: flex; flex-direction: column; align-items: center; gap: 5px;
+    cursor: pointer; transition: all 0.2s; color: #71717a;
+  }
+  .diamond-b .node:hover { color: #a78bfa; transform: scale(1.1); }
+  .diamond-b .node .icon-wrap {
+    width: 44px; height: 44px; border-radius: 13px; display: flex; align-items: center; justify-content: center;
+    background: #1c1c20; border: 1px solid #3f3f46; transition: all 0.2s;
+  }
+  .diamond-b .node:hover .icon-wrap {
+    background: rgba(124,92,252,0.15); border-color: #7c5cfc;
+    box-shadow: 0 0 20px rgba(124,92,252,0.2);
+  }
+  .diamond-b .node svg { width: 16px; height: 16px; }
+  .diamond-b .node span { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+  /* Connector lines */
+  .diamond-b .line {
+    position: absolute; top: 50%; left: 50%; transform-origin: 0 0;
+    height: 1px; background: linear-gradient(90deg, #7c5cfc30, transparent);
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     OPTION C: Glass Cards Fan
+     Glassmorphism cards that fan out in an arc above the element
+     ═══════════════════════════════════════════════════════════ */
+  .fan-c {
+    position: absolute; display: flex; gap: 6px;
+    opacity: 0; pointer-events: none;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateY(10px);
+    perspective: 600px;
+  }
+  .fan-c.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  .fan-c .card {
+    width: 68px; padding: 12px 6px 10px; border-radius: 14px;
+    background: rgba(28,28,32,0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(63,63,70,0.5);
+    display: flex; flex-direction: column; align-items: center; gap: 7px; cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); color: #a1a1aa;
+    transform-origin: bottom center;
+  }
+  .fan-c .card:nth-child(1) { transform: rotate(-8deg); }
+  .fan-c .card:nth-child(2) { transform: rotate(-3deg); }
+  .fan-c .card:nth-child(3) { transform: rotate(0deg); }
+  .fan-c .card:nth-child(4) { transform: rotate(3deg); }
+  .fan-c .card:nth-child(5) { transform: rotate(8deg); }
+  .fan-c .card:hover {
+    background: rgba(124,92,252,0.15); border-color: rgba(124,92,252,0.5); color: #e4e4e7;
+    transform: rotate(0deg) translateY(-8px) scale(1.08) !important;
+    box-shadow: 0 12px 32px rgba(124,92,252,0.15), 0 0 0 1px rgba(124,92,252,0.3);
+  }
+  .fan-c .card svg { width: 16px; height: 16px; }
+  .fan-c .card span { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+
+  /* ═══════════════════════════════════════════════════════════
+     OPTION D: Hex Grid
+     Honeycomb-style hexagonal layout with accent borders
+     ═══════════════════════════════════════════════════════════ */
+  .hex-d {
+    position: absolute; opacity: 0; pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); transform: scale(0.85);
+  }
+  .hex-d.show { opacity: 1; pointer-events: auto; transform: scale(1); }
+  .hex-d .cell {
+    position: absolute; width: 56px; height: 56px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+    cursor: pointer; transition: all 0.2s; color: #71717a;
+  }
+  .hex-d .cell::before {
+    content: ''; position: absolute; inset: 0;
+    background: #1c1c20; border: 1px solid #3f3f46;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    transition: all 0.2s;
+  }
+  .hex-d .cell:hover::before {
+    background: rgba(124,92,252,0.15); border-color: #7c5cfc;
+    box-shadow: 0 0 24px rgba(124,92,252,0.2);
+  }
+  .hex-d .cell:hover { color: #a78bfa; transform: scale(1.12); }
+  .hex-d .cell svg { width: 15px; height: 15px; position: relative; z-index: 1; }
+  .hex-d .cell span { font-size: 7px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; position: relative; z-index: 1; }
+  /* Tooltip for hex */
+  .hex-d .cell .htip {
+    position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%);
+    background: #fafafa; color: #18181b; font-size: 10px; font-weight: 600;
+    padding: 3px 8px; border-radius: 6px; white-space: nowrap; opacity: 0; transition: opacity 0.15s; pointer-events: none; z-index: 2;
+  }
+  .hex-d .cell:hover .htip { opacity: 1; }
+
+  /* ═══════════════════════════════════════════════════════════
+     OPTION E: Constellation
+     Minimal dots connected by lines, expanding into labeled nodes
+     ═══════════════════════════════════════════════════════════ */
+  .constellation-e {
+    position: absolute; opacity: 0; pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); transform: scale(0.7);
+  }
+  .constellation-e.show { opacity: 1; pointer-events: auto; transform: scale(1); }
+  .constellation-e .center {
+    width: 10px; height: 10px; border-radius: 50%; background: #7c5cfc;
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    box-shadow: 0 0 16px #7c5cfc80;
+  }
+  .constellation-e .line-svg {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 260px; height: 260px; pointer-events: none;
+  }
+  .constellation-e .star {
+    position: absolute; display: flex; align-items: center; gap: 8px;
+    cursor: pointer; transition: all 0.25s; color: #71717a;
+  }
+  .constellation-e .star:hover { color: #e4e4e7; }
+  .constellation-e .star .dot {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: #1c1c20; border: 1px solid #3f3f46;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.25s; flex-shrink: 0;
+  }
+  .constellation-e .star:hover .dot {
+    background: rgba(124,92,252,0.15); border-color: #7c5cfc;
+    box-shadow: 0 0 20px rgba(124,92,252,0.25);
+  }
+  .constellation-e .star svg { width: 14px; height: 14px; }
+  .constellation-e .star .label {
+    font-size: 10px; font-weight: 600; white-space: nowrap;
+    opacity: 0; transform: translateX(-4px); transition: all 0.2s;
+  }
+  .constellation-e .star:hover .label { opacity: 1; transform: translateX(0); }
+  .constellation-e .star.left { flex-direction: row-reverse; }
+  .constellation-e .star.left .label { transform: translateX(4px); }
+  .constellation-e .star.left:hover .label { transform: translateX(0); }
+</style>
+</head>
+<body>
+
+<h1>Edit Wheel — Round 2</h1>
+<p class="subtitle">Building on Options 4 (Floating Cards) and 5 (Orbital Ring). Click each element to toggle the menu.</p>
+
+<div class="examples">
+
+<!-- ═══ A: Stacked Cards with Glow ═══ -->
+<div class="example">
+  <div class="example-info">
+    <span class="tag">Option A</span>
+    <h2>Stacked Cards + Glow</h2>
+    <p>Vertical card stack appears to the right of the selection with a subtle radial glow. Each row slides right on hover. Divider separates element actions from section actions. Compact and scannable.</p>
+    <p class="pros">+ Clear labels, easy to scan, works at any zoom</p>
+    <p class="cons">- Less spatially exciting than a wheel</p>
+  </div>
+  <div class="demo-area">
+    <div class="selected-element" onclick="toggle('stackA')">
+      <h3>Hero Heading</h3>
+      <p>Click to see stacked cards</p>
+    </div>
+    <div class="stack-a" id="stackA" style="top: 50%; left: calc(50% + 100px); transform-origin: left center;">
+      <div class="item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        <span>Edit Text</span>
+      </div>
+      <div class="item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        <span>Edit with AI</span>
+      </div>
+      <div class="divider"></div>
+      <div class="item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+        <span>Replace Section (AI)</span>
+      </div>
+      <div class="item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span>From Library</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ B: Diamond Orbital ═══ -->
+<div class="example">
+  <div class="example-info">
+    <span class="tag">Option B</span>
+    <h2>Diamond Orbital</h2>
+    <p>Four primary actions at compass points in a diamond formation. Pulsing ring with glowing center dot. Icons in rounded-square containers with labels below. Lines radiate from center. Premium, game-UI inspired.</p>
+    <p class="pros">+ Visually striking, clear spatial layout, memorable</p>
+    <p class="cons">- Limited to ~5 options before crowding</p>
+  </div>
+  <div class="demo-area">
+    <div class="selected-element" onclick="toggle('diamondB')">
+      <h3>Feature Card</h3>
+      <p>Click to see diamond orbital</p>
+    </div>
+    <div class="diamond-b" id="diamondB" style="top: 50%; left: 50%;">
+      <div class="ring"></div>
+      <div class="dot"></div>
+      <!-- Lines -->
+      <div class="line" style="width: 70px; transform: rotate(-90deg);"></div>
+      <div class="line" style="width: 70px; transform: rotate(0deg);"></div>
+      <div class="line" style="width: 70px; transform: rotate(90deg);"></div>
+      <div class="line" style="width: 70px; transform: rotate(180deg);"></div>
+      <div class="line" style="width: 70px; transform: rotate(-145deg);"></div>
+      <!-- Nodes -->
+      <div class="node" style="top: -110px; left: -22px;">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </div>
+        <span>Text</span>
+      </div>
+      <div class="node" style="top: -22px; left: 65px;">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <span>AI Edit</span>
+      </div>
+      <div class="node" style="top: 60px; left: -22px;">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+        </div>
+        <span>Replace</span>
+      </div>
+      <div class="node" style="top: -22px; left: -110px;">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        </div>
+        <span>Library</span>
+      </div>
+      <div class="node" style="top: -80px; left: -100px;">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        </div>
+        <span>Delete</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ C: Glass Cards Fan ═══ -->
+<div class="example">
+  <div class="example-info">
+    <span class="tag">Option C</span>
+    <h2>Glass Cards Fan</h2>
+    <p>Glassmorphism cards fanned in a subtle arc above the selection. Each card is slightly rotated and straightens + lifts on hover. Frosted glass effect with backdrop blur. Feels elegant and modern, like a hand of cards.</p>
+    <p class="pros">+ Beautiful, playful, distinctive interaction feel</p>
+    <p class="cons">- Needs space above element, backdrop-filter can be expensive</p>
+  </div>
+  <div class="demo-area">
+    <div class="selected-element" onclick="toggle('fanC')" style="margin-top: 100px;">
+      <h3>Testimonial Block</h3>
+      <p>Click to see the glass fan</p>
+    </div>
+    <div class="fan-c" id="fanC" style="top: calc(50% - 50px); left: 50%; transform: translateX(-50%) translateY(0);">
+      <div class="card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        <span>Text</span>
+      </div>
+      <div class="card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        <span>AI Edit</span>
+      </div>
+      <div class="card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+        <span>Replace</span>
+      </div>
+      <div class="card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span>Library</span>
+      </div>
+      <div class="card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        <span>Delete</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ D: Hex Grid ═══ -->
+<div class="example">
+  <div class="example-info">
+    <span class="tag">Option D</span>
+    <h2>Hex Grid</h2>
+    <p>Honeycomb-shaped buttons in a tight cluster. Hexagonal clip-paths with accent glow on hover. Icon + tiny label inside each cell. Tooltip shows full name. Compact, techy, game-UI aesthetic. Feels like selecting a power-up.</p>
+    <p class="pros">+ Unique, compact, very cool visual identity</p>
+    <p class="cons">- Small hit targets, text hard to read at small sizes</p>
+  </div>
+  <div class="demo-area">
+    <div class="selected-element" onclick="toggle('hexD')">
+      <h3>CTA Section</h3>
+      <p>Click to see the hex grid</p>
+    </div>
+    <div class="hex-d" id="hexD" style="top: 50%; left: 50%;">
+      <!-- Top row: 2 hexes -->
+      <div class="cell" style="top: -75px; left: -30px;">
+        <span class="htip">Edit Text</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        <span>Edit</span>
+      </div>
+      <div class="cell" style="top: -75px; left: 32px;">
+        <span class="htip">Edit with AI</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        <span>AI</span>
+      </div>
+      <!-- Middle row: 3 hexes -->
+      <div class="cell" style="top: -30px; left: -60px;">
+        <span class="htip">From Library</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span>Lib</span>
+      </div>
+      <div class="cell" style="top: -30px; left: 1px;">
+        <!-- Center: empty or a "more" icon -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+      </div>
+      <div class="cell" style="top: -30px; left: 62px;">
+        <span class="htip">AI Replace</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+        <span>Swap</span>
+      </div>
+      <!-- Bottom row -->
+      <div class="cell" style="top: 15px; left: -30px;">
+        <span class="htip">Delete Element</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        <span>Del</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ E: Constellation ═══ -->
+<div class="example">
+  <div class="example-info">
+    <span class="tag">Option E</span>
+    <h2>Constellation</h2>
+    <p>Options connected by faint lines to a glowing center point, like a star constellation. Each node is a rounded-square icon that reveals its label on hover (slides in from the side). Lines drawn with SVG. Ethereal, cosmic aesthetic.</p>
+    <p class="pros">+ Most unique, beautiful animation, premium feel</p>
+    <p class="cons">- Labels hidden by default (needs hover), takes up more space</p>
+  </div>
+  <div class="demo-area">
+    <div class="selected-element" onclick="toggle('constellE')">
+      <h3>Navigation Bar</h3>
+      <p>Click to see the constellation</p>
+    </div>
+    <div class="constellation-e" id="constellE" style="top: 50%; left: 50%;">
+      <svg class="line-svg" viewBox="0 0 260 260">
+        <line x1="130" y1="130" x2="130" y2="30" stroke="#7c5cfc" stroke-width="0.5" opacity="0.3"/>
+        <line x1="130" y1="130" x2="220" y2="80" stroke="#7c5cfc" stroke-width="0.5" opacity="0.3"/>
+        <line x1="130" y1="130" x2="220" y2="180" stroke="#7c5cfc" stroke-width="0.5" opacity="0.3"/>
+        <line x1="130" y1="130" x2="40" y2="80" stroke="#7c5cfc" stroke-width="0.5" opacity="0.3"/>
+        <line x1="130" y1="130" x2="40" y2="180" stroke="#7c5cfc" stroke-width="0.5" opacity="0.3"/>
+      </svg>
+      <div class="center"></div>
+      <!-- Stars -->
+      <div class="star" style="top: -105px; left: -18px;">
+        <div class="dot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </div>
+        <span class="label">Edit Text</span>
+      </div>
+      <div class="star" style="top: -55px; left: 65px;">
+        <div class="dot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <span class="label">AI Edit</span>
+      </div>
+      <div class="star" style="top: 25px; left: 65px;">
+        <div class="dot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+        </div>
+        <span class="label">AI Replace</span>
+      </div>
+      <div class="star left" style="top: 25px; left: -100px;">
+        <div class="dot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        </div>
+        <span class="label">Library</span>
+      </div>
+      <div class="star left" style="top: -55px; left: -100px;">
+        <div class="dot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        </div>
+        <span class="label">Delete</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+function toggle(id) {
+  // Close all others first
+  document.querySelectorAll('.show').forEach(el => el.classList.remove('show'));
+  document.getElementById(id).classList.toggle('show');
+}
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.selected-element') && !e.target.closest('.show')) {
+    document.querySelectorAll('.show').forEach(el => el.classList.remove('show'));
+  }
+});
+</script>
+
+</body>
+</html>

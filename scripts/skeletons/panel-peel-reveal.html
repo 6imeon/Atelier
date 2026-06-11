@@ -1,0 +1,51 @@
+<!-- PANEL PEEL REVEAL: Sticky top layer clip-path peels to reveal the chapter below -->
+<!-- Pattern: Two full-bleed panels stacked; top peels back via clip-path on scroll -->
+<!-- Requires: GSAP + ScrollTrigger -->
+<!-- Ref: https://report.adidas-group.com/2023/en/ -->
+
+<section class="ppr-section" style="position:relative;height:250vh">
+  <div class="ppr-sticky" style="position:sticky;top:0;height:100vh;overflow:hidden">
+    <div class="ppr-layer ppr-bottom" data-layer="bottom" style="position:absolute;inset:0;background-size:cover;background-position:center;z-index:1;display:flex;align-items:center;justify-content:center">
+      <div class="ppr-content" style="max-width:900px;text-align:center;padding:0 6vw;color:#fff">
+        <span class="ppr-eyebrow" data-eyebrow="optional" style="font-size:12px;letter-spacing:3px;text-transform:uppercase">[EYEBROW_BOTTOM]</span>
+        <h2 style="font-size:clamp(36px,6vw,88px);font-weight:800;margin:16px 0 0;line-height:1.05">[HEADLINE_BOTTOM]</h2>
+        <p style="font-size:clamp(16px,1.4vw,20px);line-height:1.55;margin:24px auto 0;max-width:620px">[BODY_BOTTOM]</p>
+      </div>
+    </div>
+    <div class="ppr-layer ppr-top" data-layer="top" style="position:absolute;inset:0;background-size:cover;background-position:center;z-index:2;clip-path:inset(0 0 0 0);display:flex;align-items:center;justify-content:center">
+      <div class="ppr-content" style="max-width:900px;text-align:center;padding:0 6vw;color:#fff">
+        <span class="ppr-eyebrow" data-eyebrow="optional" style="font-size:12px;letter-spacing:3px;text-transform:uppercase">[EYEBROW_TOP]</span>
+        <h2 style="font-size:clamp(36px,6vw,88px);font-weight:800;margin:16px 0 0;line-height:1.05">[HEADLINE_TOP]</h2>
+        <p style="font-size:clamp(16px,1.4vw,20px);line-height:1.55;margin:24px auto 0;max-width:620px">[BODY_TOP]</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+@media (prefers-reduced-motion: reduce) {
+  .ppr-section { height: auto !important; }
+  .ppr-sticky { position: static !important; height: auto !important; display: flex !important; flex-direction: column !important; }
+  .ppr-layer { position: static !important; min-height: 60vh !important; clip-path: none !important; }
+}
+</style>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const root = document.querySelector('.ppr-section');
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+if (!prefersReducedMotion) {
+  const topLayer = root.querySelector('.ppr-top');
+  gsap.to(topLayer, {
+    clipPath: 'inset(100% 0 0 0)',
+    ease: 'none',
+    scrollTrigger: {
+      trigger: root,
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: 0.5,
+    }
+  });
+}
+</script>

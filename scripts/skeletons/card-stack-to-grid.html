@@ -1,0 +1,73 @@
+<!-- CARD STACK TO GRID: Pinned scroll morphs stacked cards into an exploded grid -->
+<!-- Pattern: Cards start offset-stacked; scroll progress tweens to a grid layout -->
+<!-- Requires: GSAP + ScrollTrigger -->
+<!-- Ref: https://www.apple.com/services/ -->
+<!-- Ref: https://linear.app/features -->
+<!-- Ref: https://www.framer.com/ -->
+
+<section class="cstg-section" style="position:relative;height:300vh">
+  <div class="cstg-sticky" style="position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center">
+    <div class="cstg-stage" style="position:relative;width:min(1100px,90vw);aspect-ratio:16/9">
+      <article class="cstg-card" data-card="0" data-x="-180" data-y="-40" data-rot="-8" style="position:absolute;left:50%;top:50%;width:44%;aspect-ratio:4/5;background:#1a1a1a;color:#fff;border-radius:12px;padding:24px;transform:translate(-50%,-50%) rotate(-8deg);z-index:3;will-change:transform">
+        <span class="cstg-idx" style="font-size:12px;letter-spacing:2px;opacity:0.6">[INDEX_1]</span>
+        <h3 style="font-size:22px;font-weight:700;margin:8px 0 12px">[TITLE_1]</h3>
+        <p style="font-size:14px;line-height:1.5;margin:0;opacity:0.75">[BODY_1]</p>
+      </article>
+      <article class="cstg-card" data-card="1" data-x="-60" data-y="20" data-rot="-3" style="position:absolute;left:50%;top:50%;width:44%;aspect-ratio:4/5;background:#1a1a1a;color:#fff;border-radius:12px;padding:24px;transform:translate(-50%,-50%) rotate(-3deg);z-index:4;will-change:transform">
+        <span class="cstg-idx" style="font-size:12px;letter-spacing:2px;opacity:0.6">[INDEX_2]</span>
+        <h3 style="font-size:22px;font-weight:700;margin:8px 0 12px">[TITLE_2]</h3>
+        <p style="font-size:14px;line-height:1.5;margin:0;opacity:0.75">[BODY_2]</p>
+      </article>
+      <article class="cstg-card" data-card="2" data-x="60" data-y="0" data-rot="4" style="position:absolute;left:50%;top:50%;width:44%;aspect-ratio:4/5;background:#1a1a1a;color:#fff;border-radius:12px;padding:24px;transform:translate(-50%,-50%) rotate(4deg);z-index:5;will-change:transform">
+        <span class="cstg-idx" style="font-size:12px;letter-spacing:2px;opacity:0.6">[INDEX_3]</span>
+        <h3 style="font-size:22px;font-weight:700;margin:8px 0 12px">[TITLE_3]</h3>
+        <p style="font-size:14px;line-height:1.5;margin:0;opacity:0.75">[BODY_3]</p>
+      </article>
+      <article class="cstg-card" data-card="3" data-x="180" data-y="40" data-rot="9" style="position:absolute;left:50%;top:50%;width:44%;aspect-ratio:4/5;background:#1a1a1a;color:#fff;border-radius:12px;padding:24px;transform:translate(-50%,-50%) rotate(9deg);z-index:6;will-change:transform">
+        <span class="cstg-idx" style="font-size:12px;letter-spacing:2px;opacity:0.6">[INDEX_4]</span>
+        <h3 style="font-size:22px;font-weight:700;margin:8px 0 12px">[TITLE_4]</h3>
+        <p style="font-size:14px;line-height:1.5;margin:0;opacity:0.75">[BODY_4]</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+@media (prefers-reduced-motion: reduce) {
+  .cstg-section { height: auto !important; }
+  .cstg-sticky { position: static !important; height: auto !important; padding: 60px 0 !important; }
+  .cstg-section .cstg-stage { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 16px !important; aspect-ratio: auto !important; }
+  .cstg-section .cstg-card { position: static !important; transform: none !important; width: 100% !important; left: auto !important; top: auto !important; }
+}
+</style>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const cstgRoot = document.querySelector('.cstg-section');
+const cstgPrefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+if (!cstgPrefersReduced) {
+  const cards = cstgRoot.querySelectorAll('.cstg-card');
+  const n = cards.length;
+  const colGap = 22;
+  const colWidth = 22;
+  cards.forEach((card, i) => {
+    const targetX = (i - (n - 1) / 2) * (colWidth + colGap);
+    gsap.fromTo(card,
+      { xPercent: parseFloat(card.dataset.x), yPercent: parseFloat(card.dataset.y), rotate: parseFloat(card.dataset.rot) },
+      {
+        xPercent: targetX,
+        yPercent: 0,
+        rotate: 0,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: cstgRoot,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 0.6,
+        }
+      }
+    );
+  });
+}
+</script>

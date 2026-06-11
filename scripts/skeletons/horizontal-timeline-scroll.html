@@ -1,0 +1,81 @@
+<!-- HORIZONTAL TIMELINE SCROLL: Pinned section with horizontal-scrubbed year cards on vertical scroll -->
+<!-- Pattern: Full-bleed pinned stage; GSAP pins and translates a horizontal track of year-cards -->
+<!-- Requires: GSAP + ScrollTrigger -->
+<!-- Ref: https://www.apple.com/apple-history/ -->
+<!-- Ref: https://www.nasa.gov/ -->
+<!-- Ref: https://www.ferrari.com/ -->
+
+<section class="hts-section" style="position:relative;height:400vh">
+  <div class="hts-sticky" style="position:sticky;top:0;height:100vh;overflow:hidden;display:flex;flex-direction:column;justify-content:center">
+    <header class="hts-head" style="max-width:1200px;width:100%;margin:0 auto 40px;padding:0 40px">
+      <span class="hts-eyebrow" data-eyebrow="optional" style="font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:600;opacity:0.65">[EYEBROW]</span>
+      <h2 class="hts-title" style="font-size:clamp(32px,4.4vw,72px);font-weight:700;margin:12px 0 0;letter-spacing:-0.02em;line-height:1">[HEADLINE]</h2>
+    </header>
+
+    <div class="hts-rail" style="position:relative;width:100%">
+      <div class="hts-spine" aria-hidden="true" style="position:absolute;left:0;right:0;top:50%;height:1px;background:currentColor;opacity:0.22"></div>
+      <div class="hts-track" data-track="true" style="display:flex;gap:60px;align-items:center;padding:0 6vw;will-change:transform">
+        <article class="hts-card" data-card="0" style="flex:0 0 auto;width:clamp(280px,28vw,380px);position:relative">
+          <div class="hts-year" style="font-size:clamp(48px,6vw,88px);font-weight:800;letter-spacing:-0.03em;line-height:1">[YEAR_1]</div>
+          <div class="hts-marker" aria-hidden="true" style="width:14px;height:14px;border-radius:50%;background:currentColor;margin:24px 0"></div>
+          <h3 style="font-size:clamp(18px,1.6vw,22px);font-weight:700;margin:0 0 8px;line-height:1.2">[TITLE_1]</h3>
+          <p style="font-size:14px;line-height:1.55;margin:0;opacity:0.75">[BODY_1]</p>
+        </article>
+        <article class="hts-card" data-card="1" style="flex:0 0 auto;width:clamp(280px,28vw,380px);position:relative">
+          <div class="hts-year" style="font-size:clamp(48px,6vw,88px);font-weight:800;letter-spacing:-0.03em;line-height:1">[YEAR_2]</div>
+          <div class="hts-marker" aria-hidden="true" style="width:14px;height:14px;border-radius:50%;background:currentColor;margin:24px 0"></div>
+          <h3 style="font-size:clamp(18px,1.6vw,22px);font-weight:700;margin:0 0 8px;line-height:1.2">[TITLE_2]</h3>
+          <p style="font-size:14px;line-height:1.55;margin:0;opacity:0.75">[BODY_2]</p>
+        </article>
+        <article class="hts-card" data-card="2" style="flex:0 0 auto;width:clamp(280px,28vw,380px);position:relative">
+          <div class="hts-year" style="font-size:clamp(48px,6vw,88px);font-weight:800;letter-spacing:-0.03em;line-height:1">[YEAR_3]</div>
+          <div class="hts-marker" aria-hidden="true" style="width:14px;height:14px;border-radius:50%;background:currentColor;margin:24px 0"></div>
+          <h3 style="font-size:clamp(18px,1.6vw,22px);font-weight:700;margin:0 0 8px;line-height:1.2">[TITLE_3]</h3>
+          <p style="font-size:14px;line-height:1.55;margin:0;opacity:0.75">[BODY_3]</p>
+        </article>
+        <article class="hts-card" data-card="3" style="flex:0 0 auto;width:clamp(280px,28vw,380px);position:relative">
+          <div class="hts-year" style="font-size:clamp(48px,6vw,88px);font-weight:800;letter-spacing:-0.03em;line-height:1">[YEAR_4]</div>
+          <div class="hts-marker" aria-hidden="true" style="width:14px;height:14px;border-radius:50%;background:currentColor;margin:24px 0"></div>
+          <h3 style="font-size:clamp(18px,1.6vw,22px);font-weight:700;margin:0 0 8px;line-height:1.2">[TITLE_4]</h3>
+          <p style="font-size:14px;line-height:1.55;margin:0;opacity:0.75">[BODY_4]</p>
+        </article>
+        <article class="hts-card" data-card="4" style="flex:0 0 auto;width:clamp(280px,28vw,380px);position:relative">
+          <div class="hts-year" style="font-size:clamp(48px,6vw,88px);font-weight:800;letter-spacing:-0.03em;line-height:1">[YEAR_5]</div>
+          <div class="hts-marker" aria-hidden="true" style="width:14px;height:14px;border-radius:50%;background:currentColor;margin:24px 0"></div>
+          <h3 style="font-size:clamp(18px,1.6vw,22px);font-weight:700;margin:0 0 8px;line-height:1.2">[TITLE_5]</h3>
+          <p style="font-size:14px;line-height:1.55;margin:0;opacity:0.75">[BODY_5]</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+@media (prefers-reduced-motion: reduce) {
+  .hts-section { height: auto !important; }
+  .hts-sticky { position: static !important; height: auto !important; padding: 60px 0 !important; }
+  .hts-section .hts-track { flex-wrap: wrap !important; justify-content: center !important; transform: none !important; }
+}
+</style>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const htsRoot = document.querySelector('.hts-section');
+const htsPrefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+if (!htsPrefersReduced) {
+  const track = htsRoot.querySelector('.hts-track');
+  const distance = () => track.scrollWidth - track.clientWidth + 120;
+  gsap.to(track, {
+    x: () => -distance(),
+    ease: 'none',
+    scrollTrigger: {
+      trigger: htsRoot,
+      start: 'top top',
+      end: () => '+=' + distance(),
+      scrub: 0.6,
+      invalidateOnRefresh: true,
+    }
+  });
+}
+</script>

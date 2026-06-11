@@ -1,0 +1,59 @@
+<!-- SPOTLIGHT BORDER CARD: Mouse-tracked radial-gradient border glow on card grid -->
+<!-- Pattern: Card border gradient position follows cursor (conic/radial); glow on hover -->
+<!-- Requires: CSS variables + minimal JS (pointer tracking) -->
+<!-- Ref: https://linear.app/features -->
+<!-- Ref: https://vercel.com/home -->
+<!-- Ref: https://www.framer.com/ -->
+
+<section class="sbc-section" style="position:relative;padding:100px 40px;max-width:1400px;margin:0 auto">
+  <header class="sbc-head" style="margin-bottom:60px;max-width:720px">
+    <span class="sbc-eyebrow" data-eyebrow="optional" style="font-size:12px;letter-spacing:3px;text-transform:uppercase">[EYEBROW]</span>
+    <h2 class="sbc-title" style="font-size:clamp(28px,3.6vw,56px);font-weight:700;margin:10px 0 0;line-height:1.1">[HEADLINE]</h2>
+  </header>
+
+  <div class="sbc-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px">
+    <article class="sbc-card" data-card="0" style="position:relative;padding:1px;border-radius:16px;background:rgba(255,255,255,0.06)">
+      <div class="sbc-card-glow" aria-hidden="true" style="position:absolute;inset:0;border-radius:16px;opacity:0;pointer-events:none;background:radial-gradient(200px circle at var(--sbc-x, 50%) var(--sbc-y, 50%), rgba(255,255,255,0.6), transparent 60%)"></div>
+      <div class="sbc-card-body" style="position:relative;z-index:1;padding:32px;border-radius:15px;background:#0b0b0b;color:#fff;height:100%">
+        <div class="sbc-icon" aria-hidden="true" style="width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,0.08);margin-bottom:24px"></div>
+        <h3 style="font-size:20px;font-weight:600;margin:0 0 8px">[TITLE_1]</h3>
+        <p style="font-size:15px;line-height:1.55;margin:0;opacity:0.7">[BODY_1]</p>
+      </div>
+    </article>
+    <article class="sbc-card" data-card="1" style="position:relative;padding:1px;border-radius:16px;background:rgba(255,255,255,0.06)">
+      <div class="sbc-card-glow" aria-hidden="true" style="position:absolute;inset:0;border-radius:16px;opacity:0;pointer-events:none;background:radial-gradient(200px circle at var(--sbc-x, 50%) var(--sbc-y, 50%), rgba(255,255,255,0.6), transparent 60%)"></div>
+      <div class="sbc-card-body" style="position:relative;z-index:1;padding:32px;border-radius:15px;background:#0b0b0b;color:#fff;height:100%">
+        <div class="sbc-icon" aria-hidden="true" style="width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,0.08);margin-bottom:24px"></div>
+        <h3 style="font-size:20px;font-weight:600;margin:0 0 8px">[TITLE_2]</h3>
+        <p style="font-size:15px;line-height:1.55;margin:0;opacity:0.7">[BODY_2]</p>
+      </div>
+    </article>
+    <article class="sbc-card" data-card="2" style="position:relative;padding:1px;border-radius:16px;background:rgba(255,255,255,0.06)">
+      <div class="sbc-card-glow" aria-hidden="true" style="position:absolute;inset:0;border-radius:16px;opacity:0;pointer-events:none;background:radial-gradient(200px circle at var(--sbc-x, 50%) var(--sbc-y, 50%), rgba(255,255,255,0.6), transparent 60%)"></div>
+      <div class="sbc-card-body" style="position:relative;z-index:1;padding:32px;border-radius:15px;background:#0b0b0b;color:#fff;height:100%">
+        <div class="sbc-icon" aria-hidden="true" style="width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,0.08);margin-bottom:24px"></div>
+        <h3 style="font-size:20px;font-weight:600;margin:0 0 8px">[TITLE_3]</h3>
+        <p style="font-size:15px;line-height:1.55;margin:0;opacity:0.7">[BODY_3]</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<style>
+.sbc-section .sbc-card-glow { transition: opacity 0.25s ease; }
+.sbc-section .sbc-card:hover .sbc-card-glow { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .sbc-section .sbc-card-glow { transition: none !important; }
+}
+</style>
+
+<script>
+const sbcRoot = document.querySelector('.sbc-section');
+sbcRoot.querySelectorAll('.sbc-card').forEach(card => {
+  card.addEventListener('pointermove', (e) => {
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--sbc-x', ((e.clientX - r.left) / r.width * 100) + '%');
+    card.style.setProperty('--sbc-y', ((e.clientY - r.top) / r.height * 100) + '%');
+  });
+});
+</script>

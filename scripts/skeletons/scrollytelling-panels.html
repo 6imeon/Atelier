@@ -1,0 +1,108 @@
+<!-- SCROLLYTELLING: 3-stage panel-by-panel transition with staggered column swaps -->
+<!-- Pattern: 3 columns x 3 image sets, scroll-driven swap left->center->right -->
+<!-- Text labels crossfade per stage. Requires: GSAP + ScrollTrigger -->
+<!-- Ref: https://report.adidas-group.com/2024/en/ -->
+
+<section class="scrolly-wrapper" style="height:600vh;position:relative">
+  <div class="scrolly-sticky" style="position:sticky;top:0;height:100vh;overflow:hidden;background:#000">
+
+    <!-- 3 columns, each with 3 stacked full-height images -->
+    <div class="scrolly-columns" style="display:flex;width:100%;height:100%;position:relative">
+      <!-- LEFT COLUMN -->
+      <div class="panel-col" style="flex:1;position:relative;overflow:hidden">
+        <div class="panel-img" data-col="0" data-idx="0" style="position:absolute;inset:0;background-size:cover;background-position:center"></div>
+        <div class="panel-img" data-col="0" data-idx="1" style="position:absolute;inset:0;background-size:cover;background-position:center;transform:translateY(100%)"></div>
+        <div class="panel-img" data-col="0" data-idx="2" style="position:absolute;inset:0;background-size:cover;background-position:center;transform:translateY(100%)"></div>
+      </div>
+      <!-- CENTER COLUMN -->
+      <div class="panel-col" style="flex:1;position:relative;overflow:hidden">
+        <div class="panel-img" data-col="1" data-idx="0" style="position:absolute;inset:0;background-size:cover;background-position:center"></div>
+        <div class="panel-img" data-col="1" data-idx="1" style="position:absolute;inset:0;background-size:cover;background-position:center;transform:translateY(100%)"></div>
+        <div class="panel-img" data-col="1" data-idx="2" style="position:absolute;inset:0;background-size:cover;background-position:center;transform:translateY(100%)"></div>
+      </div>
+      <!-- RIGHT COLUMN -->
+      <div class="panel-col" style="flex:1;position:relative;overflow:hidden">
+        <div class="panel-img" data-col="2" data-idx="0" style="position:absolute;inset:0;background-size:cover;background-position:center"></div>
+        <div class="panel-img" data-col="2" data-idx="1" style="position:absolute;inset:0;background-size:cover;background-position:center;transform:translateY(100%)"></div>
+        <div class="panel-img" data-col="2" data-idx="2" style="position:absolute;inset:0;background-size:cover;background-position:center;transform:translateY(100%)"></div>
+      </div>
+    </div>
+
+    <!-- Text labels per stage -->
+    <div class="section-label" data-section="0" style="position:absolute;bottom:0;left:0;right:0;pointer-events:none;z-index:10">
+      <span class="label-left" style="position:absolute;bottom:40px;left:40px;font-size:clamp(50px,8vw,100px);color:#fff;font-weight:700">[LABEL_LEFT_1]</span>
+      <span class="label-right" style="position:absolute;bottom:40px;right:40px;font-size:clamp(50px,8vw,100px);color:#fff;font-weight:700">[LABEL_RIGHT_1]</span>
+    </div>
+    <div class="section-label" data-section="1" style="position:absolute;bottom:0;left:0;right:0;pointer-events:none;z-index:10;opacity:0">
+      <span class="label-left" style="position:absolute;bottom:40px;left:40px;font-size:clamp(50px,8vw,100px);color:#fff;font-weight:700">[LABEL_LEFT_2]</span>
+      <span class="label-right" style="position:absolute;bottom:40px;right:40px;font-size:clamp(50px,8vw,100px);color:#fff;font-weight:700">[LABEL_RIGHT_2]</span>
+    </div>
+    <div class="section-label" data-section="2" style="position:absolute;bottom:0;left:0;right:0;pointer-events:none;z-index:10;opacity:0">
+      <span class="label-left" style="position:absolute;bottom:40px;left:40px;font-size:clamp(50px,8vw,100px);color:#fff;font-weight:700">[LABEL_LEFT_3]</span>
+      <span class="label-right" style="position:absolute;bottom:40px;right:40px;font-size:clamp(50px,8vw,100px);color:#fff;font-weight:700">[LABEL_RIGHT_3]</span>
+    </div>
+
+    <!-- CTA per stage -->
+    <a href="#" class="cta-btn" data-section="0" style="position:absolute;bottom:30px;left:50%;transform:translateX(-50%);z-index:20;border:1px solid #fff;color:#fff;text-decoration:none;padding:10px 28px;font-size:12px;letter-spacing:2px;text-transform:uppercase;font-family:system-ui,sans-serif;background:transparent">[CTA]</a>
+    <a href="#" class="cta-btn" data-section="1" style="position:absolute;bottom:30px;left:50%;transform:translateX(-50%);z-index:20;border:1px solid #fff;color:#fff;text-decoration:none;padding:10px 28px;font-size:12px;letter-spacing:2px;text-transform:uppercase;font-family:system-ui,sans-serif;background:transparent;opacity:0;pointer-events:none">[CTA]</a>
+    <a href="#" class="cta-btn" data-section="2" style="position:absolute;bottom:30px;left:50%;transform:translateX(-50%);z-index:20;border:1px solid #fff;color:#fff;text-decoration:none;padding:10px 28px;font-size:12px;letter-spacing:2px;text-transform:uppercase;font-family:system-ui,sans-serif;background:transparent;opacity:0;pointer-events:none">[CTA]</a>
+  </div>
+</section>
+
+<style>
+@media (prefers-reduced-motion: reduce) {
+  .panel-img[data-idx="1"], .panel-img[data-idx="2"] { display: none; }
+  .section-label { position: static !important; opacity: 1 !important; padding: 40px; }
+  .section-label[data-section="1"], .section-label[data-section="2"] { display: none; }
+  .cta-btn[data-section="1"], .cta-btn[data-section="2"] { display: none; }
+}
+</style>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (prefersReducedMotion) {
+  // Short-circuit: show first stage only, skip scroll choreography.
+} else {
+  const wrapper = document.querySelector('.scrolly-wrapper');
+  const labels = document.querySelectorAll('.section-label');
+  const ctas = document.querySelectorAll('.cta-btn');
+  function getPanel(col, idx) {
+    return document.querySelector(`.panel-img[data-col="${col}"][data-idx="${idx}"]`);
+  }
+  const tl = gsap.timeline({
+    scrollTrigger: { trigger: wrapper, start: 'top top', end: 'bottom bottom', scrub: 0.8 }
+  });
+  const s = 1;
+  // Phase 1: entrance
+  tl.from(labels[0], { opacity: 0, y: 30, duration: s * 0.3 }, 0);
+  tl.from(ctas[0], { opacity: 0, duration: s * 0.2 }, s * 0.2);
+  tl.to({}, { duration: s * 0.5 });
+  // Transition 1->2
+  const t1 = s * 1;
+  tl.to(labels[0], { opacity: 0, duration: s * 0.15 }, t1);
+  tl.to(ctas[0], { opacity: 0, duration: s * 0.1 }, t1);
+  tl.to(getPanel(0,0), { y: '-100%', duration: s*0.4, ease: 'power2.inOut' }, t1 + s*0.1);
+  tl.to(getPanel(0,1), { y: '0%', duration: s*0.4, ease: 'power2.inOut' }, t1 + s*0.1);
+  tl.to(getPanel(1,0), { y: '-100%', duration: s*0.4, ease: 'power2.inOut' }, t1 + s*0.25);
+  tl.to(getPanel(1,1), { y: '0%', duration: s*0.4, ease: 'power2.inOut' }, t1 + s*0.25);
+  tl.to(getPanel(2,0), { y: '-100%', duration: s*0.4, ease: 'power2.inOut' }, t1 + s*0.4);
+  tl.to(getPanel(2,1), { y: '0%', duration: s*0.4, ease: 'power2.inOut' }, t1 + s*0.4);
+  tl.to(labels[1], { opacity: 1, duration: s*0.2 }, t1 + s*0.7);
+  tl.to(ctas[1], { opacity: 1, duration: s*0.15 }, t1 + s*0.75);
+  tl.to({}, { duration: s * 0.5 }, t1 + s*0.9);
+  // Transition 2->3
+  const t2 = t1 + s * 1.4;
+  tl.to(labels[1], { opacity: 0, duration: s*0.15 }, t2);
+  tl.to(ctas[1], { opacity: 0, duration: s*0.1 }, t2);
+  tl.to(getPanel(0,1), { y: '-100%', duration: s*0.4, ease: 'power2.inOut' }, t2 + s*0.1);
+  tl.to(getPanel(0,2), { y: '0%', duration: s*0.4, ease: 'power2.inOut' }, t2 + s*0.1);
+  tl.to(getPanel(1,1), { y: '-100%', duration: s*0.4, ease: 'power2.inOut' }, t2 + s*0.25);
+  tl.to(getPanel(1,2), { y: '0%', duration: s*0.4, ease: 'power2.inOut' }, t2 + s*0.25);
+  tl.to(getPanel(2,1), { y: '-100%', duration: s*0.4, ease: 'power2.inOut' }, t2 + s*0.4);
+  tl.to(getPanel(2,2), { y: '0%', duration: s*0.4, ease: 'power2.inOut' }, t2 + s*0.4);
+  tl.to(labels[2], { opacity: 1, duration: s*0.2 }, t2 + s*0.7);
+  tl.to(ctas[2], { opacity: 1, duration: s*0.15 }, t2 + s*0.75);
+  tl.to({}, { duration: s * 0.5 }, t2 + s*0.9);
+}
+</script>

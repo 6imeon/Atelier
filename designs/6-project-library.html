@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atelier — Project Library (4 Alternatives)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #0e0e10; color: #ccc; }
+
+  /* ─── Page-level controls ─── */
+  .page-controls {
+    position: sticky; top: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+    padding: 14px 24px; background: #0e0e10; border-bottom: 1px solid #222;
+  }
+  .page-controls h1 { font-size: 14px; font-weight: 600; color: #fff; margin-right: 12px; letter-spacing: -0.01em; }
+  .mode-toggle { display: flex; border-radius: 8px; overflow: hidden; border: 1px solid #333; }
+  .mode-btn {
+    padding: 7px 16px; border: none; font-size: 12px; font-weight: 500;
+    font-family: inherit; cursor: pointer; background: transparent; color: #888; transition: all 0.15s;
+  }
+  .mode-btn.active { background: #fff; color: #000; }
+
+  /* ─── Grid shell ─── */
+  .alt-grid { display: grid; grid-template-columns: 1fr 1fr; min-height: calc(100vh - 49px); }
+  .alt { position: relative; overflow-y: auto; border: 1px solid #1a1a1a; transition: background 0.3s, color 0.3s; }
+  .alt-label {
+    position: sticky; top: 0; z-index: 10;
+    padding: 8px 14px; font-size: 11px; font-weight: 600; letter-spacing: 0.03em;
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* ════════════════════════════════════════════════
+     PALETTE VARIABLES  (light default, .dark overrides)
+     ════════════════════════════════════════════════ */
+  .alt-a{--bg:#F8F9FA;--sf:#F1F3F5;--card:#FFF;--bd:#E2E5E9;--t1:#1A1D21;--t2:#5F6B7A;--t3:#9CA3AF;--ac:#6366F1;--ach:#5457E5;--lbg:rgba(99,102,241,.08);--lc:#6366F1;}
+  .dark .alt-a{--bg:#111113;--sf:#19191B;--card:#222225;--bd:#2E2E32;--t1:#EDEDEF;--t2:#A0A0A6;--t3:#63636E;--ac:#818CF8;--ach:#9BA3FB;--lbg:rgba(129,140,248,.1);--lc:#818CF8;}
+
+  .alt-b{--bg:#FAF9F7;--sf:#F3F1EE;--card:#FFF;--bd:#E8E5E0;--t1:#1C1917;--t2:#6B6560;--t3:#A8A29E;--ac:#B45309;--ach:#A14A08;--lbg:rgba(180,83,9,.08);--lc:#B45309;}
+  .dark .alt-b{--bg:#121110;--sf:#1C1A18;--card:#252320;--bd:#33302C;--t1:#E7E5E4;--t2:#A8A29E;--t3:#6B6560;--ac:#F59E0B;--ach:#FBBF24;--lbg:rgba(245,158,11,.1);--lc:#F59E0B;}
+
+  .alt-c{--bg:#F8FAF8;--sf:#F0F4F0;--card:#FFF;--bd:#DDE5DD;--t1:#1A1F1A;--t2:#5C6B5C;--t3:#94A394;--ac:#4A7C59;--ach:#3D6B4A;--lbg:rgba(74,124,89,.08);--lc:#4A7C59;}
+  .dark .alt-c{--bg:#101210;--sf:#171A17;--card:#1F231F;--bd:#2C322C;--t1:#E4E9E4;--t2:#94A394;--t3:#5C6B5C;--ac:#6EAA7E;--ach:#84BB92;--lbg:rgba(110,170,126,.1);--lc:#6EAA7E;}
+
+  .alt-d{--bg:#FAF8F9;--sf:#F4F0F2;--card:#FFF;--bd:#E8E1E4;--t1:#1F1A1C;--t2:#6B5F64;--t3:#A89BA0;--ac:#9F5474;--ach:#8D4766;--lbg:rgba(159,84,116,.08);--lc:#9F5474;}
+  .dark .alt-d{--bg:#121011;--sf:#1A1719;--card:#242022;--bd:#332D30;--t1:#E9E4E6;--t2:#A89BA0;--t3:#6B5F64;--ac:#D4809E;--ach:#E098B2;--lbg:rgba(212,128,158,.1);--lc:#D4809E;}
+
+  .alt { background: var(--bg); color: var(--t1); }
+  .alt-label { background: var(--lbg); color: var(--lc); }
+
+  /* ════════════════════════════════════════
+     A — GRID GALLERY  (Pinterest / Linear)
+     Compact cards, thumbnail-heavy, minimal chrome
+     ════════════════════════════════════════ */
+  .a-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px; border-bottom: 1px solid var(--bd); background: var(--card);
+  }
+  .a-logo { display: flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 600; color: var(--t1); }
+  .a-logo svg { width: 17px; height: 17px; color: var(--ac); }
+  .a-right { display: flex; align-items: center; gap: 10px; }
+  .a-icon-btn {
+    width: 30px; height: 30px; border-radius: 7px; border: 1px solid var(--bd);
+    background: var(--card); display: flex; align-items: center; justify-content: center; cursor: pointer;
+  }
+  .a-icon-btn svg { width: 14px; height: 14px; color: var(--t3); }
+  .a-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--ac); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #fff; }
+
+  .a-body { padding: 20px; }
+  .a-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 16px; }
+  .a-title { font-size: 16px; font-weight: 700; }
+  .a-count { font-size: 12px; color: var(--t3); font-weight: 400; margin-left: 6px; }
+  .a-new {
+    display: flex; align-items: center; gap: 5px;
+    padding: 7px 14px; border-radius: 8px; border: none;
+    background: var(--ac); color: #fff; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer;
+  }
+  .a-new svg { width: 13px; height: 13px; }
+
+  .a-search {
+    display: flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 9px;
+    background: var(--sf); border: 1px solid var(--bd); margin-bottom: 16px;
+  }
+  .a-search svg { width: 14px; height: 14px; color: var(--t3); }
+  .a-search input { flex: 1; border: none; outline: none; background: transparent; font-size: 13px; color: var(--t1); font-family: inherit; }
+  .a-search input::placeholder { color: var(--t3); }
+
+  .a-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .a-card {
+    border-radius: 10px; overflow: hidden; background: var(--card);
+    border: 1px solid var(--bd); cursor: pointer; transition: all 0.2s;
+  }
+  .a-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.07); }
+  .a-thumb {
+    height: 80px; background: var(--sf); display: flex; align-items: center; justify-content: center;
+    border-bottom: 1px solid var(--bd); position: relative;
+  }
+  .a-thumb svg { width: 20px; height: 20px; color: var(--t3); opacity: .4; }
+  .a-badge { position: absolute; top: 5px; right: 5px; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700; }
+  .a-badge.w { background: rgba(217,119,6,.1); color: #D97706; }
+  .a-badge.c { background: rgba(220,38,38,.1); color: #DC2626; }
+  .a-info { padding: 8px 10px; }
+  .a-name { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .a-meta { font-size: 10px; color: var(--t3); margin-top: 3px; }
+
+  .a-add {
+    border-radius: 10px; border: 1.5px dashed var(--bd); min-height: 120px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px; color: var(--t3); font-size: 11px; font-weight: 500; cursor: pointer; transition: all .15s;
+  }
+  .a-add:hover { border-color: var(--ac); color: var(--ac); }
+  .a-add svg { width: 18px; height: 18px; }
+
+  /* ════════════════════════════════════════
+     B — SIDEBAR LIST  (Notion / Linear sidebar)
+     Left sidebar with project list, right panel shows detail
+     ════════════════════════════════════════ */
+  .b-shell { display: flex; height: 100%; min-height: 460px; }
+  .b-sidebar {
+    width: 220px; border-right: 1px solid var(--bd); background: var(--sf);
+    display: flex; flex-direction: column;
+  }
+  .b-sid-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px; border-bottom: 1px solid var(--bd);
+  }
+  .b-sid-logo { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--t1); }
+  .b-sid-logo svg { width: 16px; height: 16px; color: var(--ac); }
+  .b-sid-add {
+    width: 24px; height: 24px; border-radius: 6px; border: none;
+    background: var(--ac); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer;
+  }
+  .b-sid-add svg { width: 12px; height: 12px; }
+
+  .b-sid-search {
+    margin: 10px 12px; padding: 7px 10px; border-radius: 7px;
+    background: var(--card); border: 1px solid var(--bd);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .b-sid-search svg { width: 12px; height: 12px; color: var(--t3); }
+  .b-sid-search input { flex: 1; border: none; outline: none; background: transparent; font-size: 12px; color: var(--t1); font-family: inherit; }
+  .b-sid-search input::placeholder { color: var(--t3); }
+
+  .b-sid-section { padding: 4px 8px; font-size: 10px; font-weight: 600; color: var(--t3); text-transform: uppercase; letter-spacing: .04em; margin-top: 8px; }
+  .b-sid-list { flex: 1; overflow-y: auto; padding: 0 6px; }
+  .b-sid-item {
+    display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 7px;
+    cursor: pointer; transition: background .1s; font-size: 13px; color: var(--t2); font-weight: 500;
+  }
+  .b-sid-item:hover { background: var(--card); }
+  .b-sid-item.active { background: var(--card); color: var(--t1); box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+  .b-sid-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .b-sid-item .b-sid-screens { margin-left: auto; font-size: 10px; color: var(--t3); font-weight: 400; }
+  .b-sid-badge-inline { margin-left: auto; font-size: 9px; font-weight: 600; padding: 1px 5px; border-radius: 3px; }
+  .b-sid-badge-inline.w { background: rgba(217,119,6,.1); color: #D97706; }
+
+  .b-sid-footer { padding: 12px 16px; border-top: 1px solid var(--bd); display: flex; align-items: center; gap: 8px; }
+  .b-sid-avatar { width: 24px; height: 24px; border-radius: 6px; background: var(--ac); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: #fff; }
+  .b-sid-user { font-size: 12px; font-weight: 500; color: var(--t2); }
+
+  .b-detail { flex: 1; background: var(--bg); padding: 24px; }
+  .b-detail-title { font-size: 18px; font-weight: 700; color: var(--t1); margin-bottom: 4px; }
+  .b-detail-meta { font-size: 12px; color: var(--t3); margin-bottom: 20px; display: flex; gap: 16px; }
+  .b-detail-screens { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .b-detail-screen {
+    height: 90px; border-radius: 8px; background: var(--card);
+    border: 1px solid var(--bd); display: flex; align-items: center; justify-content: center;
+  }
+  .b-detail-screen svg { width: 20px; height: 20px; color: var(--t3); opacity: .3; }
+  .b-detail-screen-label { font-size: 10px; color: var(--t3); margin-top: 6px; text-align: center; }
+  .b-detail-actions { display: flex; gap: 8px; margin-top: 16px; }
+  .b-btn {
+    padding: 7px 14px; border-radius: 7px; font-size: 12px; font-weight: 500;
+    font-family: inherit; cursor: pointer; border: 1px solid var(--bd); background: var(--card); color: var(--t2); transition: all .15s;
+  }
+  .b-btn:hover { color: var(--t1); background: var(--sf); }
+  .b-btn.primary { background: var(--ac); color: #fff; border-color: var(--ac); }
+  .b-btn.primary:hover { opacity: .9; }
+
+  /* ════════════════════════════════════════
+     C — TABLE VIEW  (Vercel / GitHub)
+     Clean table rows, dense information, professional
+     ════════════════════════════════════════ */
+  .c-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px; border-bottom: 1px solid var(--bd); background: var(--card);
+  }
+  .c-logo { display: flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 600; color: var(--t1); }
+  .c-logo svg { width: 17px; height: 17px; color: var(--ac); }
+  .c-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--ac); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #fff; }
+
+  .c-body { padding: 20px; }
+  .c-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .c-title { font-size: 16px; font-weight: 700; }
+  .c-actions { display: flex; gap: 8px; }
+  .c-search {
+    display: flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 7px;
+    background: var(--sf); border: 1px solid var(--bd);
+  }
+  .c-search svg { width: 13px; height: 13px; color: var(--t3); }
+  .c-search input { width: 120px; border: none; outline: none; background: transparent; font-size: 12px; color: var(--t1); font-family: inherit; }
+  .c-search input::placeholder { color: var(--t3); }
+  .c-new {
+    display: flex; align-items: center; gap: 5px; padding: 7px 14px; border-radius: 7px;
+    border: none; background: var(--ac); color: #fff; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer;
+  }
+  .c-new svg { width: 12px; height: 12px; }
+
+  .c-table { width: 100%; border-collapse: collapse; }
+  .c-table th {
+    text-align: left; padding: 8px 12px; font-size: 11px; font-weight: 600; color: var(--t3);
+    text-transform: uppercase; letter-spacing: .04em;
+    border-bottom: 1px solid var(--bd); background: var(--sf);
+  }
+  .c-table td {
+    padding: 10px 12px; font-size: 13px; border-bottom: 1px solid var(--bd);
+    color: var(--t2); vertical-align: middle;
+  }
+  .c-table tr { transition: background .1s; cursor: pointer; }
+  .c-table tbody tr:hover { background: var(--sf); }
+  .c-project-name { font-weight: 600; color: var(--t1); display: flex; align-items: center; gap: 8px; }
+  .c-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .c-dot.green { background: #22c55e; }
+  .c-dot.amber { background: #f59e0b; }
+  .c-dot.red { background: #ef4444; }
+  .c-dot.gray { background: var(--t3); }
+  .c-status { font-size: 11px; font-weight: 500; padding: 3px 8px; border-radius: 99px; }
+  .c-status.active { background: rgba(34,197,94,.08); color: #16a34a; }
+  .c-status.warning { background: rgba(245,158,11,.08); color: #d97706; }
+  .c-status.critical { background: rgba(239,68,68,.08); color: #dc2626; }
+  .c-actions-cell { display: flex; gap: 4px; }
+  .c-act {
+    width: 26px; height: 26px; border-radius: 5px; border: 1px solid var(--bd);
+    background: var(--card); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all .1s;
+  }
+  .c-act:hover { background: var(--sf); }
+  .c-act svg { width: 12px; height: 12px; color: var(--t3); }
+
+  /* ════════════════════════════════════════
+     D — KANBAN / STATUS COLUMNS  (Trello / Linear board)
+     Projects grouped by status in horizontal columns
+     ════════════════════════════════════════ */
+  .d-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px; border-bottom: 1px solid var(--bd); background: var(--card);
+  }
+  .d-logo { display: flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 600; color: var(--t1); }
+  .d-logo svg { width: 17px; height: 17px; color: var(--ac); }
+  .d-tab-row { display: flex; gap: 2px; }
+  .d-tab {
+    padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 500;
+    color: var(--t3); cursor: pointer; border: none; background: transparent; font-family: inherit; transition: all .1s;
+  }
+  .d-tab:hover { color: var(--t2); background: var(--sf); }
+  .d-tab.active { color: var(--t1); background: var(--sf); font-weight: 600; }
+  .d-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--ac); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #fff; }
+
+  .d-board { display: flex; gap: 12px; padding: 16px; overflow-x: auto; height: calc(100% - 49px); align-items: flex-start; }
+  .d-col { width: 200px; flex-shrink: 0; }
+  .d-col-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 10px; margin-bottom: 8px;
+    font-size: 12px; font-weight: 600; color: var(--t2);
+  }
+  .d-col-count { font-size: 11px; font-weight: 400; color: var(--t3); padding: 1px 6px; border-radius: 4px; background: var(--sf); }
+  .d-col-cards { display: flex; flex-direction: column; gap: 8px; }
+  .d-card {
+    padding: 12px; border-radius: 9px; background: var(--card);
+    border: 1px solid var(--bd); cursor: pointer; transition: all .15s;
+  }
+  .d-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,.06); transform: translateY(-1px); }
+  .d-card-name { font-size: 13px; font-weight: 600; color: var(--t1); margin-bottom: 6px; }
+  .d-card-meta { display: flex; align-items: center; gap: 8px; font-size: 10px; color: var(--t3); }
+  .d-card-meta svg { width: 11px; height: 11px; }
+  .d-card-bar { height: 3px; border-radius: 2px; margin-top: 8px; }
+  .d-card-bar.green { background: #22c55e; }
+  .d-card-bar.amber { background: #f59e0b; }
+  .d-card-bar.red { background: #ef4444; }
+
+  .d-add-card {
+    padding: 10px; border-radius: 9px; border: 1.5px dashed var(--bd);
+    text-align: center; font-size: 12px; color: var(--t3); font-weight: 500;
+    cursor: pointer; transition: all .15s;
+  }
+  .d-add-card:hover { border-color: var(--ac); color: var(--ac); }
+</style>
+</head>
+<body>
+
+<div class="page-controls">
+  <h1>Project Library — 4 Alternatives</h1>
+  <div class="mode-toggle">
+    <button class="mode-btn active" onclick="setMode('light')">Light</button>
+    <button class="mode-btn" onclick="setMode('dark')">Dark</button>
+  </div>
+</div>
+
+<div class="alt-grid" id="grid">
+
+<!-- ══════════════════════════════════════════════════════
+     A — GRID GALLERY  (Cool Slate)
+     Pinterest-style thumbnail grid, compact, visual-first
+     ══════════════════════════════════════════════════════ -->
+<div class="alt alt-a">
+  <div class="alt-label">A — Grid Gallery &middot; Cool Slate</div>
+  <div class="a-topbar">
+    <div class="a-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>Atelier</div>
+    <div class="a-right">
+      <div class="a-icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></div>
+      <div class="a-avatar">JD</div>
+    </div>
+  </div>
+  <div class="a-body">
+    <div class="a-header">
+      <div><span class="a-title">Projects</span><span class="a-count">6</span></div>
+      <button class="a-new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New</button>
+    </div>
+    <div class="a-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input placeholder="Search projects..." /></div>
+    <div class="a-grid">
+      <div class="a-card"><div class="a-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><div class="a-info"><div class="a-name">Fintech Dashboard</div><div class="a-meta">4 screens &middot; 2h ago</div></div></div>
+      <div class="a-card"><div class="a-thumb"><div class="a-badge w">5d</div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><div class="a-info"><div class="a-name">E-commerce Landing</div><div class="a-meta">2 screens &middot; 25d ago</div></div></div>
+      <div class="a-card"><div class="a-thumb"><div class="a-badge c">1d</div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><div class="a-info"><div class="a-name">Portfolio</div><div class="a-meta">1 screen &middot; 29d ago</div></div></div>
+      <div class="a-card"><div class="a-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><div class="a-info"><div class="a-name">SaaS Onboarding</div><div class="a-meta">8 screens &middot; 5d ago</div></div></div>
+      <div class="a-card"><div class="a-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><div class="a-info"><div class="a-name">Healthcare Portal</div><div class="a-meta">3 screens &middot; 12d ago</div></div></div>
+      <div class="a-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New Project</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     B — SIDEBAR + DETAIL  (Warm Stone)
+     Notion-style: sidebar project list, right detail pane
+     ══════════════════════════════════════════════════════ -->
+<div class="alt alt-b">
+  <div class="alt-label">B — Sidebar + Detail &middot; Warm Stone</div>
+  <div class="b-shell">
+    <div class="b-sidebar">
+      <div class="b-sid-header">
+        <div class="b-sid-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>Atelier</div>
+        <button class="b-sid-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+      </div>
+      <div class="b-sid-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input placeholder="Search..." /></div>
+      <div class="b-sid-section">Projects</div>
+      <div class="b-sid-list">
+        <div class="b-sid-item active"><div class="b-sid-dot" style="background:#22c55e;"></div>Fintech Dashboard<span class="b-sid-screens">4</span></div>
+        <div class="b-sid-item"><div class="b-sid-dot" style="background:#22c55e;"></div>SaaS Onboarding<span class="b-sid-screens">8</span></div>
+        <div class="b-sid-item"><div class="b-sid-dot" style="background:#22c55e;"></div>Healthcare Portal<span class="b-sid-screens">3</span></div>
+        <div class="b-sid-item"><div class="b-sid-dot" style="background:#f59e0b;"></div>E-commerce Landing<span class="b-sid-badge-inline w">5d</span></div>
+        <div class="b-sid-item"><div class="b-sid-dot" style="background:#ef4444;"></div>Portfolio<span class="b-sid-screens">1</span></div>
+      </div>
+      <div class="b-sid-footer">
+        <div class="b-sid-avatar">JD</div>
+        <div class="b-sid-user">Jane Doe</div>
+      </div>
+    </div>
+    <div class="b-detail">
+      <div class="b-detail-title">Fintech Dashboard</div>
+      <div class="b-detail-meta"><span>4 screens</span><span>Last edited 2h ago</span><span>Active</span></div>
+      <div class="b-detail-screens">
+        <div><div class="b-detail-screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><div class="b-detail-screen-label">Overview</div></div>
+        <div><div class="b-detail-screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><div class="b-detail-screen-label">Analytics</div></div>
+        <div><div class="b-detail-screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><div class="b-detail-screen-label">Settings</div></div>
+        <div><div class="b-detail-screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><div class="b-detail-screen-label">Transactions</div></div>
+      </div>
+      <div class="b-detail-actions">
+        <button class="b-btn primary">Open in Editor</button>
+        <button class="b-btn">Duplicate</button>
+        <button class="b-btn">Export</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     C — TABLE / LIST VIEW  (Sage)
+     Vercel/GitHub-style dense table rows, sortable columns
+     ══════════════════════════════════════════════════════ -->
+<div class="alt alt-c">
+  <div class="alt-label">C — Table View &middot; Sage</div>
+  <div class="c-topbar">
+    <div class="c-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>Atelier</div>
+    <div class="c-avatar">JD</div>
+  </div>
+  <div class="c-body">
+    <div class="c-header">
+      <div class="c-title">Projects</div>
+      <div class="c-actions">
+        <div class="c-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input placeholder="Filter..." /></div>
+        <button class="c-new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New</button>
+      </div>
+    </div>
+    <table class="c-table">
+      <thead><tr><th>Project</th><th>Screens</th><th>Last Active</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        <tr><td><div class="c-project-name"><div class="c-dot green"></div>Fintech Dashboard</div></td><td>4</td><td>2 hours ago</td><td><span class="c-status active">Active</span></td><td><div class="c-actions-cell"><div class="c-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><div class="c-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></div></div></td></tr>
+        <tr><td><div class="c-project-name"><div class="c-dot green"></div>SaaS Onboarding</div></td><td>8</td><td>5 days ago</td><td><span class="c-status active">Active</span></td><td><div class="c-actions-cell"><div class="c-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><div class="c-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></div></div></td></tr>
+        <tr><td><div class="c-project-name"><div class="c-dot green"></div>Healthcare Portal</div></td><td>3</td><td>12 days ago</td><td><span class="c-status active">Active</span></td><td><div class="c-actions-cell"><div class="c-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><div class="c-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></div></div></td></tr>
+        <tr><td><div class="c-project-name"><div class="c-dot amber"></div>E-commerce Landing</div></td><td>2</td><td>25 days ago</td><td><span class="c-status warning">5d left</span></td><td><div class="c-actions-cell"><div class="c-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><div class="c-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></div></div></td></tr>
+        <tr><td><div class="c-project-name"><div class="c-dot red"></div>Portfolio Concept</div></td><td>1</td><td>29 days ago</td><td><span class="c-status critical">1d left</span></td><td><div class="c-actions-cell"><div class="c-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><div class="c-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></div></div></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     D — KANBAN BOARD  (Dusty Rose)
+     Trello/Linear board: columns by project status
+     ══════════════════════════════════════════════════════ -->
+<div class="alt alt-d">
+  <div class="alt-label">D — Kanban Board &middot; Dusty Rose</div>
+  <div class="d-topbar">
+    <div class="d-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>Atelier</div>
+    <div class="d-tab-row">
+      <button class="d-tab active">Board</button>
+      <button class="d-tab">Grid</button>
+      <button class="d-tab">List</button>
+    </div>
+    <div class="d-avatar">JD</div>
+  </div>
+  <div class="d-board">
+    <div class="d-col">
+      <div class="d-col-header">Active <span class="d-col-count">3</span></div>
+      <div class="d-col-cards">
+        <div class="d-card"><div class="d-card-name">Fintech Dashboard</div><div class="d-card-meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>4 screens &middot; 2h ago</div><div class="d-card-bar green"></div></div>
+        <div class="d-card"><div class="d-card-name">SaaS Onboarding</div><div class="d-card-meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>8 screens &middot; 5d ago</div><div class="d-card-bar green"></div></div>
+        <div class="d-card"><div class="d-card-name">Healthcare Portal</div><div class="d-card-meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>3 screens &middot; 12d ago</div><div class="d-card-bar green"></div></div>
+        <div class="d-add-card">+ New Project</div>
+      </div>
+    </div>
+    <div class="d-col">
+      <div class="d-col-header">Expiring <span class="d-col-count">1</span></div>
+      <div class="d-col-cards">
+        <div class="d-card"><div class="d-card-name">E-commerce Landing</div><div class="d-card-meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>2 screens &middot; 25d ago</div><div class="d-card-bar amber"></div></div>
+      </div>
+    </div>
+    <div class="d-col">
+      <div class="d-col-header">Critical <span class="d-col-count">1</span></div>
+      <div class="d-col-cards">
+        <div class="d-card"><div class="d-card-name">Portfolio Concept</div><div class="d-card-meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>1 screen &middot; 29d ago</div><div class="d-card-bar red"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+function setMode(m) {
+  document.getElementById('grid').classList.toggle('dark', m === 'dark');
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.textContent.toLowerCase() === m));
+}
+</script>
+</body>
+</html>

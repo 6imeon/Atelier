@@ -1,0 +1,11 @@
+{
+  "name": "@canvas-ai/mcp-server",
+  "version": "0.1.0",
+  "main": "./dist/index.js",
+  "scripts": { "build": "tsc", "start": "node dist/index.js" },
+  "dependencies": {
+    "@canvas-ai/sdk": "*",
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "devDependencies": { "typescript": "^5.7.0" }
+}

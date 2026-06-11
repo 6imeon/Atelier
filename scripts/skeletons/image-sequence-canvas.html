@@ -1,0 +1,68 @@
+<!-- IMAGE SEQUENCE CANVAS: Scroll-driven frame playback on a <canvas> element -->
+<!-- Pattern: Pinned section; frame index = scroll progress × total frames; drawn to canvas -->
+<!-- Requires: GSAP + ScrollTrigger -->
+<!-- Ref: https://www.apple.com/airpods-pro/ -->
+<!-- Ref: https://www.apple.com/iphone-15-pro/ -->
+<!-- Ref: https://www.rivian.com/r1s -->
+
+<section class="isc-section" style="position:relative;height:400vh">
+  <div class="isc-sticky" style="position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center">
+    <canvas class="isc-canvas" data-sequence="true" data-frames="120" data-src-pattern="" width="1600" height="900" style="width:100%;height:100%;object-fit:cover;display:block"></canvas>
+    <div class="isc-overlay" style="position:absolute;inset:0;display:flex;align-items:flex-end;pointer-events:none">
+      <div class="isc-overlay-inner" style="width:100%;padding:60px 6vw;color:#fff">
+        <span class="isc-eyebrow" data-eyebrow="optional" style="font-size:12px;letter-spacing:3px;text-transform:uppercase">[EYEBROW]</span>
+        <h2 class="isc-title" style="font-size:clamp(32px,4.4vw,72px);font-weight:700;margin:10px 0 0;line-height:1.05;max-width:900px">[HEADLINE]</h2>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+@media (prefers-reduced-motion: reduce) {
+  .isc-section { height: auto !important; }
+  .isc-sticky { position: static !important; height: auto !important; aspect-ratio: 16/9; }
+}
+</style>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const iscRoot = document.querySelector('.isc-section');
+const iscCanvas = iscRoot.querySelector('.isc-canvas');
+const iscCtx = iscCanvas.getContext('2d');
+const iscTotal = parseInt(iscCanvas.dataset.frames, 10) || 120;
+const iscPattern = iscCanvas.dataset.srcPattern;
+const iscPrefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const iscImages = [];
+const iscState = { frame: 0 };
+
+const iscDraw = () => {
+  const img = iscImages[iscState.frame];
+  if (!img || !img.complete) return;
+  iscCtx.clearRect(0, 0, iscCanvas.width, iscCanvas.height);
+  iscCtx.drawImage(img, 0, 0, iscCanvas.width, iscCanvas.height);
+};
+
+if (iscPattern) {
+  for (let i = 0; i < iscTotal; i++) {
+    const img = new Image();
+    img.src = iscPattern.replace('{i}', String(i).padStart(4, '0'));
+    img.onload = () => { if (i === 0) iscDraw(); };
+    iscImages.push(img);
+  }
+}
+
+if (!iscPrefersReduced) {
+  gsap.to(iscState, {
+    frame: iscTotal - 1,
+    ease: 'none',
+    snap: 'frame',
+    scrollTrigger: {
+      trigger: iscRoot,
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: 0.5,
+    },
+    onUpdate: iscDraw,
+  });
+}
+</script>

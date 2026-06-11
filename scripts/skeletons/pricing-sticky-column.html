@@ -1,0 +1,79 @@
+<!-- PRICING STICKY COLUMN: 3-tier pricing with highlighted middle column pinned -->
+<!-- Pattern: 3-col grid; center tier scales up + has sticky badge; feature rows align across columns -->
+<!-- Requires: CSS only -->
+<!-- Ref: https://stripe.com/pricing -->
+<!-- Ref: https://linear.app/pricing -->
+<!-- Ref: https://vercel.com/pricing -->
+
+<section class="psc-section" style="position:relative;padding:100px 40px;max-width:1200px;margin:0 auto">
+  <header class="psc-head" style="text-align:center;margin-bottom:60px;max-width:720px;margin-left:auto;margin-right:auto">
+    <span class="psc-eyebrow" data-eyebrow="optional" style="font-size:12px;letter-spacing:3px;text-transform:uppercase">[EYEBROW]</span>
+    <h2 class="psc-title" style="font-size:clamp(28px,3.6vw,56px);font-weight:700;margin:10px 0 16px;line-height:1.1">[HEADLINE]</h2>
+    <p class="psc-body" style="font-size:17px;line-height:1.6;margin:0;opacity:0.75">[BODY]</p>
+  </header>
+
+  <div class="psc-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;align-items:stretch">
+    <article class="psc-tier" data-tier="0" style="position:relative;padding:40px 32px;border:1px solid currentColor;border-radius:16px 0 0 16px;border-right:0;background:transparent">
+      <header class="psc-tier-head" style="margin-bottom:32px">
+        <h3 style="font-size:20px;font-weight:700;margin:0 0 8px">[TIER_1]</h3>
+        <p style="font-size:14px;margin:0;opacity:0.7">[TIER_1_DESC]</p>
+      </header>
+      <div class="psc-price" style="margin-bottom:32px">
+        <span class="psc-price-val" style="font-size:48px;font-weight:700;line-height:1">[PRICE_1]</span>
+        <span class="psc-price-period" style="font-size:14px;opacity:0.7;margin-left:4px">[PERIOD]</span>
+      </div>
+      <a class="psc-cta" href="#" style="display:block;text-align:center;padding:14px 20px;border:1px solid currentColor;border-radius:999px;font-size:14px;font-weight:600;text-decoration:none;margin-bottom:32px">[CTA_1]</a>
+      <ul class="psc-features" style="list-style:none;padding:0;margin:0;font-size:14px;line-height:1.8">
+        <li>[FEATURE_1_1]</li>
+        <li>[FEATURE_1_2]</li>
+        <li>[FEATURE_1_3]</li>
+      </ul>
+    </article>
+
+    <article class="psc-tier psc-tier--featured" data-tier="1" style="position:relative;padding:52px 32px;border:2px solid currentColor;border-radius:16px;background:currentColor;color:#fff;transform:scale(1.03);z-index:2;box-shadow:0 20px 60px rgba(0,0,0,0.15)">
+      <span class="psc-badge" style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);padding:6px 14px;border-radius:999px;font-size:11px;letter-spacing:2px;font-weight:700;background:#fff;color:#000">[BADGE]</span>
+      <header class="psc-tier-head" style="margin-bottom:32px">
+        <h3 style="font-size:22px;font-weight:700;margin:0 0 8px;color:#fff">[TIER_2]</h3>
+        <p style="font-size:14px;margin:0;opacity:0.85;color:#fff">[TIER_2_DESC]</p>
+      </header>
+      <div class="psc-price" style="margin-bottom:32px;color:#fff">
+        <span class="psc-price-val" style="font-size:52px;font-weight:700;line-height:1">[PRICE_2]</span>
+        <span class="psc-price-period" style="font-size:14px;opacity:0.85;margin-left:4px">[PERIOD]</span>
+      </div>
+      <a class="psc-cta" href="#" style="display:block;text-align:center;padding:14px 20px;border:0;border-radius:999px;font-size:14px;font-weight:600;text-decoration:none;background:#fff;color:#000;margin-bottom:32px">[CTA_2]</a>
+      <ul class="psc-features" style="list-style:none;padding:0;margin:0;font-size:14px;line-height:1.8;color:#fff">
+        <li>[FEATURE_2_1]</li>
+        <li>[FEATURE_2_2]</li>
+        <li>[FEATURE_2_3]</li>
+        <li>[FEATURE_2_4]</li>
+      </ul>
+    </article>
+
+    <article class="psc-tier" data-tier="2" style="position:relative;padding:40px 32px;border:1px solid currentColor;border-radius:0 16px 16px 0;border-left:0;background:transparent">
+      <header class="psc-tier-head" style="margin-bottom:32px">
+        <h3 style="font-size:20px;font-weight:700;margin:0 0 8px">[TIER_3]</h3>
+        <p style="font-size:14px;margin:0;opacity:0.7">[TIER_3_DESC]</p>
+      </header>
+      <div class="psc-price" style="margin-bottom:32px">
+        <span class="psc-price-val" style="font-size:48px;font-weight:700;line-height:1">[PRICE_3]</span>
+        <span class="psc-price-period" style="font-size:14px;opacity:0.7;margin-left:4px">[PERIOD]</span>
+      </div>
+      <a class="psc-cta" href="#" style="display:block;text-align:center;padding:14px 20px;border:1px solid currentColor;border-radius:999px;font-size:14px;font-weight:600;text-decoration:none;margin-bottom:32px">[CTA_3]</a>
+      <ul class="psc-features" style="list-style:none;padding:0;margin:0;font-size:14px;line-height:1.8">
+        <li>[FEATURE_3_1]</li>
+        <li>[FEATURE_3_2]</li>
+        <li>[FEATURE_3_3]</li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+<style>
+.psc-section .psc-features li { padding: 8px 0; border-bottom: 1px solid currentColor; border-color: rgba(128,128,128,0.2); }
+.psc-section .psc-tier--featured .psc-features li { border-color: rgba(255,255,255,0.15); }
+@media (max-width: 900px) {
+  .psc-section .psc-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
+  .psc-section .psc-tier { border-radius: 16px !important; border: 1px solid currentColor !important; transform: none !important; }
+  .psc-section .psc-tier--featured { transform: none !important; }
+}
+</style>

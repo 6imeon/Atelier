@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atelier — Login (4 Alternatives)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #0e0e10; color: #ccc; }
+  .page-controls {
+    position: sticky; top: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+    padding: 14px 24px; background: #0e0e10; border-bottom: 1px solid #222;
+  }
+  .page-controls h1 { font-size: 14px; font-weight: 600; color: #fff; margin-right: 12px; }
+  .mode-toggle { display: flex; border-radius: 8px; overflow: hidden; border: 1px solid #333; }
+  .mode-btn { padding: 7px 16px; border: none; font-size: 12px; font-weight: 500; font-family: inherit; cursor: pointer; background: transparent; color: #888; transition: all 0.15s; }
+  .mode-btn.active { background: #fff; color: #000; }
+  .alt-grid { display: grid; grid-template-columns: 1fr 1fr; min-height: calc(100vh - 49px); }
+  .alt { position: relative; overflow: hidden; border: 1px solid #1a1a1a; transition: background 0.3s; display: flex; align-items: center; justify-content: center; min-height: 520px; }
+  .alt-label { position: absolute; top: 0; left: 0; z-index: 10; padding: 8px 14px; font-size: 11px; font-weight: 600; letter-spacing: 0.03em; backdrop-filter: blur(12px); border-radius: 0 0 8px 0; }
+
+  .alt-a{--bg:#F8F9FA;--sf:#F1F3F5;--card:#FFF;--bd:#E2E5E9;--t1:#1A1D21;--t2:#5F6B7A;--t3:#9CA3AF;--ac:#6366F1;--ach:#5457E5;--lbg:rgba(99,102,241,.08);--lc:#6366F1;}
+  .dark .alt-a{--bg:#111113;--sf:#19191B;--card:#222225;--bd:#2E2E32;--t1:#EDEDEF;--t2:#A0A0A6;--t3:#63636E;--ac:#818CF8;--ach:#9BA3FB;--lbg:rgba(129,140,248,.1);--lc:#818CF8;}
+  .alt-b{--bg:#FAF9F7;--sf:#F3F1EE;--card:#FFF;--bd:#E8E5E0;--t1:#1C1917;--t2:#6B6560;--t3:#A8A29E;--ac:#B45309;--ach:#A14A08;--lbg:rgba(180,83,9,.08);--lc:#B45309;}
+  .dark .alt-b{--bg:#121110;--sf:#1C1A18;--card:#252320;--bd:#33302C;--t1:#E7E5E4;--t2:#A8A29E;--t3:#6B6560;--ac:#F59E0B;--ach:#FBBF24;--lbg:rgba(245,158,11,.1);--lc:#F59E0B;}
+  .alt-c{--bg:#F8FAF8;--sf:#F0F4F0;--card:#FFF;--bd:#DDE5DD;--t1:#1A1F1A;--t2:#5C6B5C;--t3:#94A394;--ac:#4A7C59;--ach:#3D6B4A;--lbg:rgba(74,124,89,.08);--lc:#4A7C59;}
+  .dark .alt-c{--bg:#101210;--sf:#171A17;--card:#1F231F;--bd:#2C322C;--t1:#E4E9E4;--t2:#94A394;--t3:#5C6B5C;--ac:#6EAA7E;--ach:#84BB92;--lbg:rgba(110,170,126,.1);--lc:#6EAA7E;}
+  .alt-d{--bg:#FAF8F9;--sf:#F4F0F2;--card:#FFF;--bd:#E8E1E4;--t1:#1F1A1C;--t2:#6B5F64;--t3:#A89BA0;--ac:#9F5474;--ach:#8D4766;--lbg:rgba(159,84,116,.08);--lc:#9F5474;}
+  .dark .alt-d{--bg:#121011;--sf:#1A1719;--card:#242022;--bd:#332D30;--t1:#E9E4E6;--t2:#A89BA0;--t3:#6B5F64;--ac:#D4809E;--ach:#E098B2;--lbg:rgba(212,128,158,.1);--lc:#D4809E;}
+  .alt { background: var(--bg); color: var(--t1); }
+  .alt-label { background: var(--lbg); color: var(--lc); }
+
+  /* Shared */
+  .ms-icon { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; width: 16px; height: 16px; flex-shrink: 0; }
+  .ms-icon div { border-radius: 1px; }
+  .ms-icon .r{background:#f25022} .ms-icon .g{background:#7fba00} .ms-icon .b{background:#00a4ef} .ms-icon .y{background:#ffb900}
+  .l-logo svg { width: 22px; height: 22px; color: var(--ac); }
+  .l-logo-text { font-size: 20px; font-weight: 700; color: var(--t1); }
+  .l-subtitle { font-size: 14px; color: var(--t3); line-height: 1.5; }
+  .l-sso {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--bd);
+    background: var(--card); color: var(--t1); font-size: 14px; font-weight: 500;
+    font-family: inherit; cursor: pointer; transition: all .2s;
+  }
+  .l-sso:hover { border-color: var(--ac); box-shadow: 0 2px 12px rgba(0,0,0,.06); }
+  .l-divider { display: flex; align-items: center; gap: 12px; color: var(--t3); font-size: 11px; margin: 18px 0; }
+  .l-divider::before,.l-divider::after { content:''; flex:1; height:1px; background: var(--bd); }
+  .l-input {
+    width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--bd);
+    background: var(--sf); color: var(--t1); font-size: 13px; font-family: 'SF Mono','Fira Code',monospace;
+    outline: none; transition: border-color .15s;
+  }
+  .l-input::placeholder { color: var(--t3); font-family: inherit; }
+  .l-input:focus { border-color: var(--ac); }
+  .l-btn-primary {
+    width: 100%; padding: 11px; border-radius: 9px; border: none;
+    background: var(--ac); color: #fff; font-size: 14px; font-weight: 500;
+    font-family: inherit; cursor: pointer; transition: all .15s;
+  }
+  .l-btn-primary:hover { opacity: .9; }
+  .l-footer { font-size: 11px; color: var(--t3); text-align: center; margin-top: 16px; line-height: 1.6; }
+  .l-footer a { color: var(--ac); text-decoration: none; }
+
+  /* ═══ A — MINIMAL CENTER CARD ═══
+     Clean, Apple-like, single floating card */
+  .a-card { width: 340px; padding: 36px 32px; border-radius: 16px; background: var(--card); border: 1px solid var(--bd); box-shadow: 0 4px 24px rgba(0,0,0,.04); }
+  .a-logo { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 24px; }
+  .a-subtitle { text-align: center; margin-bottom: 28px; }
+
+  /* ═══ B — SPLIT SCREEN ═══
+     Left branding panel, right login form */
+  .alt-b { display: flex !important; align-items: stretch; justify-content: stretch; }
+  .b-brand {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: var(--sf); border-right: 1px solid var(--bd); padding: 40px 30px; text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .b-brand-grid {
+    position: absolute; inset: 0; opacity: .4;
+    background-size: 32px 32px;
+    background-image: radial-gradient(circle, var(--bd) 1px, transparent 1px);
+  }
+  .b-brand-content { position: relative; z-index: 1; }
+  .b-brand-logo { display: flex; align-items: center; gap: 8px; justify-content: center; margin-bottom: 16px; }
+  .b-brand-tagline { font-size: 16px; font-weight: 300; color: var(--t2); line-height: 1.6; max-width: 220px; }
+  .b-brand-features { margin-top: 28px; text-align: left; display: flex; flex-direction: column; gap: 10px; }
+  .b-brand-feat { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--t2); font-weight: 500; }
+  .b-brand-feat-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ac); flex-shrink: 0; }
+  .b-form { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 40px 32px; background: var(--bg); max-width: 360px; }
+  .b-form-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+  .b-form-desc { font-size: 13px; color: var(--t3); margin-bottom: 24px; }
+  .b-input-group { margin-bottom: 12px; }
+  .b-input-label { font-size: 12px; font-weight: 500; color: var(--t2); margin-bottom: 6px; }
+
+  /* ═══ C — STACKED METHODS ═══
+     Compact, methods stacked vertically with visual cards */
+  .c-wrap { width: 320px; }
+  .c-logo { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 28px; }
+  .c-logo-icon { width: 48px; height: 48px; border-radius: 14px; background: var(--sf); border: 1px solid var(--bd); display: flex; align-items: center; justify-content: center; }
+  .c-logo-icon svg { width: 24px; height: 24px; color: var(--ac); }
+  .c-method {
+    padding: 16px; border-radius: 12px; border: 1px solid var(--bd); background: var(--card);
+    margin-bottom: 10px; cursor: pointer; transition: all .15s;
+  }
+  .c-method:hover { border-color: var(--ac); }
+  .c-method-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .c-method-title { font-size: 14px; font-weight: 600; }
+  .c-method-desc { font-size: 12px; color: var(--t3); }
+  .c-method-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--sf); display: flex; align-items: center; justify-content: center; }
+  .c-method-icon svg { width: 16px; height: 16px; color: var(--ac); }
+  .c-method.highlighted { border-color: var(--ac); background: linear-gradient(135deg, var(--card), var(--sf)); }
+
+  /* ═══ D — MINIMAL BRANDED ═══
+     Ultra-minimal: logo + single button + subtle branding */
+  .d-wrap { width: 300px; text-align: center; }
+  .d-logo-mark {
+    width: 64px; height: 64px; border-radius: 18px;
+    background: var(--sf); border: 1px solid var(--bd);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px; box-shadow: 0 2px 12px rgba(0,0,0,.03);
+  }
+  .d-logo-mark svg { width: 28px; height: 28px; color: var(--ac); }
+  .d-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .d-desc { font-size: 13px; color: var(--t3); margin-bottom: 32px; line-height: 1.5; }
+  .d-sso-big {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    width: 100%; padding: 14px; border-radius: 12px; border: none;
+    background: var(--ac); color: #fff; font-size: 15px; font-weight: 600;
+    font-family: inherit; cursor: pointer; transition: all .15s;
+    box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  }
+  .d-sso-big:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,0,0,.12); }
+  .d-or { font-size: 12px; color: var(--t3); margin: 20px 0; }
+  .d-api-row { display: flex; gap: 8px; }
+  .d-api-input {
+    flex: 1; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--bd);
+    background: var(--sf); color: var(--t1); font-size: 12px; font-family: 'SF Mono','Fira Code',monospace;
+    outline: none;
+  }
+  .d-api-input::placeholder { color: var(--t3); }
+  .d-api-btn {
+    padding: 10px 16px; border-radius: 8px; border: 1px solid var(--bd);
+    background: var(--card); color: var(--t2); font-size: 12px; font-weight: 500;
+    font-family: inherit; cursor: pointer; transition: all .15s;
+  }
+  .d-api-btn:hover { background: var(--sf); color: var(--t1); }
+  .d-footer-links { margin-top: 28px; display: flex; justify-content: center; gap: 16px; font-size: 11px; }
+  .d-footer-links a { color: var(--t3); text-decoration: none; }
+  .d-footer-links a:hover { color: var(--t1); }
+</style>
+</head>
+<body>
+<div class="page-controls">
+  <h1>Login — 4 Alternatives</h1>
+  <div class="mode-toggle">
+    <button class="mode-btn active" onclick="setMode('light')">Light</button>
+    <button class="mode-btn" onclick="setMode('dark')">Dark</button>
+  </div>
+</div>
+<div class="alt-grid" id="grid">
+
+<!-- A — MINIMAL CENTER CARD (Cool Slate) -->
+<div class="alt alt-a">
+  <div class="alt-label">A — Minimal Card &middot; Cool Slate</div>
+  <div class="a-card">
+    <div class="a-logo">
+      <span class="l-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/><path d="M9 21V9"/></svg></span>
+      <span class="l-logo-text">Atelier</span>
+    </div>
+    <p class="l-subtitle a-subtitle">Sign in to your workspace</p>
+    <button class="l-sso"><div class="ms-icon"><div class="r"></div><div class="g"></div><div class="b"></div><div class="y"></div></div>Continue with Microsoft</button>
+    <div class="l-divider">or</div>
+    <div style="display:flex;gap:8px;">
+      <input class="l-input" type="password" placeholder="API Key" style="flex:1;" />
+      <button class="l-btn-primary" style="width:auto;padding:10px 18px;">Go</button>
+    </div>
+    <div class="l-footer">Need access? Contact your <a href="#">admin</a>.</div>
+  </div>
+</div>
+
+<!-- B — SPLIT SCREEN (Warm Stone) -->
+<div class="alt alt-b">
+  <div class="alt-label">B — Split Screen &middot; Warm Stone</div>
+  <div class="b-brand">
+    <div class="b-brand-grid"></div>
+    <div class="b-brand-content">
+      <div class="b-brand-logo">
+        <span class="l-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/><path d="M9 21V9"/></svg></span>
+        <span class="l-logo-text">Atelier</span>
+      </div>
+      <p class="b-brand-tagline">AI-powered design generation for teams that move fast.</p>
+      <div class="b-brand-features">
+        <div class="b-brand-feat"><div class="b-brand-feat-dot"></div>Generate full-page UIs from text</div>
+        <div class="b-brand-feat"><div class="b-brand-feat-dot"></div>Extract design systems from URLs</div>
+        <div class="b-brand-feat"><div class="b-brand-feat-dot"></div>Export to React components</div>
+      </div>
+    </div>
+  </div>
+  <div class="b-form">
+    <div class="b-form-title">Welcome back</div>
+    <div class="b-form-desc">Sign in to continue to Atelier</div>
+    <button class="l-sso" style="margin-bottom:16px;"><div class="ms-icon"><div class="r"></div><div class="g"></div><div class="b"></div><div class="y"></div></div>Sign in with Microsoft</button>
+    <div class="l-divider">or use API key</div>
+    <div class="b-input-group">
+      <div class="b-input-label">API Key</div>
+      <input class="l-input" type="password" placeholder="sk-atelier-..." />
+    </div>
+    <button class="l-btn-primary">Connect</button>
+    <div class="l-footer">Don't have access? <a href="#">Request an invite</a></div>
+  </div>
+</div>
+
+<!-- C — STACKED METHOD CARDS (Sage) -->
+<div class="alt alt-c">
+  <div class="alt-label">C — Method Cards &middot; Sage</div>
+  <div class="c-wrap">
+    <div class="c-logo">
+      <div class="c-logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/><path d="M9 21V9"/></svg></div>
+      <span class="l-logo-text">Atelier</span>
+    </div>
+    <div class="c-method highlighted">
+      <div class="c-method-header">
+        <div class="c-method-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div>
+          <div class="c-method-title">Microsoft Entra ID</div>
+          <div class="c-method-desc">SSO with your organization account</div>
+        </div>
+      </div>
+      <button class="l-sso" style="margin-top:10px;"><div class="ms-icon"><div class="r"></div><div class="g"></div><div class="b"></div><div class="y"></div></div>Continue with Microsoft</button>
+    </div>
+    <div class="c-method">
+      <div class="c-method-header">
+        <div class="c-method-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <div>
+          <div class="c-method-title">API Key</div>
+          <div class="c-method-desc">Direct access for development</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <input class="l-input" type="password" placeholder="sk-atelier-..." style="flex:1;" />
+        <button class="l-btn-primary" style="width:auto;padding:10px 16px;">Go</button>
+      </div>
+    </div>
+    <div class="l-footer">Need help? <a href="#">View documentation</a></div>
+  </div>
+</div>
+
+<!-- D — ULTRA MINIMAL (Dusty Rose) -->
+<div class="alt alt-d">
+  <div class="alt-label">D — Ultra Minimal &middot; Dusty Rose</div>
+  <div class="d-wrap">
+    <div class="d-logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/><path d="M9 21V9"/></svg></div>
+    <div class="d-title">Atelier</div>
+    <div class="d-desc">AI design generation platform.<br>Sign in to get started.</div>
+    <button class="d-sso-big"><div class="ms-icon"><div class="r"></div><div class="g"></div><div class="b"></div><div class="y"></div></div>Sign in with Microsoft</button>
+    <div class="d-or">or enter API key</div>
+    <div class="d-api-row">
+      <input class="d-api-input" type="password" placeholder="sk-atelier-..." />
+      <button class="d-api-btn">Connect</button>
+    </div>
+    <div class="d-footer-links">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Docs</a>
+    </div>
+  </div>
+</div>
+
+</div>
+<script>
+function setMode(m) {
+  document.getElementById('grid').classList.toggle('dark', m === 'dark');
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.textContent.toLowerCase() === m));
+}
+</script>
+</body>
+</html>

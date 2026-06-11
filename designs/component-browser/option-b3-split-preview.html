@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B3 — Split View: List Left, Large Preview Right</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0e0e10; --surface: #18181b; --border: #27272a; --border-hover: #3f3f46;
+    --text: #fafafa; --text-muted: #71717a; --text-secondary: #a1a1aa;
+    --accent: #7c5cfc; --accent-bg: rgba(124,92,252,0.08); --accent-text: #a78bfa;
+  }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); }
+
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 100; }
+
+  .modal {
+    width: 92vw; max-width: 1280px; height: 88vh; background: var(--surface);
+    border-radius: 20px; border: 1px solid var(--border); overflow: hidden;
+    display: flex; flex-direction: column; box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+  }
+
+  .modal-top {
+    padding: 16px 24px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 16px;
+  }
+  .modal-top h1 { font-size: 15px; font-weight: 600; }
+  .modal-top .count { font-size: 11px; color: var(--text-muted); background: var(--bg); padding: 3px 10px; border-radius: 10px; }
+  .search-wrap { flex: 1; max-width: 320px; position: relative; }
+  .search-wrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+  .search-bar { width: 100%; padding: 8px 12px 8px 34px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 13px; font-family: inherit; outline: none; }
+  .search-bar:focus { border-color: var(--accent); }
+  .spacer { flex: 1; }
+  .close-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 6px; border-radius: 8px; }
+  .close-btn:hover { background: var(--bg); color: var(--text); }
+
+  /* 50/50 split body */
+  .modal-body { display: flex; flex: 1; overflow: hidden; }
+
+  /* Left panel: filters + list */
+  .left-panel { width: 440px; border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
+
+  .filter-row {
+    display: flex; gap: 6px; padding: 12px 16px; border-bottom: 1px solid var(--border);
+    overflow-x: auto; flex-shrink: 0;
+  }
+  .filter-row::-webkit-scrollbar { display: none; }
+  .filter-chip {
+    padding: 5px 12px; border-radius: 8px; font-size: 11px; font-weight: 500;
+    border: 1px solid var(--border); background: transparent; color: var(--text-muted);
+    cursor: pointer; font-family: inherit; white-space: nowrap; transition: all 0.12s;
+  }
+  .filter-chip:hover { border-color: var(--border-hover); color: var(--text-secondary); }
+  .filter-chip.active { border-color: var(--accent); background: var(--accent-bg); color: var(--accent-text); }
+
+  /* Component list — compact rows */
+  .comp-list { flex: 1; overflow-y: auto; }
+  .comp-list::-webkit-scrollbar { width: 4px; }
+  .comp-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .comp-row {
+    display: flex; align-items: center; gap: 12px; padding: 10px 16px;
+    cursor: pointer; transition: background 0.1s; border-bottom: 1px solid rgba(39,39,42,0.5);
+  }
+  .comp-row:hover { background: var(--accent-bg); }
+  .comp-row.active { background: var(--accent-bg); border-left: 2px solid var(--accent); }
+
+  .comp-thumb {
+    width: 64px; height: 44px; border-radius: 8px; overflow: hidden; flex-shrink: 0;
+    border: 1px solid var(--border); background: #fff;
+  }
+  .comp-thumb-inner { width: 100%; height: 100%; }
+  .comp-body { flex: 1; min-width: 0; }
+  .comp-name { font-size: 13px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .comp-desc { font-size: 10px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px; }
+  .comp-badges { display: flex; gap: 4px; flex-shrink: 0; }
+  .comp-badge {
+    font-size: 9px; padding: 2px 6px; border-radius: 4px;
+    background: var(--bg); border: 1px solid var(--border); color: var(--text-muted);
+  }
+  .comp-badge.ind { color: var(--accent-text); border-color: rgba(124,92,252,0.2); }
+
+  /* Right panel: large preview */
+  .right-panel { flex: 1; display: flex; flex-direction: column; background: var(--bg); }
+
+  .preview-header {
+    padding: 16px 24px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: flex-start; justify-content: space-between;
+  }
+  .preview-header h2 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+  .preview-header p { font-size: 11px; color: var(--text-muted); line-height: 1.5; max-width: 500px; }
+  .preview-header-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+  .preview-frame { flex: 1; background: white; margin: 16px 24px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+
+  .preview-footer {
+    padding: 12px 24px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .preview-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+  .tag { font-size: 9px; padding: 2px 7px; border-radius: 4px; background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); }
+  .preview-btns { display: flex; gap: 8px; }
+
+  .btn { padding: 8px 20px; border-radius: 8px; font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit; border: none; transition: all 0.15s; }
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-primary:hover { filter: brightness(1.1); }
+  .btn-ghost { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); }
+  .btn-ghost:hover { border-color: var(--border-hover); }
+
+  /* Device toggle */
+  .device-toggle { display: flex; gap: 2px; background: var(--surface); border-radius: 8px; padding: 3px; }
+  .device-btn {
+    padding: 5px 10px; border: none; border-radius: 6px; background: transparent;
+    color: var(--text-muted); cursor: pointer; font-size: 11px; font-family: inherit;
+  }
+  .device-btn.active { background: var(--bg); color: var(--text); }
+</style>
+</head>
+<body>
+  <div class="overlay">
+    <div class="modal">
+      <div class="modal-top">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <h1>Components</h1>
+        <span class="count">208</span>
+        <div class="search-wrap">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input class="search-bar" placeholder="Search..." />
+        </div>
+        <div class="spacer"></div>
+        <div class="device-toggle">
+          <button class="device-btn active">Desktop</button>
+          <button class="device-btn">Tablet</button>
+          <button class="device-btn">Mobile</button>
+        </div>
+        <button class="close-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="left-panel">
+          <div class="filter-row">
+            <button class="filter-chip active">All</button>
+            <button class="filter-chip">Hero</button>
+            <button class="filter-chip">Features</button>
+            <button class="filter-chip">Cards</button>
+            <button class="filter-chip">Navbar</button>
+            <button class="filter-chip">CTA</button>
+            <button class="filter-chip">Footer</button>
+            <button class="filter-chip">Carousel</button>
+            <button class="filter-chip">Stats</button>
+            <button class="filter-chip">Forms</button>
+          </div>
+          <div class="comp-list">
+            <div class="comp-row active">
+              <div class="comp-thumb"><div class="comp-thumb-inner" style="background:linear-gradient(135deg,#0a1628,#1a2744)"></div></div>
+              <div class="comp-body">
+                <div class="comp-name">Hero — Investment Bank Landing</div>
+                <div class="comp-desc">Dark navy, serif headline, gold divider, market data strip</div>
+              </div>
+              <div class="comp-badges"><span class="comp-badge">hero</span><span class="comp-badge ind">finance</span></div>
+            </div>
+            <div class="comp-row">
+              <div class="comp-thumb"><div class="comp-thumb-inner" style="background:#fafafa"></div></div>
+              <div class="comp-body">
+                <div class="comp-name">Navbar — SaaS Product</div>
+                <div class="comp-desc">Clean nav, Product dropdown, accent CTA</div>
+              </div>
+              <div class="comp-badges"><span class="comp-badge">navbar</span><span class="comp-badge ind">technology</span></div>
+            </div>
+            <div class="comp-row">
+              <div class="comp-thumb"><div class="comp-thumb-inner" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7)"></div></div>
+              <div class="comp-body">
+                <div class="comp-name">Features — Sustainability Pillars</div>
+                <div class="comp-desc">3 cards with green border, stats, progress bars</div>
+              </div>
+              <div class="comp-badges"><span class="comp-badge">features</span><span class="comp-badge ind">environmental</span></div>
+            </div>
+            <div class="comp-row">
+              <div class="comp-thumb"><div class="comp-thumb-inner" style="background:linear-gradient(135deg,#141414,#1f1f1f)"></div></div>
+              <div class="comp-body">
+                <div class="comp-name">Carousel — Netflix-style Content Row</div>
+                <div class="comp-desc">Horizontal poster cards, scale on hover, dark</div>
+              </div>
+              <div class="comp-badges"><span class="comp-badge">carousel</span><span class="comp-badge ind">media</span></div>
+            </div>
+            <div class="comp-row">
+              <div class="comp-thumb"><div class="comp-thumb-inner" style="background:linear-gradient(135deg,#faf5ff,#ede9fe)"></div></div>
+              <div class="comp-body">
+                <div class="comp-name">Hero — Wellness App</div>
+                <div class="comp-desc">Soft gradient, meditation illustration, trial CTA</div>
+              </div>
+              <div class="comp-badges"><span class="comp-badge">hero</span><span class="comp-badge ind">wellness</span></div>
+            </div>
+            <div class="comp-row">
+              <div class="comp-thumb"><div class="comp-thumb-inner" style="background:linear-gradient(135deg,#0d1117,#161b22)"></div></div>
+              <div class="comp-body">
+                <div class="comp-name">Hero — Crypto Exchange</div>
+                <div class="comp-desc">Dark, live price ticker, sparkline charts</div>
+              </div>
+              <div class="comp-badges"><span class="comp-badge">hero</span><span class="comp-badge ind">fintech</span></div>
+            </div>
+            <div class="comp-row">
+              <div class="comp-thumb"><div class="comp-thumb-inner" style="background:linear-gradient(135deg,#fff,#f8fafc)"></div></div>
+              <div class="comp-body">
+                <div class="comp-name">Cards — Property Listings Grid</div>
+                <div class="comp-desc">3 property cards with photos, specs, favorites</div>
+              </div>
+              <div class="comp-badges"><span class="comp-badge">cards</span><span class="comp-badge ind">realestate</span></div>
+            </div>
+            <div class="comp-row">
+              <div class="comp-thumb"><div class="comp-thumb-inner" style="background:linear-gradient(135deg,#0a1628,#152238)"></div></div>
+              <div class="comp-body">
+                <div class="comp-name">Stats — Assets Under Management</div>
+                <div class="comp-desc">Large stats row, gold labels, banking trust</div>
+              </div>
+              <div class="comp-badges"><span class="comp-badge">stats</span><span class="comp-badge ind">finance</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="right-panel">
+          <div class="preview-header">
+            <div>
+              <h2>Hero — Investment Bank Landing</h2>
+              <p>Dark navy hero with serif headline about markets/investing, subtle gold divider, two CTA links (Insights, Contact), market data strip below. Goldman Sachs inspired.</p>
+            </div>
+          </div>
+          <div class="preview-frame" style="background:linear-gradient(180deg,#0a1628 0%,#152238 50%,#1a2744 100%); display:flex; align-items:center; justify-content:center;">
+            <div style="text-align:center; padding:60px 40px;">
+              <div style="font-family:Georgia,serif; font-size:32px; color:#fff; letter-spacing:-0.02em; margin-bottom:16px; line-height:1.2;">Navigating Markets<br>with Precision</div>
+              <div style="width:48px; height:1px; background:#c9a84c; margin:0 auto 20px;"></div>
+              <div style="font-size:13px; color:#94a3b8; margin-bottom:28px; max-width:400px; margin-left:auto; margin-right:auto; line-height:1.6;">Global insights. Trusted counsel. Enduring partnerships across generations of market cycles.</div>
+              <div style="display:flex; gap:24px; justify-content:center;">
+                <span style="font-size:12px; color:#c9a84c; border-bottom:1px solid #c9a84c; padding-bottom:3px; cursor:pointer;">Market Insights</span>
+                <span style="font-size:12px; color:#c9a84c; border-bottom:1px solid #c9a84c; padding-bottom:3px; cursor:pointer;">Contact Us</span>
+              </div>
+              <div style="display:flex; gap:32px; justify-content:center; margin-top:48px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.08);">
+                <div><div style="font-size:18px; color:#fff; font-weight:600;">$2.4T</div><div style="font-size:9px; color:#64748b; margin-top:2px;">Assets Under Mgmt</div></div>
+                <div><div style="font-size:18px; color:#fff; font-weight:600;">156</div><div style="font-size:9px; color:#64748b; margin-top:2px;">Years</div></div>
+                <div><div style="font-size:18px; color:#fff; font-weight:600;">43</div><div style="font-size:9px; color:#64748b; margin-top:2px;">Countries</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="preview-footer">
+            <div class="preview-tags">
+              <span class="tag">tailwind</span><span class="tag">responsive</span><span class="tag">hero</span><span class="tag">finance</span><span class="tag">corporate-precision</span>
+            </div>
+            <div class="preview-btns">
+              <button class="btn btn-ghost">Copy HTML</button>
+              <button class="btn btn-primary">Add to Canvas</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

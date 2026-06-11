@@ -1,0 +1,71 @@
+<!-- MASONRY GRID: CSS-column masonry layout with varied-height tiles + hover sibling-dim -->
+<!-- Pattern: Pinterest-style grid; CSS columns distribute items; hover lifts card and dims peers -->
+<!-- Requires: CSS only -->
+<!-- Ref: https://www.pinterest.com/ -->
+<!-- Ref: https://www.behance.net/ -->
+<!-- Ref: https://www.awwwards.com/ -->
+
+<section class="msg-section" style="position:relative;padding:120px 40px;max-width:1400px;margin:0 auto">
+  <header class="msg-head" style="margin-bottom:60px;max-width:720px">
+    <span class="msg-eyebrow" data-eyebrow="optional" style="font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:600;opacity:0.65">[EYEBROW]</span>
+    <h2 class="msg-title" style="font-size:clamp(32px,4.4vw,72px);font-weight:700;margin:12px 0 0;letter-spacing:-0.02em;line-height:1">[HEADLINE]</h2>
+  </header>
+
+  <div class="msg-grid" data-columns="3" style="column-count:3;column-gap:24px">
+    <figure class="msg-tile" data-tile="0" style="break-inside:avoid;margin:0 0 24px;position:relative;overflow:hidden;border-radius:4px;cursor:pointer">
+      <div class="msg-media" style="width:100%;aspect-ratio:3/4;background-size:cover;background-position:center"></div>
+      <figcaption class="msg-cap" style="position:absolute;inset:auto 0 0 0;padding:20px;background:linear-gradient(to top,rgba(0,0,0,0.8),transparent);color:#fff;opacity:0;transform:translateY(10px)">
+        <span style="font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;opacity:0.85">[CAT_1]</span>
+        <h3 style="font-size:18px;font-weight:600;margin:6px 0 0">[TITLE_1]</h3>
+      </figcaption>
+    </figure>
+    <figure class="msg-tile" data-tile="1" style="break-inside:avoid;margin:0 0 24px;position:relative;overflow:hidden;border-radius:4px;cursor:pointer">
+      <div class="msg-media" style="width:100%;aspect-ratio:1/1;background-size:cover;background-position:center"></div>
+      <figcaption class="msg-cap" style="position:absolute;inset:auto 0 0 0;padding:20px;background:linear-gradient(to top,rgba(0,0,0,0.8),transparent);color:#fff;opacity:0;transform:translateY(10px)">
+        <span style="font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;opacity:0.85">[CAT_2]</span>
+        <h3 style="font-size:18px;font-weight:600;margin:6px 0 0">[TITLE_2]</h3>
+      </figcaption>
+    </figure>
+    <figure class="msg-tile" data-tile="2" style="break-inside:avoid;margin:0 0 24px;position:relative;overflow:hidden;border-radius:4px;cursor:pointer">
+      <div class="msg-media" style="width:100%;aspect-ratio:4/5;background-size:cover;background-position:center"></div>
+      <figcaption class="msg-cap" style="position:absolute;inset:auto 0 0 0;padding:20px;background:linear-gradient(to top,rgba(0,0,0,0.8),transparent);color:#fff;opacity:0;transform:translateY(10px)">
+        <span style="font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;opacity:0.85">[CAT_3]</span>
+        <h3 style="font-size:18px;font-weight:600;margin:6px 0 0">[TITLE_3]</h3>
+      </figcaption>
+    </figure>
+    <figure class="msg-tile" data-tile="3" style="break-inside:avoid;margin:0 0 24px;position:relative;overflow:hidden;border-radius:4px;cursor:pointer">
+      <div class="msg-media" style="width:100%;aspect-ratio:3/2;background-size:cover;background-position:center"></div>
+      <figcaption class="msg-cap" style="position:absolute;inset:auto 0 0 0;padding:20px;background:linear-gradient(to top,rgba(0,0,0,0.8),transparent);color:#fff;opacity:0;transform:translateY(10px)">
+        <span style="font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;opacity:0.85">[CAT_4]</span>
+        <h3 style="font-size:18px;font-weight:600;margin:6px 0 0">[TITLE_4]</h3>
+      </figcaption>
+    </figure>
+    <figure class="msg-tile" data-tile="4" style="break-inside:avoid;margin:0 0 24px;position:relative;overflow:hidden;border-radius:4px;cursor:pointer">
+      <div class="msg-media" style="width:100%;aspect-ratio:4/5;background-size:cover;background-position:center"></div>
+      <figcaption class="msg-cap" style="position:absolute;inset:auto 0 0 0;padding:20px;background:linear-gradient(to top,rgba(0,0,0,0.8),transparent);color:#fff;opacity:0;transform:translateY(10px)">
+        <span style="font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;opacity:0.85">[CAT_5]</span>
+        <h3 style="font-size:18px;font-weight:600;margin:6px 0 0">[TITLE_5]</h3>
+      </figcaption>
+    </figure>
+    <figure class="msg-tile" data-tile="5" style="break-inside:avoid;margin:0 0 24px;position:relative;overflow:hidden;border-radius:4px;cursor:pointer">
+      <div class="msg-media" style="width:100%;aspect-ratio:3/4;background-size:cover;background-position:center"></div>
+      <figcaption class="msg-cap" style="position:absolute;inset:auto 0 0 0;padding:20px;background:linear-gradient(to top,rgba(0,0,0,0.8),transparent);color:#fff;opacity:0;transform:translateY(10px)">
+        <span style="font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;opacity:0.85">[CAT_6]</span>
+        <h3 style="font-size:18px;font-weight:600;margin:6px 0 0">[TITLE_6]</h3>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+.msg-section .msg-tile, .msg-section .msg-cap, .msg-section .msg-media { transition: transform 0.4s cubic-bezier(0.2,0.8,0.2,1), opacity 0.3s ease; }
+.msg-section .msg-tile:hover .msg-cap { opacity: 1; transform: translateY(0); }
+.msg-section .msg-tile:hover .msg-media { transform: scale(1.04); }
+.msg-section .msg-grid:hover .msg-tile { opacity: 0.5; }
+.msg-section .msg-grid:hover .msg-tile:hover { opacity: 1; }
+@media (max-width: 900px) { .msg-section .msg-grid { column-count: 2 !important; } }
+@media (max-width: 600px) { .msg-section .msg-grid { column-count: 1 !important; } }
+@media (prefers-reduced-motion: reduce) {
+  .msg-section .msg-tile, .msg-section .msg-cap, .msg-section .msg-media { transition: none !important; }
+}
+</style>

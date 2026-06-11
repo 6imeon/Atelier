@@ -1,0 +1,93 @@
+<!-- MEGA MENU GRID: Nav trigger opens dropdown panel with grid of category cards -->
+<!-- Pattern: Horizontal nav bar; primary link opens full-width panel with image+label tiles -->
+<!-- Requires: Minimal JS (click toggle + outside-close) -->
+<!-- Ref: https://www.nike.com/ -->
+<!-- Ref: https://www.apple.com/ -->
+<!-- Ref: https://stripe.com/ -->
+
+<section class="mmg-section" style="position:relative">
+  <nav class="mmg-nav" role="navigation" aria-label="Primary" style="position:relative;display:flex;align-items:center;justify-content:space-between;padding:20px 40px;border-bottom:1px solid currentColor;border-color:rgba(128,128,128,0.25);z-index:5">
+    <div class="mmg-brand" style="font-size:16px;font-weight:800;letter-spacing:-0.01em">[BRAND]</div>
+    <ul class="mmg-links" style="display:flex;gap:32px;list-style:none;margin:0;padding:0">
+      <li><button class="mmg-trigger" data-trigger="0" type="button" aria-expanded="false" aria-controls="mmg-panel" style="background:transparent;border:0;font-size:14px;font-weight:600;letter-spacing:1px;cursor:pointer;padding:8px 0">[MENU_1]</button></li>
+      <li><a href="#" style="font-size:14px;font-weight:600;letter-spacing:1px;text-decoration:none;padding:8px 0;display:inline-block">[MENU_2]</a></li>
+      <li><a href="#" style="font-size:14px;font-weight:600;letter-spacing:1px;text-decoration:none;padding:8px 0;display:inline-block">[MENU_3]</a></li>
+      <li><a href="#" style="font-size:14px;font-weight:600;letter-spacing:1px;text-decoration:none;padding:8px 0;display:inline-block">[MENU_4]</a></li>
+    </ul>
+    <a class="mmg-cta" href="#" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border:1px solid currentColor;border-radius:999px;font-size:13px;font-weight:600;letter-spacing:1px;text-decoration:none">[CTA]</a>
+  </nav>
+
+  <div class="mmg-panel" id="mmg-panel" data-panel="true" aria-hidden="true" style="position:absolute;inset:100% 0 auto 0;background:#0b0b0b;color:#fff;padding:40px 40px 48px;opacity:0;pointer-events:none;transform:translateY(-8px);z-index:4;box-shadow:0 20px 60px rgba(0,0,0,0.25)">
+    <header style="max-width:1200px;margin:0 auto 24px">
+      <span class="mmg-panel-eyebrow" data-eyebrow="optional" style="font-size:11px;letter-spacing:3px;text-transform:uppercase;font-weight:600;opacity:0.65">[PANEL_EYEBROW]</span>
+      <h3 style="font-size:clamp(24px,2.4vw,34px);font-weight:700;margin:8px 0 0;letter-spacing:-0.02em">[PANEL_HEADLINE]</h3>
+    </header>
+    <ul class="mmg-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:1200px;margin:0 auto;list-style:none;padding:0">
+      <li><a class="mmg-card" data-card="1" href="#" style="display:block;position:relative;border-radius:8px;overflow:hidden;aspect-ratio:4/5;text-decoration:none;color:inherit">
+        <div class="mmg-card-media" style="position:absolute;inset:0;background-size:cover;background-position:center"></div>
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.75),transparent 55%)"></div>
+        <div style="position:absolute;inset:auto 0 0 0;padding:16px">
+          <span style="font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;opacity:0.8">[CARD_CAT_1]</span>
+          <h4 style="font-size:18px;font-weight:700;margin:4px 0 0">[CARD_TITLE_1]</h4>
+        </div>
+      </a></li>
+      <li><a class="mmg-card" data-card="2" href="#" style="display:block;position:relative;border-radius:8px;overflow:hidden;aspect-ratio:4/5;text-decoration:none;color:inherit">
+        <div class="mmg-card-media" style="position:absolute;inset:0;background-size:cover;background-position:center"></div>
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.75),transparent 55%)"></div>
+        <div style="position:absolute;inset:auto 0 0 0;padding:16px">
+          <span style="font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;opacity:0.8">[CARD_CAT_2]</span>
+          <h4 style="font-size:18px;font-weight:700;margin:4px 0 0">[CARD_TITLE_2]</h4>
+        </div>
+      </a></li>
+      <li><a class="mmg-card" data-card="3" href="#" style="display:block;position:relative;border-radius:8px;overflow:hidden;aspect-ratio:4/5;text-decoration:none;color:inherit">
+        <div class="mmg-card-media" style="position:absolute;inset:0;background-size:cover;background-position:center"></div>
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.75),transparent 55%)"></div>
+        <div style="position:absolute;inset:auto 0 0 0;padding:16px">
+          <span style="font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;opacity:0.8">[CARD_CAT_3]</span>
+          <h4 style="font-size:18px;font-weight:700;margin:4px 0 0">[CARD_TITLE_3]</h4>
+        </div>
+      </a></li>
+      <li><a class="mmg-card" data-card="4" href="#" style="display:block;position:relative;border-radius:8px;overflow:hidden;aspect-ratio:4/5;text-decoration:none;color:inherit">
+        <div class="mmg-card-media" style="position:absolute;inset:0;background-size:cover;background-position:center"></div>
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.75),transparent 55%)"></div>
+        <div style="position:absolute;inset:auto 0 0 0;padding:16px">
+          <span style="font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;opacity:0.8">[CARD_CAT_4]</span>
+          <h4 style="font-size:18px;font-weight:700;margin:4px 0 0">[CARD_TITLE_4]</h4>
+        </div>
+      </a></li>
+    </ul>
+  </div>
+</section>
+
+<style>
+.mmg-section .mmg-panel { transition: opacity 0.25s ease, transform 0.25s ease; }
+.mmg-section .mmg-panel.is-open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.mmg-section .mmg-card-media { transition: transform 0.5s cubic-bezier(0.2,0.8,0.2,1); }
+.mmg-section .mmg-card:hover .mmg-card-media { transform: scale(1.05); }
+@media (max-width: 800px) {
+  .mmg-section .mmg-grid { grid-template-columns: 1fr 1fr !important; }
+  .mmg-section .mmg-links { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mmg-section .mmg-panel, .mmg-section .mmg-card-media { transition: none !important; }
+}
+</style>
+
+<script>
+const mmgRoot = document.querySelector('.mmg-section');
+const mmgTrigger = mmgRoot.querySelector('.mmg-trigger');
+const mmgPanel = mmgRoot.querySelector('.mmg-panel');
+mmgTrigger.addEventListener('click', (e) => {
+  e.stopPropagation();
+  const open = mmgPanel.classList.toggle('is-open');
+  mmgTrigger.setAttribute('aria-expanded', String(open));
+  mmgPanel.setAttribute('aria-hidden', String(!open));
+});
+document.addEventListener('click', (e) => {
+  if (!mmgPanel.contains(e.target) && !mmgTrigger.contains(e.target)) {
+    mmgPanel.classList.remove('is-open');
+    mmgTrigger.setAttribute('aria-expanded', 'false');
+    mmgPanel.setAttribute('aria-hidden', 'true');
+  }
+});
+</script>

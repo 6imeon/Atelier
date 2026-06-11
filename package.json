@@ -1,0 +1,38 @@
+{
+  "name": "canvas-ai",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "npm@11.9.0",
+  "description": "AI-native UI design platform with multi-model support via OpenRouter",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "mcp:start": "node packages/mcp-server/dist/index.js",
+    "api:start": "node packages/api-server/dist/index.js",
+    "ui:dev": "cd packages/web-ui && npm run dev",
+    "lint": "eslint packages/*/src --ext .ts,.tsx",
+    "format": "prettier --write 'packages/*/src/**/*.{ts,tsx}'",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@types/node": "^22.0.0",
+    "eslint": "^9.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.4.0",
+    "turbo": "^2.3.0",
+    "typescript": "^5.7.0",
+    "typescript-eslint": "^8.0.0"
+  },
+  "lint-staged": {
+    "packages/*/src/**/*.{ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "@canvas-ai/figma-plugin",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Import Atelier screens and design systems into Figma",
+  "scripts": {
+    "build": "esbuild src/code.ts --bundle --outfile=dist/code.js --target=es2020 && cp src/ui.html dist/ui.html",
+    "dev": "esbuild src/code.ts --bundle --outfile=dist/code.js --target=es2020 --watch"
+  },
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.90.0",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.7.0"
+  }
+}

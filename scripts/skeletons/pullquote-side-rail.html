@@ -1,0 +1,35 @@
+<!-- PULLQUOTE SIDE RAIL: Long-form body column with sticky pull-quote in the right rail -->
+<!-- Pattern: 2/3 body + 1/3 sticky sidebar holding an oversized serif pull-quote -->
+<!-- Requires: CSS only -->
+<!-- Ref: https://www.longreads.com/ -->
+<!-- Ref: https://medium.com/ -->
+<!-- Ref: https://longform.org/ -->
+
+<section class="psr-section" style="position:relative;padding:120px 40px;max-width:1200px;margin:0 auto">
+  <div class="psr-grid" style="display:grid;grid-template-columns:2fr 1fr;gap:80px;align-items:flex-start">
+    <article class="psr-body" style="font-family:Georgia,'Times New Roman',serif;font-size:clamp(17px,1.4vw,20px);line-height:1.7">
+      <header class="psr-head" style="margin-bottom:48px">
+        <span class="psr-eyebrow" data-eyebrow="optional" style="font-family:system-ui,sans-serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:600;opacity:0.65">[EYEBROW]</span>
+        <h2 class="psr-title" style="font-size:clamp(32px,4vw,56px);font-weight:700;margin:12px 0 0;line-height:1.05;letter-spacing:-0.02em">[HEADLINE]</h2>
+      </header>
+      <p style="margin:0 0 24px">[PARAGRAPH_1]</p>
+      <p style="margin:0 0 24px">[PARAGRAPH_2]</p>
+      <p style="margin:0 0 24px">[PARAGRAPH_3]</p>
+      <p style="margin:0 0 24px">[PARAGRAPH_4]</p>
+    </article>
+
+    <aside class="psr-rail" style="position:sticky;top:120px">
+      <figure class="psr-quote" style="margin:0;padding-left:24px;border-left:2px solid currentColor">
+        <p style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:clamp(24px,2.4vw,34px);font-weight:400;line-height:1.25;letter-spacing:-0.01em;margin:0">[PULLQUOTE]</p>
+        <figcaption style="display:block;margin-top:24px;font-family:system-ui,sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;font-weight:600;opacity:0.7">[QUOTE_SOURCE]</figcaption>
+      </figure>
+    </aside>
+  </div>
+</section>
+
+<style>
+@media (max-width: 900px) {
+  .psr-section .psr-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+  .psr-section .psr-rail { position: static !important; }
+}
+</style>

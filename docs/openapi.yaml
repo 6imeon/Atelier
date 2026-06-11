@@ -1,0 +1,1264 @@
+openapi: 3.0.3
+info:
+  title: Atelier API
+  version: "0.1.0"
+  description: |
+    REST + SSE API for Atelier (canvas-ai) -- an AI-powered UI design generation platform.
+    Supports project management, screen generation (including redesign-from-URL and
+    image-to-code), component library CRUD, analytics, and feedback collection.
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+security:
+  - BearerAuth: []
+
+tags:
+  - name: System
+    description: Health and system endpoints
+  - name: Projects
+    description: Project CRUD
+  - name: Screens
+    description: Screen generation, editing, variants, and export
+  - name: Components
+    description: Component library management
+  - name: Analytics
+    description: Analytics, feedback, design-system extraction, and assets
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: >
+        Optional Bearer token set via ATELIER_API_KEY environment variable.
+        When the server has no key configured, all requests are allowed.
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+      required: [error]
+
+    ProjectSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ProjectDetail:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        screens:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              prompt:
+                type: string
+              deviceType:
+                type: string
+
+    ScreenSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        prompt:
+          type: string
+        deviceType:
+          type: string
+
+    ScreenDetail:
+      type: object
+      properties:
+        screenId:
+          type: string
+        html:
+          type: string
+        prompt:
+          type: string
+        deviceType:
+          type: string
+
+    DesignSystem:
+      type: object
+      properties:
+        colors:
+          type: object
+          properties:
+            primary:
+              type: string
+            secondary:
+              type: string
+            tertiary:
+              type: string
+            background:
+              type: string
+            neutral:
+              type: string
+            text:
+              type: string
+        fonts:
+          type: object
+          properties:
+            headline:
+              type: string
+            body:
+              type: string
+        cornerRadius:
+          type: string
+
+    UIComponent:
+      type: object
+      properties:
+        id:
+          type: string
+        category:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        html:
+          type: string
+        tokens:
+          type: object
+          properties:
+            colors:
+              type: array
+              items:
+                type: string
+            fonts:
+              type: array
+              items:
+                type: string
+            radius:
+              type: boolean
+        slots:
+          type: array
+          items:
+            type: string
+        variants:
+          type: array
+          items:
+            type: string
+        tags:
+          type: array
+          items:
+            type: string
+        source:
+          type: string
+        adaptability:
+          type: string
+        quality:
+          type: number
+        usageCount:
+          type: number
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    SSEEvent:
+      type: object
+      description: >
+        Server-Sent Event payload. Each line is prefixed with "data: " and
+        contains a JSON object with a "type" field (progress | screen | complete | error).
+      properties:
+        type:
+          type: string
+          enum: [progress, screen, complete, error]
+      additionalProperties: true
+
+    DeviceType:
+      type: string
+      enum: [MOBILE, DESKTOP, TABLET, AGNOSTIC]
+      default: DESKTOP
+
+paths:
+  # ── System ──────────────────────────────────────────────────────────────
+
+  /api/health:
+    get:
+      tags: [System]
+      summary: Health check
+      security: []
+      responses:
+        "200":
+          description: Server is running
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  # ── Projects ────────────────────────────────────────────────────────────
+
+  /api/projects:
+    get:
+      tags: [Projects]
+      summary: List all projects
+      security: []
+      responses:
+        "200":
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  projects:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ProjectSummary"
+
+    post:
+      tags: [Projects]
+      summary: Create a new project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  maxLength: 255
+                  description: Project title (defaults to "Untitled")
+      responses:
+        "201":
+          description: Project created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  title:
+                    type: string
+        "401":
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "413":
+          description: Payload too large (max 10 MB)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/projects/{pid}:
+    get:
+      tags: [Projects]
+      summary: Get project details with screen summaries
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Project with screens
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectDetail"
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "503":
+          description: Storage not configured
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  # ── Screens ─────────────────────────────────────────────────────────────
+
+  /api/projects/{pid}/screens:
+    get:
+      tags: [Screens]
+      summary: List screens for a project (paginated)
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+      responses:
+        "200":
+          description: Paginated screen list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  screens:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ScreenSummary"
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  limit:
+                    type: integer
+                  hasMore:
+                    type: boolean
+
+  /api/projects/{pid}/screens/{sid}:
+    get:
+      tags: [Screens]
+      summary: Get a single screen with HTML
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: sid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Screen details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScreenDetail"
+        "404":
+          description: Screen not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/projects/{pid}/screens/generate:
+    post:
+      tags: [Screens]
+      summary: Generate a new screen (SSE stream)
+      description: >
+        Streams progress events via SSE. Optionally accepts a sourceUrl for
+        redesign mode and a designSystem object to override default tokens.
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [prompt]
+              properties:
+                prompt:
+                  type: string
+                deviceType:
+                  $ref: "#/components/schemas/DeviceType"
+                sourceUrl:
+                  type: string
+                  format: uri
+                  description: URL of existing site to redesign (enables redesign mode)
+                designSystem:
+                  $ref: "#/components/schemas/DesignSystem"
+      responses:
+        "200":
+          description: SSE stream of progress, then complete or error
+          content:
+            text/event-stream:
+              schema:
+                $ref: "#/components/schemas/SSEEvent"
+        "400":
+          description: Missing required field
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: SSRF - URL points to private network
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "413":
+          description: Payload too large
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: Rate limit exceeded (30 req/min per IP)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/projects/{pid}/screens/from-image:
+    post:
+      tags: [Screens]
+      summary: Generate a screen from a base64 image
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [imageBase64]
+              properties:
+                imageBase64:
+                  type: string
+                  description: Base64-encoded image data
+                prompt:
+                  type: string
+                deviceType:
+                  $ref: "#/components/schemas/DeviceType"
+      responses:
+        "201":
+          description: Screen created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  screenId:
+                    type: string
+                  html:
+                    type: string
+        "400":
+          description: Missing required field
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/projects/{pid}/screens/{sid}/edit:
+    post:
+      tags: [Screens]
+      summary: Edit an existing screen
+      description: >
+        Supports full-page and section-level editing. If currentHtml is provided,
+        uses the AI refine route; otherwise falls back to the SDK screen edit.
+        Optionally accepts sectionSelector and elementSelector for targeted edits.
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: sid
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [prompt]
+              properties:
+                prompt:
+                  type: string
+                currentHtml:
+                  type: string
+                  description: Current HTML of the screen (required for AI refine)
+                sectionSelector:
+                  type: string
+                  description: CSS-style selector to target a specific section
+                elementSelector:
+                  type: string
+                elementTag:
+                  type: string
+                deviceType:
+                  $ref: "#/components/schemas/DeviceType"
+      responses:
+        "200":
+          description: Screen edited (full-page or section splice)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  screenId:
+                    type: string
+                  html:
+                    type: string
+        "201":
+          description: Screen edited (SDK fallback path)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  screenId:
+                    type: string
+                  html:
+                    type: string
+        "400":
+          description: Missing required field
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Screen not found (when no currentHtml provided)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: AI returned empty or invalid HTML
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/projects/{pid}/screens/{sid}/variants:
+    post:
+      tags: [Screens]
+      summary: Generate a visual variant of a screen
+      description: >
+        Extracts sections from the provided HTML, generates a variant for each
+        section, and reassembles them into a complete page.
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: sid
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [prompt, currentHtml]
+              properties:
+                prompt:
+                  type: string
+                currentHtml:
+                  type: string
+                  description: Full HTML of the current screen
+      responses:
+        "201":
+          description: Array containing the variant
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    screenId:
+                      type: string
+                    html:
+                      type: string
+        "400":
+          description: Missing or invalid currentHtml, or no sections found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/projects/{pid}/screens/{sid}/export/react:
+    get:
+      tags: [Screens]
+      summary: Export a screen as React code
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: sid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: React component source
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+        "404":
+          description: Screen not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  # ── Redesign (multi-page) ──────────────────────────────────────────────
+
+  /api/projects/{pid}/redesign/plan:
+    post:
+      tags: [Screens]
+      summary: Plan a multi-page redesign from a URL (SSE stream)
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url]
+              properties:
+                url:
+                  type: string
+                  format: uri
+                prompt:
+                  type: string
+      responses:
+        "200":
+          description: SSE stream ending with a plan object
+          content:
+            text/event-stream:
+              schema:
+                $ref: "#/components/schemas/SSEEvent"
+        "400":
+          description: Missing required field
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: SSRF - URL points to private network
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/projects/{pid}/redesign/generate:
+    post:
+      tags: [Screens]
+      summary: Generate multiple redesigned pages (SSE stream)
+      description: >
+        Generates one screen per page entry. Streams progress, screen, and
+        complete events. Extracts consistency constraints from the first page
+        and applies them to subsequent pages.
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url, pages, brandName, designTokens, fetchedContent]
+              properties:
+                url:
+                  type: string
+                  format: uri
+                pages:
+                  type: array
+                  items:
+                    type: object
+                    required: [title, description]
+                    properties:
+                      title:
+                        type: string
+                      description:
+                        type: string
+                brandName:
+                  type: string
+                designTokens:
+                  type: object
+                  description: Design tokens extracted from the plan step
+                fetchedContent:
+                  type: string
+                  description: Pre-fetched page content from the plan step
+                deviceType:
+                  $ref: "#/components/schemas/DeviceType"
+      responses:
+        "200":
+          description: SSE stream of progress, screen, then complete events
+          content:
+            text/event-stream:
+              schema:
+                $ref: "#/components/schemas/SSEEvent"
+        "400":
+          description: Missing required field
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: SSRF - URL points to private network
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  # ── Components ──────────────────────────────────────────────────────────
+
+  /api/components:
+    get:
+      tags: [Components]
+      summary: List or search components
+      security: []
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+          description: Filter by component category
+        - name: q
+          in: query
+          schema:
+            type: string
+          description: Free-text search query
+      responses:
+        "200":
+          description: Component list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  components:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/UIComponent"
+                  total:
+                    type: integer
+
+    post:
+      tags: [Components]
+      summary: Register a new component
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [category, name, html]
+              properties:
+                id:
+                  type: string
+                category:
+                  type: string
+                name:
+                  type: string
+                description:
+                  type: string
+                html:
+                  type: string
+                tokens:
+                  type: object
+                  properties:
+                    colors:
+                      type: array
+                      items:
+                        type: string
+                    fonts:
+                      type: array
+                      items:
+                        type: string
+                    radius:
+                      type: boolean
+                slots:
+                  type: array
+                  items:
+                    type: string
+                variants:
+                  type: array
+                  items:
+                    type: string
+                tags:
+                  type: array
+                  items:
+                    type: string
+                source:
+                  type: string
+                adaptability:
+                  type: string
+                quality:
+                  type: number
+      responses:
+        "201":
+          description: Component created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UIComponent"
+        "400":
+          description: Missing required field
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/components/{id}:
+    get:
+      tags: [Components]
+      summary: Get a single component by ID
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Component details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UIComponent"
+        "404":
+          description: Component not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/components/{id}/customize:
+    post:
+      tags: [Components]
+      summary: Customize a component with an AI instruction
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [instruction]
+              properties:
+                instruction:
+                  type: string
+      responses:
+        "200":
+          description: Customized HTML
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  html:
+                    type: string
+        "400":
+          description: Missing required field
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Component not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/components/generate:
+    post:
+      tags: [Components]
+      summary: AI-generate a new component from a description
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [description, category]
+              properties:
+                description:
+                  type: string
+                category:
+                  type: string
+      responses:
+        "201":
+          description: Generated component
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UIComponent"
+        "400":
+          description: Missing required field
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/components/stats:
+    get:
+      tags: [Components]
+      summary: Get component library statistics
+      security: []
+      responses:
+        "200":
+          description: Library stats (shape depends on ComponentLibrary.stats())
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+
+  # ── Analytics ───────────────────────────────────────────────────────────
+
+  /api/analytics/stats:
+    get:
+      tags: [Analytics]
+      summary: Get analytics storage stats
+      security: []
+      responses:
+        "200":
+          description: Analytics stats with free-tier usage info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  estimatedSizeMB:
+                    type: number
+                  freeTierLimitMB:
+                    type: number
+                    example: 512
+                  usagePercent:
+                    type: number
+                additionalProperties: true
+        "503":
+          description: Analytics not configured
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/feedback:
+    post:
+      tags: [Analytics]
+      summary: Log user feedback on a generated screen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [projectId, screenId, action]
+              properties:
+                projectId:
+                  type: string
+                screenId:
+                  type: string
+                action:
+                  type: string
+                  enum: [kept, deleted, edited, exported, variant_created]
+                generationId:
+                  type: string
+                editDelta:
+                  type: string
+                rating:
+                  type: number
+                  nullable: true
+                timeToAction:
+                  type: number
+                html:
+                  type: string
+                  description: >
+                    Full HTML of the screen. When action is exported, edited, or
+                    variant_created, sections are extracted and saved as templates.
+      responses:
+        "200":
+          description: Feedback recorded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+        "400":
+          description: Missing required field or invalid action
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/projects/{pid}/design-system/extract:
+    post:
+      tags: [Analytics]
+      summary: Extract design system tokens from a URL
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url]
+              properties:
+                url:
+                  type: string
+                  format: uri
+      responses:
+        "200":
+          description: Extracted design system object
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        "400":
+          description: Invalid URL or missing field
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: SSRF - URL points to private network
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/assets/{key}:
+    get:
+      tags: [Analytics]
+      summary: Serve a stored asset file (image)
+      security: []
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Asset filename (alphanumeric, dots, dashes, underscores)
+      responses:
+        "200":
+          description: Asset binary data
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "403":
+          description: Invalid asset path (path traversal attempt)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Asset not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"

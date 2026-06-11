@@ -1,0 +1,87 @@
+<!-- FAQ MOTION ACCORDION: Animated-height accordion with rotate-chevron + row stagger -->
+<!-- Pattern: Click row expands body via grid-template-rows 0fr→1fr trick; chevron rotates 45° -->
+<!-- Requires: CSS only (uses <details>/<summary> + grid row animation) -->
+<!-- Ref: https://stripe.com/customers -->
+<!-- Ref: https://linear.app/docs -->
+<!-- Ref: https://www.framer.com/help -->
+
+<section class="fma-section" style="position:relative;padding:100px 40px;max-width:900px;margin:0 auto">
+  <header class="fma-head" style="margin-bottom:48px">
+    <span class="fma-eyebrow" data-eyebrow="optional" style="font-size:12px;letter-spacing:3px;text-transform:uppercase">[EYEBROW]</span>
+    <h2 class="fma-title" style="font-size:clamp(28px,3.6vw,56px);font-weight:700;margin:10px 0 0;line-height:1.1">[HEADLINE]</h2>
+  </header>
+
+  <div class="fma-list" role="list">
+    <details class="fma-row" data-row="0" role="listitem">
+      <summary class="fma-q" style="list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:24px 0;border-top:1px solid currentColor;font-size:clamp(17px,1.8vw,22px);font-weight:600">
+        <span class="fma-q-text">[QUESTION_1]</span>
+        <span class="fma-chev" aria-hidden="true" style="display:inline-block;width:16px;height:16px;position:relative;flex-shrink:0;margin-left:20px">
+          <span style="position:absolute;inset:50% 0 auto 0;height:2px;background:currentColor;transform:translateY(-1px)"></span>
+          <span class="fma-chev-v" style="position:absolute;inset:0 50% 0 auto;width:2px;background:currentColor;transform:translateX(-1px)"></span>
+        </span>
+      </summary>
+      <div class="fma-a" style="display:grid;grid-template-rows:1fr">
+        <div class="fma-a-inner" style="overflow:hidden">
+          <p style="font-size:16px;line-height:1.6;margin:0 0 24px;max-width:680px;opacity:0.8">[ANSWER_1]</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="fma-row" data-row="1" role="listitem">
+      <summary class="fma-q" style="list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:24px 0;border-top:1px solid currentColor;font-size:clamp(17px,1.8vw,22px);font-weight:600">
+        <span class="fma-q-text">[QUESTION_2]</span>
+        <span class="fma-chev" aria-hidden="true" style="display:inline-block;width:16px;height:16px;position:relative;flex-shrink:0;margin-left:20px">
+          <span style="position:absolute;inset:50% 0 auto 0;height:2px;background:currentColor;transform:translateY(-1px)"></span>
+          <span class="fma-chev-v" style="position:absolute;inset:0 50% 0 auto;width:2px;background:currentColor;transform:translateX(-1px)"></span>
+        </span>
+      </summary>
+      <div class="fma-a" style="display:grid;grid-template-rows:1fr">
+        <div class="fma-a-inner" style="overflow:hidden">
+          <p style="font-size:16px;line-height:1.6;margin:0 0 24px;max-width:680px;opacity:0.8">[ANSWER_2]</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="fma-row" data-row="2" role="listitem">
+      <summary class="fma-q" style="list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:24px 0;border-top:1px solid currentColor;font-size:clamp(17px,1.8vw,22px);font-weight:600">
+        <span class="fma-q-text">[QUESTION_3]</span>
+        <span class="fma-chev" aria-hidden="true" style="display:inline-block;width:16px;height:16px;position:relative;flex-shrink:0;margin-left:20px">
+          <span style="position:absolute;inset:50% 0 auto 0;height:2px;background:currentColor;transform:translateY(-1px)"></span>
+          <span class="fma-chev-v" style="position:absolute;inset:0 50% 0 auto;width:2px;background:currentColor;transform:translateX(-1px)"></span>
+        </span>
+      </summary>
+      <div class="fma-a" style="display:grid;grid-template-rows:1fr">
+        <div class="fma-a-inner" style="overflow:hidden">
+          <p style="font-size:16px;line-height:1.6;margin:0 0 24px;max-width:680px;opacity:0.8">[ANSWER_3]</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="fma-row" data-row="3" role="listitem">
+      <summary class="fma-q" style="list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:24px 0;border-top:1px solid currentColor;border-bottom:1px solid currentColor;font-size:clamp(17px,1.8vw,22px);font-weight:600">
+        <span class="fma-q-text">[QUESTION_4]</span>
+        <span class="fma-chev" aria-hidden="true" style="display:inline-block;width:16px;height:16px;position:relative;flex-shrink:0;margin-left:20px">
+          <span style="position:absolute;inset:50% 0 auto 0;height:2px;background:currentColor;transform:translateY(-1px)"></span>
+          <span class="fma-chev-v" style="position:absolute;inset:0 50% 0 auto;width:2px;background:currentColor;transform:translateX(-1px)"></span>
+        </span>
+      </summary>
+      <div class="fma-a" style="display:grid;grid-template-rows:1fr">
+        <div class="fma-a-inner" style="overflow:hidden">
+          <p style="font-size:16px;line-height:1.6;margin:0 0 24px;max-width:680px;opacity:0.8">[ANSWER_4]</p>
+        </div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<style>
+.fma-section .fma-q::-webkit-details-marker { display: none; }
+.fma-section .fma-row { overflow: hidden; }
+.fma-section .fma-chev-v { transition: transform 0.3s ease; }
+.fma-section .fma-row[open] .fma-chev-v { transform: translateX(-1px) rotate(90deg); opacity: 0; }
+.fma-section .fma-a { transition: grid-template-rows 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); grid-template-rows: 0fr !important; }
+.fma-section .fma-row[open] .fma-a { grid-template-rows: 1fr !important; }
+@media (prefers-reduced-motion: reduce) {
+  .fma-section .fma-a, .fma-section .fma-chev-v { transition: none !important; }
+}
+</style>

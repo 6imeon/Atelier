@@ -1,0 +1,31 @@
+node_modules/
+dist/
+.env
+.env.local
+*.log
+.DS_Store
+.idea/
+.vscode/
+data/
+*.db
+*.db-journal
+*.db-wal
+
+# Compiled TypeScript in scripts/
+scripts/**/*.js
+scripts/**/*.js.map
+scripts/**/*.d.ts
+
+# Debug/screenshot output
+scripts/adidas-screenshots/
+scripts/engine-previews/
+scripts/premium-components/
+
+# Local tooling state
+.claude/
+.turbo/
+
+# Generated test output and scratch test scripts
+test-outputs/
+/test-*.mjs
+*.tgz

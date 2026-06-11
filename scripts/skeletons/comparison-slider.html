@@ -1,0 +1,61 @@
+<!-- COMPARISON SLIDER: Drag handle reveals before/after image split -->
+<!-- Pattern: Two stacked images; draggable vertical divider clips the top image to show bottom -->
+<!-- Requires: Minimal JS (pointer drag) -->
+<!-- Ref: https://www.apple.com/apple-vision-pro/ -->
+<!-- Ref: https://stripe.com/ -->
+<!-- Ref: https://www.figma.com/ -->
+
+<section class="cms-section" style="position:relative;padding:100px 40px;max-width:1200px;margin:0 auto">
+  <header class="cms-head" style="margin-bottom:48px;text-align:center;max-width:720px;margin-left:auto;margin-right:auto">
+    <span class="cms-eyebrow" data-eyebrow="optional" style="font-size:12px;letter-spacing:3px;text-transform:uppercase">[EYEBROW]</span>
+    <h2 class="cms-title" style="font-size:clamp(28px,3.6vw,56px);font-weight:700;margin:10px 0 16px;line-height:1.1">[HEADLINE]</h2>
+    <p class="cms-body" style="font-size:17px;line-height:1.6;margin:0;opacity:0.75">[BODY]</p>
+  </header>
+
+  <div class="cms-stage" style="position:relative;width:100%;aspect-ratio:16/10;border-radius:12px;overflow:hidden;user-select:none;touch-action:none">
+    <div class="cms-after" data-layer="after" style="position:absolute;inset:0;background-size:cover;background-position:center;z-index:1">
+      <span class="cms-label cms-label-after" style="position:absolute;left:24px;bottom:24px;padding:6px 12px;border-radius:999px;font-size:12px;letter-spacing:2px;font-weight:600;background:rgba(0,0,0,0.55);color:#fff">[LABEL_AFTER]</span>
+    </div>
+    <div class="cms-before" data-layer="before" style="position:absolute;inset:0;background-size:cover;background-position:center;z-index:2;clip-path:inset(0 50% 0 0)">
+      <span class="cms-label cms-label-before" style="position:absolute;left:24px;bottom:24px;padding:6px 12px;border-radius:999px;font-size:12px;letter-spacing:2px;font-weight:600;background:rgba(0,0,0,0.55);color:#fff">[LABEL_BEFORE]</span>
+    </div>
+    <button class="cms-handle" data-handle="true" type="button" aria-label="Drag to compare" style="position:absolute;top:0;bottom:0;left:50%;width:3px;background:#fff;z-index:3;transform:translateX(-50%);cursor:ew-resize;border:0;padding:0">
+      <span class="cms-handle-knob" aria-hidden="true" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:44px;height:44px;border-radius:50%;background:#fff;box-shadow:0 4px 16px rgba(0,0,0,0.25);display:flex;align-items:center;justify-content:center;color:#111;font-weight:700;font-size:14px">⇆</span>
+    </button>
+  </div>
+</section>
+
+<style>
+@media (prefers-reduced-motion: reduce) {
+  .cms-section .cms-before, .cms-section .cms-handle { transition: none !important; }
+}
+</style>
+
+<script>
+const cmsRoot = document.querySelector('.cms-section');
+const cmsStage = cmsRoot.querySelector('.cms-stage');
+const cmsBefore = cmsRoot.querySelector('.cms-before');
+const cmsHandle = cmsRoot.querySelector('.cms-handle');
+let cmsDragging = false;
+
+const setCms = (pct) => {
+  const p = Math.max(0, Math.min(100, pct));
+  cmsBefore.style.clipPath = `inset(0 ${100 - p}% 0 0)`;
+  cmsHandle.style.left = p + '%';
+};
+
+const onMove = (e) => {
+  if (!cmsDragging) return;
+  const r = cmsStage.getBoundingClientRect();
+  const x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
+  setCms((x / r.width) * 100);
+};
+
+cmsHandle.addEventListener('pointerdown', (e) => { cmsDragging = true; cmsHandle.setPointerCapture(e.pointerId); });
+cmsHandle.addEventListener('pointermove', onMove);
+cmsHandle.addEventListener('pointerup', () => { cmsDragging = false; });
+cmsStage.addEventListener('click', (e) => {
+  const r = cmsStage.getBoundingClientRect();
+  setCms(((e.clientX - r.left) / r.width) * 100);
+});
+</script>

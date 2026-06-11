@@ -1,0 +1,36 @@
+<!-- TEXT MARQUEE: Infinite scrolling text banner -->
+<!-- Pattern: CSS-only infinite horizontal scroll, two copies for seamless loop -->
+<!-- Requires: CSS only (no JS libraries) -->
+<!-- Ref: https://report.adidas-group.com/2024/en/ -->
+
+<section class="marquee-section" style="overflow:hidden;padding:40px 0;position:relative">
+  <div class="marquee-track" style="display:flex;width:max-content;animation:marquee-scroll 20s linear infinite">
+    <div class="marquee-content" style="display:flex;align-items:center;gap:60px;padding-right:60px;white-space:nowrap">
+      <span class="marquee-item" style="font-size:clamp(48px,6vw,96px);font-weight:800;text-transform:uppercase;letter-spacing:-0.02em">[MARQUEE_ITEM_1]</span>
+      <span class="marquee-dot" style="width:16px;height:16px;border-radius:50%;flex-shrink:0"></span>
+      <span class="marquee-item" style="font-size:clamp(48px,6vw,96px);font-weight:800;text-transform:uppercase;letter-spacing:-0.02em">[MARQUEE_ITEM_2]</span>
+      <span class="marquee-dot" style="width:16px;height:16px;border-radius:50%;flex-shrink:0"></span>
+      <span class="marquee-item" style="font-size:clamp(48px,6vw,96px);font-weight:800;text-transform:uppercase;letter-spacing:-0.02em">[MARQUEE_ITEM_3]</span>
+      <span class="marquee-dot" style="width:16px;height:16px;border-radius:50%;flex-shrink:0"></span>
+    </div>
+    <!-- Duplicate for seamless loop -->
+    <div class="marquee-content" aria-hidden="true" style="display:flex;align-items:center;gap:60px;padding-right:60px;white-space:nowrap">
+      <span class="marquee-item" style="font-size:clamp(48px,6vw,96px);font-weight:800;text-transform:uppercase;letter-spacing:-0.02em">[MARQUEE_ITEM_1]</span>
+      <span class="marquee-dot" style="width:16px;height:16px;border-radius:50%;flex-shrink:0"></span>
+      <span class="marquee-item" style="font-size:clamp(48px,6vw,96px);font-weight:800;text-transform:uppercase;letter-spacing:-0.02em">[MARQUEE_ITEM_2]</span>
+      <span class="marquee-dot" style="width:16px;height:16px;border-radius:50%;flex-shrink:0"></span>
+      <span class="marquee-item" style="font-size:clamp(48px,6vw,96px);font-weight:800;text-transform:uppercase;letter-spacing:-0.02em">[MARQUEE_ITEM_3]</span>
+      <span class="marquee-dot" style="width:16px;height:16px;border-radius:50%;flex-shrink:0"></span>
+    </div>
+  </div>
+</section>
+
+<style>
+@keyframes marquee-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none !important; }
+}
+</style>

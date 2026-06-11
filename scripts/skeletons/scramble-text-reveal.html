@@ -1,0 +1,60 @@
+<!-- SCRAMBLE TEXT REVEAL: Letters settle from random characters into final word on viewport entry -->
+<!-- Pattern: Large display headline where each char cycles through noise before landing on target -->
+<!-- Requires: GSAP + ScrollTrigger -->
+<!-- Ref: https://www.framer.com/ -->
+<!-- Ref: https://www.apple.com/iphone/ -->
+<!-- Ref: https://lusion.co/ -->
+
+<section class="str-section" style="position:relative;padding:160px 40px;max-width:1400px;margin:0 auto;text-align:center">
+  <header class="str-head" style="margin-bottom:24px">
+    <span class="str-eyebrow" data-eyebrow="optional" style="font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:600;opacity:0.65">[EYEBROW]</span>
+  </header>
+
+  <h1 class="str-title" data-scramble="true" data-target="[HEADLINE]" style="font-size:clamp(56px,12vw,200px);font-weight:900;letter-spacing:-0.04em;line-height:0.9;margin:0 auto;font-variant-numeric:tabular-nums;font-feature-settings:'tnum';max-width:1200px">[HEADLINE]</h1>
+
+  <p class="str-body" style="font-size:clamp(16px,1.4vw,20px);line-height:1.6;margin:40px auto 0;max-width:560px;opacity:0.75">[BODY]</p>
+</section>
+
+<style>
+@media (prefers-reduced-motion: reduce) {
+  .str-section .str-title { opacity: 1 !important; }
+}
+</style>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const strRoot = document.querySelector('.str-section');
+const strPrefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const strEl = strRoot.querySelector('.str-title');
+const strTarget = (strEl.dataset.target || strEl.textContent || '').trim();
+const strChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*';
+
+function strScramble(finalText, durationMs = 1500) {
+  const start = performance.now();
+  const tick = (now) => {
+    const p = Math.min(1, (now - start) / durationMs);
+    const shown = Math.floor(p * finalText.length);
+    let out = '';
+    for (let i = 0; i < finalText.length; i++) {
+      if (i < shown || finalText[i] === ' ') { out += finalText[i]; }
+      else { out += strChars[Math.floor(Math.random() * strChars.length)]; }
+    }
+    strEl.textContent = out;
+    if (p < 1) requestAnimationFrame(tick);
+    else strEl.textContent = finalText;
+  };
+  requestAnimationFrame(tick);
+}
+
+if (strPrefersReduced) {
+  strEl.textContent = strTarget;
+} else {
+  strEl.textContent = ' '.repeat(strTarget.length);
+  ScrollTrigger.create({
+    trigger: strRoot,
+    start: 'top 70%',
+    once: true,
+    onEnter: () => strScramble(strTarget, 1400),
+  });
+}
+</script>

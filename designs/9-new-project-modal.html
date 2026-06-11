@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atelier — New Project (4 Alternatives)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #0e0e10; color: #ccc; }
+  .page-controls {
+    position: sticky; top: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+    padding: 14px 24px; background: #0e0e10; border-bottom: 1px solid #222;
+  }
+  .page-controls h1 { font-size: 14px; font-weight: 600; color: #fff; margin-right: 12px; }
+  .mode-toggle { display: flex; border-radius: 8px; overflow: hidden; border: 1px solid #333; }
+  .mode-btn { padding: 7px 16px; border: none; font-size: 12px; font-weight: 500; font-family: inherit; cursor: pointer; background: transparent; color: #888; transition: all 0.15s; }
+  .mode-btn.active { background: #fff; color: #000; }
+  .alt-grid { display: grid; grid-template-columns: 1fr 1fr; min-height: calc(100vh - 49px); }
+  .alt { position: relative; overflow-y: auto; border: 1px solid #1a1a1a; transition: background 0.3s; display: flex; align-items: center; justify-content: center; min-height: 560px; }
+  .alt-label { position: absolute; top: 0; left: 0; z-index: 10; padding: 8px 14px; font-size: 11px; font-weight: 600; letter-spacing: 0.03em; backdrop-filter: blur(12px); border-radius: 0 0 8px 0; }
+
+  .alt-a{--bg:#F8F9FA;--sf:#F1F3F5;--card:#FFF;--bd:#E2E5E9;--t1:#1A1D21;--t2:#5F6B7A;--t3:#9CA3AF;--ac:#6366F1;--ach:#5457E5;--lbg:rgba(99,102,241,.08);--lc:#6366F1;}
+  .dark .alt-a{--bg:#111113;--sf:#19191B;--card:#222225;--bd:#2E2E32;--t1:#EDEDEF;--t2:#A0A0A6;--t3:#63636E;--ac:#818CF8;--ach:#9BA3FB;--lbg:rgba(129,140,248,.1);--lc:#818CF8;}
+  .alt-b{--bg:#FAF9F7;--sf:#F3F1EE;--card:#FFF;--bd:#E8E5E0;--t1:#1C1917;--t2:#6B6560;--t3:#A8A29E;--ac:#B45309;--ach:#A14A08;--lbg:rgba(180,83,9,.08);--lc:#B45309;}
+  .dark .alt-b{--bg:#121110;--sf:#1C1A18;--card:#252320;--bd:#33302C;--t1:#E7E5E4;--t2:#A8A29E;--t3:#6B6560;--ac:#F59E0B;--ach:#FBBF24;--lbg:rgba(245,158,11,.1);--lc:#F59E0B;}
+  .alt-c{--bg:#F8FAF8;--sf:#F0F4F0;--card:#FFF;--bd:#DDE5DD;--t1:#1A1F1A;--t2:#5C6B5C;--t3:#94A394;--ac:#4A7C59;--ach:#3D6B4A;--lbg:rgba(74,124,89,.08);--lc:#4A7C59;}
+  .dark .alt-c{--bg:#101210;--sf:#171A17;--card:#1F231F;--bd:#2C322C;--t1:#E4E9E4;--t2:#94A394;--t3:#5C6B5C;--ac:#6EAA7E;--ach:#84BB92;--lbg:rgba(110,170,126,.1);--lc:#6EAA7E;}
+  .alt-d{--bg:#FAF8F9;--sf:#F4F0F2;--card:#FFF;--bd:#E8E1E4;--t1:#1F1A1C;--t2:#6B5F64;--t3:#A89BA0;--ac:#9F5474;--ach:#8D4766;--lbg:rgba(159,84,116,.08);--lc:#9F5474;}
+  .dark .alt-d{--bg:#121011;--sf:#1A1719;--card:#242022;--bd:#332D30;--t1:#E9E4E6;--t2:#A89BA0;--t3:#6B5F64;--ac:#D4809E;--ach:#E098B2;--lbg:rgba(212,128,158,.1);--lc:#D4809E;}
+  .alt { background: var(--bg); color: var(--t1); }
+  .alt-label { background: var(--lbg); color: var(--lc); }
+
+  /* Shared form bits */
+  .np-input {
+    width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--bd);
+    background: var(--sf); color: var(--t1); font-size: 13px; font-family: inherit; outline: none;
+    transition: border-color .15s;
+  }
+  .np-input:focus { border-color: var(--ac); }
+  .np-input::placeholder { color: var(--t3); }
+  .np-textarea { resize: none; height: 64px; line-height: 1.5; }
+  .np-label { font-size: 12px; font-weight: 500; color: var(--t2); margin-bottom: 6px; }
+  .np-hint { font-size: 11px; color: var(--t3); }
+  .np-btn {
+    padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 500;
+    font-family: inherit; cursor: pointer; transition: all .15s; border: 1px solid var(--bd);
+    background: var(--card); color: var(--t2);
+  }
+  .np-btn:hover { background: var(--sf); color: var(--t1); }
+  .np-btn.primary { background: var(--ac); color: #fff; border-color: var(--ac); }
+  .np-btn.primary:hover { opacity: .9; }
+
+  /* ═══ A — CLASSIC MODAL ═══
+     Traditional centered modal with form fields, dimmed backdrop */
+  .a-backdrop {
+    position: absolute; inset: 0; background: rgba(0,0,0,.15);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .a-modal {
+    width: 440px; border-radius: 16px; background: var(--card);
+    border: 1px solid var(--bd); box-shadow: 0 16px 48px rgba(0,0,0,.08);
+    overflow: hidden;
+  }
+  .a-modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 20px; border-bottom: 1px solid var(--bd);
+  }
+  .a-modal-title { font-size: 16px; font-weight: 700; }
+  .a-modal-close {
+    width: 28px; height: 28px; border-radius: 6px; border: none;
+    background: var(--sf); color: var(--t3); display: flex; align-items: center; justify-content: center; cursor: pointer;
+  }
+  .a-modal-close svg { width: 14px; height: 14px; }
+  .a-modal-body { padding: 20px; }
+  .a-field { margin-bottom: 14px; }
+  .a-templates { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+  .a-template {
+    padding: 12px 8px; border-radius: 10px; border: 1px solid var(--bd);
+    background: var(--card); text-align: center; cursor: pointer; transition: all .15s;
+  }
+  .a-template:hover { border-color: var(--ac); }
+  .a-template.selected { border-color: var(--ac); background: linear-gradient(var(--sf), var(--card)); }
+  .a-template-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--sf); display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; }
+  .a-template-icon svg { width: 16px; height: 16px; color: var(--t3); }
+  .a-template.selected .a-template-icon svg { color: var(--ac); }
+  .a-template-name { font-size: 11px; font-weight: 600; color: var(--t2); }
+  .a-template.selected .a-template-name { color: var(--ac); }
+  .a-modal-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px; border-top: 1px solid var(--bd); background: var(--sf);
+  }
+  .a-modal-footer .np-hint svg { width: 12px; height: 12px; display: inline; vertical-align: -2px; margin-right: 4px; }
+
+  /* ═══ B — STEP WIZARD ═══
+     Multi-step flow: choose type → fill details → confirm */
+  .b-wizard { width: 420px; }
+  .b-steps { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; justify-content: center; }
+  .b-step { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--t3); font-weight: 500; }
+  .b-step.active { color: var(--t1); }
+  .b-step-dot { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--bd); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; }
+  .b-step.active .b-step-dot { background: var(--ac); border-color: var(--ac); color: #fff; }
+  .b-step.done .b-step-dot { background: var(--sf); border-color: var(--ac); color: var(--ac); }
+  .b-step-line { width: 24px; height: 1px; background: var(--bd); }
+
+  .b-card { padding: 24px; border-radius: 14px; background: var(--card); border: 1px solid var(--bd); }
+  .b-card-title { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+  .b-card-desc { font-size: 13px; color: var(--t3); margin-bottom: 20px; }
+  .b-type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+  .b-type-card {
+    padding: 16px; border-radius: 10px; border: 1px solid var(--bd);
+    background: var(--card); cursor: pointer; transition: all .15s; text-align: center;
+  }
+  .b-type-card:hover { border-color: var(--ac); }
+  .b-type-card.selected { border-color: var(--ac); background: var(--sf); }
+  .b-type-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--sf); display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; }
+  .b-type-icon svg { width: 18px; height: 18px; color: var(--t3); }
+  .b-type-card.selected .b-type-icon svg { color: var(--ac); }
+  .b-type-name { font-size: 13px; font-weight: 600; color: var(--t1); }
+  .b-type-desc { font-size: 11px; color: var(--t3); margin-top: 2px; }
+  .b-footer { display: flex; justify-content: space-between; margin-top: 18px; }
+
+  /* ═══ C — COMMAND PALETTE ═══
+     Raycast/Spotlight-style: type project name, quick-start */
+  .c-palette {
+    width: 440px; border-radius: 14px; background: var(--card);
+    border: 1px solid var(--bd); box-shadow: 0 16px 48px rgba(0,0,0,.1);
+    overflow: hidden;
+  }
+  .c-palette-input-row {
+    display: flex; align-items: center; gap: 10px; padding: 14px 16px;
+    border-bottom: 1px solid var(--bd);
+  }
+  .c-palette-input-row svg { width: 18px; height: 18px; color: var(--t3); flex-shrink: 0; }
+  .c-palette-input {
+    flex: 1; border: none; outline: none; background: transparent;
+    font-size: 15px; font-weight: 500; color: var(--t1); font-family: inherit;
+  }
+  .c-palette-input::placeholder { color: var(--t3); font-weight: 400; }
+  .c-palette-kbd { padding: 3px 7px; border-radius: 4px; background: var(--sf); font-size: 10px; font-weight: 600; color: var(--t3); border: 1px solid var(--bd); }
+
+  .c-palette-section { padding: 8px 12px; font-size: 10px; font-weight: 600; color: var(--t3); text-transform: uppercase; letter-spacing: .04em; }
+  .c-palette-options { padding: 4px 8px; }
+  .c-palette-option {
+    display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px;
+    cursor: pointer; transition: background .1s;
+  }
+  .c-palette-option:hover { background: var(--sf); }
+  .c-palette-option.active { background: var(--sf); }
+  .c-opt-icon { width: 30px; height: 30px; border-radius: 8px; background: var(--sf); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .c-palette-option.active .c-opt-icon { background: rgba(74,124,89,.1); }
+  .c-opt-icon svg { width: 15px; height: 15px; color: var(--t3); }
+  .c-palette-option.active .c-opt-icon svg { color: var(--ac); }
+  .c-opt-text { flex: 1; }
+  .c-opt-title { font-size: 13px; font-weight: 500; color: var(--t1); }
+  .c-opt-desc { font-size: 11px; color: var(--t3); }
+  .c-opt-shortcut { font-size: 10px; color: var(--t3); }
+
+  .c-palette-footer {
+    padding: 10px 16px; border-top: 1px solid var(--bd); background: var(--sf);
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 11px; color: var(--t3);
+  }
+  .c-palette-footer-keys { display: flex; gap: 8px; }
+  .c-palette-footer-key { display: flex; align-items: center; gap: 3px; }
+
+  /* ═══ D — INLINE FULL PAGE ═══
+     No modal: full page form with side-by-side sections */
+  .d-page { width: 100%; padding: 28px 24px; }
+  .d-page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .d-page-title { font-size: 18px; font-weight: 700; }
+  .d-back { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--t3); cursor: pointer; }
+  .d-back svg { width: 13px; height: 13px; }
+  .d-back:hover { color: var(--t1); }
+  .d-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .d-field { margin-bottom: 14px; }
+  .d-section-title { font-size: 13px; font-weight: 600; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--bd); }
+  .d-device-row { display: flex; gap: 6px; }
+  .d-device {
+    flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--bd);
+    background: var(--card); text-align: center; cursor: pointer;
+    font-size: 11px; font-weight: 500; color: var(--t3); transition: all .15s;
+  }
+  .d-device:hover { color: var(--t2); border-color: var(--ac); }
+  .d-device.selected { border-color: var(--ac); color: var(--ac); background: var(--sf); }
+  .d-device svg { width: 16px; height: 16px; display: block; margin: 0 auto 4px; }
+  .d-source-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .d-source {
+    padding: 14px 10px; border-radius: 10px; border: 1px solid var(--bd);
+    background: var(--card); text-align: center; cursor: pointer; transition: all .15s;
+  }
+  .d-source:hover { border-color: var(--ac); }
+  .d-source.selected { border-color: var(--ac); background: var(--sf); }
+  .d-source svg { width: 20px; height: 20px; color: var(--t3); margin-bottom: 6px; }
+  .d-source.selected svg { color: var(--ac); }
+  .d-source-name { font-size: 12px; font-weight: 600; color: var(--t2); }
+  .d-source.selected .d-source-name { color: var(--ac); }
+  .d-url-row { display: flex; gap: 8px; margin-top: 12px; }
+  .d-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--bd); }
+</style>
+</head>
+<body>
+<div class="page-controls">
+  <h1>New Project — 4 Alternatives</h1>
+  <div class="mode-toggle">
+    <button class="mode-btn active" onclick="setMode('light')">Light</button>
+    <button class="mode-btn" onclick="setMode('dark')">Dark</button>
+  </div>
+</div>
+<div class="alt-grid" id="grid">
+
+<!-- A — CLASSIC MODAL (Cool Slate) -->
+<div class="alt alt-a">
+  <div class="alt-label">A — Classic Modal &middot; Cool Slate</div>
+  <div class="a-backdrop">
+    <div class="a-modal">
+      <div class="a-modal-header">
+        <div class="a-modal-title">New Project</div>
+        <button class="a-modal-close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <div class="a-modal-body">
+        <div class="a-field"><div class="np-label">Project Name</div><input class="np-input" placeholder="e.g. Fintech Dashboard" value="Fintech Dashboard" /></div>
+        <div class="a-field"><div class="np-label">Description <span style="color:var(--t3);font-weight:400;">(optional)</span></div><textarea class="np-input np-textarea" placeholder="Brief project goals..."></textarea></div>
+        <div class="np-label" style="margin-bottom:8px;">Start from</div>
+        <div class="a-templates">
+          <div class="a-template selected"><div class="a-template-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/></svg></div><div class="a-template-name">Blank</div></div>
+          <div class="a-template"><div class="a-template-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="a-template-name">AI Generate</div></div>
+          <div class="a-template"><div class="a-template-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9"/></svg></div><div class="a-template-name">From URL</div></div>
+        </div>
+      </div>
+      <div class="a-modal-footer">
+        <span class="np-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>Auto-deletes after 30 days of inactivity</span>
+        <div style="display:flex;gap:6px;"><button class="np-btn">Cancel</button><button class="np-btn primary">Create</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- B — STEP WIZARD (Warm Stone) -->
+<div class="alt alt-b">
+  <div class="alt-label">B — Step Wizard &middot; Warm Stone</div>
+  <div class="b-wizard">
+    <div class="b-steps">
+      <div class="b-step done"><div class="b-step-dot">1</div>Type</div>
+      <div class="b-step-line"></div>
+      <div class="b-step active"><div class="b-step-dot">2</div>Details</div>
+      <div class="b-step-line"></div>
+      <div class="b-step"><div class="b-step-dot">3</div>Create</div>
+    </div>
+    <div class="b-card">
+      <div class="b-card-title">What are you building?</div>
+      <div class="b-card-desc">Choose a starting point for your project.</div>
+      <div class="b-type-grid">
+        <div class="b-type-card selected">
+          <div class="b-type-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/></svg></div>
+          <div class="b-type-name">Blank Canvas</div>
+          <div class="b-type-desc">Start from scratch</div>
+        </div>
+        <div class="b-type-card">
+          <div class="b-type-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+          <div class="b-type-name">AI Generate</div>
+          <div class="b-type-desc">Describe your UI</div>
+        </div>
+        <div class="b-type-card">
+          <div class="b-type-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9"/></svg></div>
+          <div class="b-type-name">From URL</div>
+          <div class="b-type-desc">Redesign a website</div>
+        </div>
+        <div class="b-type-card">
+          <div class="b-type-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+          <div class="b-type-name">Template</div>
+          <div class="b-type-desc">Pre-built layouts</div>
+        </div>
+      </div>
+      <div class="b-footer">
+        <button class="np-btn">Back</button>
+        <button class="np-btn primary">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- C — COMMAND PALETTE (Sage) -->
+<div class="alt alt-c">
+  <div class="alt-label">C — Command Palette &middot; Sage</div>
+  <div class="c-palette">
+    <div class="c-palette-input-row">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <input class="c-palette-input" placeholder="Project name..." value="Fintech Dashboard" />
+      <span class="c-palette-kbd">Enter</span>
+    </div>
+    <div class="c-palette-section">Start from</div>
+    <div class="c-palette-options">
+      <div class="c-palette-option active">
+        <div class="c-opt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/></svg></div>
+        <div class="c-opt-text"><div class="c-opt-title">Blank Canvas</div><div class="c-opt-desc">Empty project, start designing</div></div>
+        <span class="c-opt-shortcut">B</span>
+      </div>
+      <div class="c-palette-option">
+        <div class="c-opt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+        <div class="c-opt-text"><div class="c-opt-title">AI Generate</div><div class="c-opt-desc">Describe a UI, get screens</div></div>
+        <span class="c-opt-shortcut">G</span>
+      </div>
+      <div class="c-palette-option">
+        <div class="c-opt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9"/></svg></div>
+        <div class="c-opt-text"><div class="c-opt-title">Redesign from URL</div><div class="c-opt-desc">Extract design system, rebuild</div></div>
+        <span class="c-opt-shortcut">U</span>
+      </div>
+      <div class="c-palette-option">
+        <div class="c-opt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+        <div class="c-opt-text"><div class="c-opt-title">From Screenshot</div><div class="c-opt-desc">Upload an image to recreate</div></div>
+        <span class="c-opt-shortcut">S</span>
+      </div>
+    </div>
+    <div class="c-palette-footer">
+      <div class="c-palette-footer-keys">
+        <span class="c-palette-footer-key"><span class="c-palette-kbd" style="font-size:9px;">&#8593;&#8595;</span> navigate</span>
+        <span class="c-palette-footer-key"><span class="c-palette-kbd" style="font-size:9px;">&#9166;</span> select</span>
+        <span class="c-palette-footer-key"><span class="c-palette-kbd" style="font-size:9px;">esc</span> cancel</span>
+      </div>
+      <span class="np-hint">30-day auto-cleanup</span>
+    </div>
+  </div>
+</div>
+
+<!-- D — INLINE FULL PAGE (Dusty Rose) -->
+<div class="alt alt-d" style="align-items:flex-start;">
+  <div class="alt-label">D — Full Page Form &middot; Dusty Rose</div>
+  <div class="d-page">
+    <div class="d-page-header">
+      <div class="d-page-title">Create New Project</div>
+      <div class="d-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Back to Projects</div>
+    </div>
+    <div class="d-form-row">
+      <div>
+        <div class="d-field"><div class="np-label">Project Name</div><input class="np-input" value="Fintech Dashboard" /></div>
+        <div class="d-field"><div class="np-label">Description <span style="color:var(--t3);font-weight:400;">(optional)</span></div><textarea class="np-input np-textarea" placeholder="Project goals..."></textarea></div>
+        <div class="d-section-title">Target Device</div>
+        <div class="d-device-row">
+          <div class="d-device"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>Mobile</div>
+          <div class="d-device"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>Tablet</div>
+          <div class="d-device selected"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Desktop</div>
+        </div>
+      </div>
+      <div>
+        <div class="d-section-title">Start From</div>
+        <div class="d-source-cards">
+          <div class="d-source selected"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/></svg><div class="d-source-name">Blank</div></div>
+          <div class="d-source"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><div class="d-source-name">AI Gen</div></div>
+          <div class="d-source"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9"/></svg><div class="d-source-name">URL</div></div>
+        </div>
+        <div class="d-field" style="margin-top:14px;">
+          <div class="np-label">Import design system from URL</div>
+          <div class="d-url-row">
+            <input class="np-input" placeholder="https://example.com" style="flex:1;" />
+          </div>
+        </div>
+        <div class="np-hint" style="margin-top:8px;">Projects auto-delete after 30 days of inactivity.</div>
+      </div>
+    </div>
+    <div class="d-footer">
+      <button class="np-btn">Cancel</button>
+      <button class="np-btn primary">Create Project</button>
+    </div>
+  </div>
+</div>
+
+</div>
+<script>
+function setMode(m) {
+  document.getElementById('grid').classList.toggle('dark', m === 'dark');
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.textContent.toLowerCase() === m));
+}
+</script>
+</body>
+</html>

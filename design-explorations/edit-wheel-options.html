@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit Wheel — 5 Design Explorations</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0e0e10; color: #fafafa; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+
+  h1 { text-align: center; padding: 40px 0 10px; font-size: 22px; font-weight: 600; color: #a78bfa; }
+  .subtitle { text-align: center; color: #71717a; font-size: 13px; margin-bottom: 40px; }
+
+  .examples { display: flex; flex-direction: column; gap: 80px; padding: 0 40px 80px; max-width: 1200px; margin: 0 auto; }
+
+  .example { display: flex; gap: 40px; align-items: flex-start; }
+  .example-info { width: 280px; flex-shrink: 0; }
+  .example-info h2 { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: #e4e4e7; }
+  .example-info .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; background: rgba(124,92,252,0.15); color: #a78bfa; margin-bottom: 8px; }
+  .example-info p { font-size: 12px; color: #71717a; line-height: 1.6; }
+
+  .demo-area { flex: 1; background: #18181b; border-radius: 16px; border: 1px solid #27272a; min-height: 350px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+
+  /* Simulated selected element */
+  .selected-element {
+    background: #1e1b2e; border: 2px solid #7c5cfc; border-radius: 12px; padding: 20px 28px;
+    position: relative; cursor: pointer; user-select: none; transition: all 0.2s;
+  }
+  .selected-element:hover { background: #252040; }
+  .selected-element h3 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+  .selected-element p { font-size: 12px; color: #a1a1aa; }
+
+  /* ─── OPTION 1: Radial Wheel ─── */
+  .wheel-1 { position: absolute; pointer-events: none; opacity: 0; transition: opacity 0.25s; }
+  .wheel-1.show { opacity: 1; pointer-events: auto; }
+  .wheel-1 .option {
+    position: absolute; width: 42px; height: 42px; border-radius: 50%;
+    background: #27272a; border: 1px solid #3f3f46; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.2s; color: #a1a1aa;
+  }
+  .wheel-1 .option:hover { background: #7c5cfc; color: white; border-color: #7c5cfc; transform: scale(1.15); }
+  .wheel-1 .option svg { width: 16px; height: 16px; }
+  .wheel-1 .option .tooltip {
+    position: absolute; top: -28px; left: 50%; transform: translateX(-50%);
+    background: #fafafa; color: #18181b; font-size: 10px; font-weight: 600;
+    padding: 3px 8px; border-radius: 6px; white-space: nowrap; opacity: 0; transition: opacity 0.15s; pointer-events: none;
+  }
+  .wheel-1 .option:hover .tooltip { opacity: 1; }
+
+  /* ─── OPTION 2: Arc Menu ─── */
+  .arc-2 { position: absolute; pointer-events: none; opacity: 0; transition: opacity 0.25s; }
+  .arc-2.show { opacity: 1; pointer-events: auto; }
+  .arc-2 .option {
+    position: absolute; display: flex; align-items: center; gap: 8px;
+    padding: 7px 14px; border-radius: 10px; background: #27272a; border: 1px solid #3f3f46;
+    cursor: pointer; transition: all 0.2s; color: #d4d4d8; font-size: 11px; font-weight: 500; white-space: nowrap;
+  }
+  .arc-2 .option:hover { background: #7c5cfc; color: white; border-color: #7c5cfc; }
+  .arc-2 .option svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+  /* ─── OPTION 3: Pill Bar ─── */
+  .pill-3 {
+    position: absolute; display: flex; gap: 2px; padding: 4px;
+    background: #1c1c20; border: 1px solid #3f3f46; border-radius: 14px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5); opacity: 0; pointer-events: none; transition: all 0.25s;
+  }
+  .pill-3.show { opacity: 1; pointer-events: auto; }
+  .pill-3 .option {
+    width: 36px; height: 36px; border-radius: 10px; border: none; background: transparent;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    color: #a1a1aa; transition: all 0.15s; position: relative;
+  }
+  .pill-3 .option:hover { background: rgba(124,92,252,0.15); color: #a78bfa; }
+  .pill-3 .option svg { width: 15px; height: 15px; }
+  .pill-3 .sep { width: 1px; background: #3f3f46; margin: 6px 2px; }
+  .pill-3 .option .tooltip {
+    position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+    background: #fafafa; color: #18181b; font-size: 10px; font-weight: 600;
+    padding: 3px 8px; border-radius: 6px; white-space: nowrap; opacity: 0; transition: opacity 0.15s; pointer-events: none;
+  }
+  .pill-3 .option:hover .tooltip { opacity: 1; }
+
+  /* ─── OPTION 4: Floating Cards ─── */
+  .cards-4 { position: absolute; display: flex; gap: 6px; opacity: 0; pointer-events: none; transition: all 0.25s; }
+  .cards-4.show { opacity: 1; pointer-events: auto; }
+  .cards-4 .card {
+    width: 72px; padding: 10px 6px; border-radius: 12px; background: #1c1c20; border: 1px solid #3f3f46;
+    display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;
+    transition: all 0.2s; color: #a1a1aa;
+  }
+  .cards-4 .card:hover { background: rgba(124,92,252,0.12); border-color: #7c5cfc; color: #a78bfa; transform: translateY(-4px); }
+  .cards-4 .card svg { width: 16px; height: 16px; }
+  .cards-4 .card span { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* ─── OPTION 5: Orbital Ring ─── */
+  .orbital-5 { position: absolute; pointer-events: none; opacity: 0; transition: opacity 0.3s; }
+  .orbital-5.show { opacity: 1; pointer-events: auto; }
+  .orbital-5 .ring {
+    width: 160px; height: 160px; border-radius: 50%; border: 1px solid #3f3f4640;
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  }
+  .orbital-5 .center-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: #7c5cfc;
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    box-shadow: 0 0 12px #7c5cfc80;
+  }
+  .orbital-5 .option {
+    position: absolute; width: 40px; height: 40px; border-radius: 12px;
+    background: #1c1c20; border: 1px solid #3f3f46; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.2s; color: #a1a1aa;
+  }
+  .orbital-5 .option:hover { background: #7c5cfc; color: white; border-color: #7c5cfc; box-shadow: 0 0 20px #7c5cfc40; }
+  .orbital-5 .option svg { width: 15px; height: 15px; }
+  .orbital-5 .option .tooltip {
+    position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+    background: #fafafa; color: #18181b; font-size: 10px; font-weight: 600;
+    padding: 3px 8px; border-radius: 6px; white-space: nowrap; opacity: 0; transition: opacity 0.15s; pointer-events: none;
+  }
+  .orbital-5 .option:hover .tooltip { opacity: 1; }
+
+  /* Line connectors for orbital */
+  .orbital-5 .connector {
+    position: absolute; top: 50%; left: 50%; transform-origin: 0 0;
+    height: 1px; background: linear-gradient(90deg, #7c5cfc40, #3f3f4640);
+  }
+</style>
+</head>
+<body>
+
+<h1>Edit Wheel — Design Explorations</h1>
+<p class="subtitle">Click on each "selected element" to toggle the edit menu. 5 different approaches.</p>
+
+<div class="examples">
+
+<!-- ═══ OPTION 1: Radial Wheel ═══ -->
+<div class="example">
+  <div class="example-info">
+    <span class="tag">Option 1</span>
+    <h2>Radial Wheel</h2>
+    <p>Icons orbit in a circle around the click point. Compact, spatial, feels like a quick-access dial. Works well for 4-6 options. Inspired by Blender's pie menus and game radial menus.</p>
+  </div>
+  <div class="demo-area" id="demo1">
+    <div class="selected-element" onclick="toggle('wheel1')">
+      <h3>Hero Heading</h3>
+      <p>Click to see the radial wheel</p>
+    </div>
+    <div class="wheel-1" id="wheel1" style="top: 50%; left: 50%;">
+      <!-- 5 options around a circle, r=65px -->
+      <div class="option" style="top: -85px; left: -21px;" title="Edit Text">
+        <span class="tooltip">Edit Text</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      </div>
+      <div class="option" style="top: -30px; left: 52px;" title="AI Edit">
+        <span class="tooltip">AI Edit</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
+      <div class="option" style="top: 45px; left: 35px;" title="AI Replace">
+        <span class="tooltip">AI Replace</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+      </div>
+      <div class="option" style="top: 45px; left: -75px;" title="From Library">
+        <span class="tooltip">From Library</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      </div>
+      <div class="option" style="top: -30px; left: -95px;" title="Delete">
+        <span class="tooltip">Delete</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ OPTION 2: Arc Context Menu ═══ -->
+<div class="example">
+  <div class="example-info">
+    <span class="tag">Option 2</span>
+    <h2>Arc Context Menu</h2>
+    <p>Labeled options fan out in a soft arc from the selection point. Combines the spatial feel of a wheel with the clarity of text labels. Easy to scan and understand. Good for discoverability.</p>
+  </div>
+  <div class="demo-area" id="demo2">
+    <div class="selected-element" onclick="toggle('arc2')">
+      <h3>Feature Card</h3>
+      <p>Click to see the arc menu</p>
+    </div>
+    <div class="arc-2" id="arc2" style="top: 50%; left: 50%;">
+      <div class="option" style="top: -100px; left: -50px; transform: rotate(-8deg);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Edit Text
+      </div>
+      <div class="option" style="top: -70px; left: 60px; transform: rotate(-4deg);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        Edit with AI
+      </div>
+      <div class="option" style="top: -20px; left: 110px; transform: rotate(0deg);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+        Replace Section (AI)
+      </div>
+      <div class="option" style="top: 30px; left: 90px; transform: rotate(4deg);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Replace From Library
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ OPTION 3: Floating Pill Bar ═══ -->
+<div class="example">
+  <div class="example-info">
+    <span class="tag">Option 3</span>
+    <h2>Floating Pill Bar</h2>
+    <p>A compact horizontal toolbar that appears above the selection. Clean, minimal, familiar pattern from text editors (like Medium, Notion). Icons with tooltips on hover. Separator divides element vs section actions.</p>
+  </div>
+  <div class="demo-area" id="demo3">
+    <div class="selected-element" onclick="toggle('pill3')" style="margin-top: 60px;">
+      <h3>Testimonial Block</h3>
+      <p>Click to see the pill bar</p>
+    </div>
+    <div class="pill-3" id="pill3" style="top: calc(50% - 60px); left: 50%; transform: translateX(-50%);">
+      <div class="option" title="Edit Text">
+        <span class="tooltip">Edit Text</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      </div>
+      <div class="option" title="Edit with AI">
+        <span class="tooltip">AI Edit</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
+      <div class="sep"></div>
+      <div class="option" title="AI Replace Section">
+        <span class="tooltip">AI Replace</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+      </div>
+      <div class="option" title="Replace From Library">
+        <span class="tooltip">Library</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      </div>
+      <div class="sep"></div>
+      <div class="option" title="Delete">
+        <span class="tooltip">Delete</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ OPTION 4: Floating Cards ═══ -->
+<div class="example">
+  <div class="example-info">
+    <span class="tag">Option 4</span>
+    <h2>Floating Cards</h2>
+    <p>Small labeled cards rise above the selection. Each has an icon + label, lifts on hover. Visual weight makes actions feel important. Good for touch screens. Inspired by Apple's context menus.</p>
+  </div>
+  <div class="demo-area" id="demo4">
+    <div class="selected-element" onclick="toggle('cards4')" style="margin-top: 80px;">
+      <h3>CTA Section</h3>
+      <p>Click to see the floating cards</p>
+    </div>
+    <div class="cards-4" id="cards4" style="top: calc(50% - 65px); left: 50%; transform: translateX(-50%);">
+      <div class="card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        <span>Text</span>
+      </div>
+      <div class="card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        <span>AI Edit</span>
+      </div>
+      <div class="card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+        <span>Replace</span>
+      </div>
+      <div class="card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span>Library</span>
+      </div>
+      <div class="card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        <span>Delete</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ OPTION 5: Orbital Ring ═══ -->
+<div class="example">
+  <div class="example-info">
+    <span class="tag">Option 5</span>
+    <h2>Orbital Ring</h2>
+    <p>Options orbit on a faint ring with a glowing center dot. Rounded-square icons float at compass points. Feels premium and spatial. Connectors link each option to the center. Most visually distinctive.</p>
+  </div>
+  <div class="demo-area" id="demo5">
+    <div class="selected-element" onclick="toggle('orbital5')">
+      <h3>Navigation Bar</h3>
+      <p>Click to see the orbital ring</p>
+    </div>
+    <div class="orbital-5" id="orbital5" style="top: 50%; left: 50%;">
+      <div class="ring"></div>
+      <div class="center-dot"></div>
+      <!-- Connectors -->
+      <div class="connector" style="width: 60px; transform: rotate(-90deg) translateY(-0.5px);"></div>
+      <div class="connector" style="width: 60px; transform: rotate(-25deg) translateY(-0.5px);"></div>
+      <div class="connector" style="width: 60px; transform: rotate(25deg) translateY(-0.5px);"></div>
+      <div class="connector" style="width: 60px; transform: rotate(155deg) translateY(-0.5px);"></div>
+      <div class="connector" style="width: 60px; transform: rotate(205deg) translateY(-0.5px);"></div>
+      <!-- Options at compass points -->
+      <div class="option" style="top: -100px; left: -20px;">
+        <span class="tooltip">Edit Text</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      </div>
+      <div class="option" style="top: -50px; left: 55px;">
+        <span class="tooltip">AI Edit</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
+      <div class="option" style="top: 20px; left: 55px;">
+        <span class="tooltip">AI Replace</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+      </div>
+      <div class="option" style="top: 20px; left: -60px;">
+        <span class="tooltip">Library</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      </div>
+      <div class="option" style="top: -50px; left: -60px;">
+        <span class="tooltip">Delete</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+function toggle(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('show');
+}
+
+// Close menus when clicking outside
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.selected-element') && !e.target.closest('.wheel-1') && !e.target.closest('.arc-2') && !e.target.closest('.pill-3') && !e.target.closest('.cards-4') && !e.target.closest('.orbital-5')) {
+    document.querySelectorAll('.show').forEach(el => el.classList.remove('show'));
+  }
+});
+</script>
+
+</body>
+</html>

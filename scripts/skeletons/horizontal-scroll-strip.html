@@ -1,0 +1,76 @@
+<!-- HORIZONTAL SCROLL STRIP: Vertical scroll drives horizontal translate of milestone track -->
+<!-- Pattern: Pinned container; as user scrolls down, track translates left through milestones -->
+<!-- Requires: GSAP + ScrollTrigger -->
+<!-- Ref: https://report.adidas-group.com/2023/en/ -->
+
+<section class="hss-section" style="position:relative;height:400vh">
+  <div class="hss-sticky" style="position:sticky;top:0;height:100vh;overflow:hidden;display:flex;flex-direction:column">
+    <header class="hss-header" style="padding:60px 8vw 24px">
+      <span class="hss-eyebrow" data-eyebrow="optional" style="font-size:12px;letter-spacing:3px;text-transform:uppercase">[EYEBROW]</span>
+      <h2 class="hss-title" style="font-size:clamp(28px,3.6vw,56px);font-weight:700;margin:10px 0 0">[HEADLINE]</h2>
+    </header>
+    <div class="hss-track-wrap" style="flex:1;position:relative;overflow:hidden">
+      <div class="hss-track" data-track="horizontal" style="display:flex;gap:40px;padding:0 8vw;align-items:stretch;height:100%;will-change:transform">
+        <article class="hss-item" data-idx="0" style="flex:0 0 min(70vw,520px);height:80%;align-self:center;position:relative;border-radius:4px;overflow:hidden">
+          <div class="hss-img" style="position:absolute;inset:0;background-size:cover;background-position:center"></div>
+          <div class="hss-meta" style="position:absolute;left:24px;bottom:24px;right:24px;z-index:2;color:#fff">
+            <span class="hss-year" style="font-size:14px;letter-spacing:2px;font-weight:600">[YEAR_1]</span>
+            <h3 style="font-size:clamp(22px,2.4vw,32px);font-weight:700;margin:8px 0 0">[TITLE_1]</h3>
+          </div>
+        </article>
+        <article class="hss-item" data-idx="1" style="flex:0 0 min(70vw,520px);height:80%;align-self:center;position:relative;border-radius:4px;overflow:hidden">
+          <div class="hss-img" style="position:absolute;inset:0;background-size:cover;background-position:center"></div>
+          <div class="hss-meta" style="position:absolute;left:24px;bottom:24px;right:24px;z-index:2;color:#fff">
+            <span class="hss-year" style="font-size:14px;letter-spacing:2px;font-weight:600">[YEAR_2]</span>
+            <h3 style="font-size:clamp(22px,2.4vw,32px);font-weight:700;margin:8px 0 0">[TITLE_2]</h3>
+          </div>
+        </article>
+        <article class="hss-item" data-idx="2" style="flex:0 0 min(70vw,520px);height:80%;align-self:center;position:relative;border-radius:4px;overflow:hidden">
+          <div class="hss-img" style="position:absolute;inset:0;background-size:cover;background-position:center"></div>
+          <div class="hss-meta" style="position:absolute;left:24px;bottom:24px;right:24px;z-index:2;color:#fff">
+            <span class="hss-year" style="font-size:14px;letter-spacing:2px;font-weight:600">[YEAR_3]</span>
+            <h3 style="font-size:clamp(22px,2.4vw,32px);font-weight:700;margin:8px 0 0">[TITLE_3]</h3>
+          </div>
+        </article>
+        <article class="hss-item" data-idx="3" style="flex:0 0 min(70vw,520px);height:80%;align-self:center;position:relative;border-radius:4px;overflow:hidden">
+          <div class="hss-img" style="position:absolute;inset:0;background-size:cover;background-position:center"></div>
+          <div class="hss-meta" style="position:absolute;left:24px;bottom:24px;right:24px;z-index:2;color:#fff">
+            <span class="hss-year" style="font-size:14px;letter-spacing:2px;font-weight:600">[YEAR_4]</span>
+            <h3 style="font-size:clamp(22px,2.4vw,32px);font-weight:700;margin:8px 0 0">[TITLE_4]</h3>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+@media (prefers-reduced-motion: reduce) {
+  .hss-section { height: auto !important; }
+  .hss-sticky { position: static !important; height: auto !important; }
+  .hss-track-wrap { overflow: auto !important; }
+  .hss-track { transform: none !important; padding-bottom: 40px !important; }
+}
+</style>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const root = document.querySelector('.hss-section');
+const track = root.querySelector('.hss-track');
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+if (!prefersReducedMotion) {
+  const distance = () => track.scrollWidth - track.clientWidth;
+  gsap.to(track, {
+    x: () => -distance(),
+    ease: 'none',
+    scrollTrigger: {
+      trigger: root,
+      start: 'top top',
+      end: () => '+=' + distance(),
+      scrub: 0.6,
+      invalidateOnRefresh: true,
+    }
+  });
+}
+</script>

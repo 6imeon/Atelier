@@ -1,0 +1,63 @@
+<!-- WORLD MAP DOTS: SVG world map with animated pulsing dots at fixed coordinates -->
+<!-- Pattern: Muted world outline + N pulse-points with staggered CSS keyframe animation + label on hover -->
+<!-- Requires: CSS only (keyframes); SVG outline simplified — persona owner should supply real outline -->
+<!-- Ref: https://stripe.com/global -->
+<!-- Ref: https://www.airbnb.com/ -->
+<!-- Ref: https://wise.com/ -->
+
+<section class="wmd-section" style="position:relative;padding:120px 40px;max-width:1400px;margin:0 auto">
+  <header class="wmd-head" style="text-align:center;margin-bottom:60px;max-width:720px;margin-left:auto;margin-right:auto">
+    <span class="wmd-eyebrow" data-eyebrow="optional" style="font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:600;opacity:0.65">[EYEBROW]</span>
+    <h2 class="wmd-title" style="font-size:clamp(32px,4.4vw,72px);font-weight:700;margin:12px 0 16px;letter-spacing:-0.02em;line-height:1.05">[HEADLINE]</h2>
+    <p class="wmd-body" style="font-size:clamp(16px,1.4vw,20px);line-height:1.55;margin:0;opacity:0.75">[BODY]</p>
+  </header>
+
+  <div class="wmd-stage" data-stage="true" style="position:relative;width:100%;aspect-ratio:2/1;max-width:1100px;margin:0 auto">
+    <svg class="wmd-map" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet" aria-hidden="true" style="width:100%;height:100%;opacity:0.28">
+      <rect x="0" y="0" width="1000" height="500" fill="none" stroke="currentColor" stroke-width="0"/>
+      <path d="M 50 180 Q 120 150 200 170 T 350 180 T 500 170 T 700 190 T 880 180 L 920 220 L 880 260 L 700 280 L 500 290 L 350 280 L 200 290 L 120 280 Z" fill="currentColor" opacity="0.4"/>
+      <ellipse cx="180" cy="320" rx="60" ry="30" fill="currentColor" opacity="0.4"/>
+      <ellipse cx="560" cy="330" rx="80" ry="40" fill="currentColor" opacity="0.4"/>
+      <ellipse cx="780" cy="340" rx="50" ry="25" fill="currentColor" opacity="0.4"/>
+    </svg>
+
+    <div class="wmd-dot" data-dot="0" data-pos-x="22%" data-pos-y="34%" style="position:absolute;left:22%;top:34%;width:12px;height:12px;border-radius:50%;background:currentColor;transform:translate(-50%,-50%);cursor:pointer">
+      <span class="wmd-pulse" aria-hidden="true" style="position:absolute;inset:0;border-radius:50%;background:currentColor;animation:wmd-pulse 2.4s ease-out infinite"></span>
+      <span class="wmd-label" style="position:absolute;left:50%;top:-32px;transform:translateX(-50%);font-size:12px;font-weight:600;letter-spacing:1px;white-space:nowrap;padding:4px 10px;border-radius:4px;background:currentColor;pointer-events:none;opacity:0"><span style="color:#fff">[CITY_1]</span></span>
+    </div>
+    <div class="wmd-dot" data-dot="1" data-pos-x="48%" data-pos-y="38%" style="position:absolute;left:48%;top:38%;width:12px;height:12px;border-radius:50%;background:currentColor;transform:translate(-50%,-50%);cursor:pointer">
+      <span class="wmd-pulse" aria-hidden="true" style="position:absolute;inset:0;border-radius:50%;background:currentColor;animation:wmd-pulse 2.4s ease-out 0.3s infinite"></span>
+      <span class="wmd-label" style="position:absolute;left:50%;top:-32px;transform:translateX(-50%);font-size:12px;font-weight:600;letter-spacing:1px;white-space:nowrap;padding:4px 10px;border-radius:4px;background:currentColor;pointer-events:none;opacity:0"><span style="color:#fff">[CITY_2]</span></span>
+    </div>
+    <div class="wmd-dot" data-dot="2" data-pos-x="70%" data-pos-y="42%" style="position:absolute;left:70%;top:42%;width:12px;height:12px;border-radius:50%;background:currentColor;transform:translate(-50%,-50%);cursor:pointer">
+      <span class="wmd-pulse" aria-hidden="true" style="position:absolute;inset:0;border-radius:50%;background:currentColor;animation:wmd-pulse 2.4s ease-out 0.6s infinite"></span>
+      <span class="wmd-label" style="position:absolute;left:50%;top:-32px;transform:translateX(-50%);font-size:12px;font-weight:600;letter-spacing:1px;white-space:nowrap;padding:4px 10px;border-radius:4px;background:currentColor;pointer-events:none;opacity:0"><span style="color:#fff">[CITY_3]</span></span>
+    </div>
+    <div class="wmd-dot" data-dot="3" data-pos-x="82%" data-pos-y="35%" style="position:absolute;left:82%;top:35%;width:12px;height:12px;border-radius:50%;background:currentColor;transform:translate(-50%,-50%);cursor:pointer">
+      <span class="wmd-pulse" aria-hidden="true" style="position:absolute;inset:0;border-radius:50%;background:currentColor;animation:wmd-pulse 2.4s ease-out 0.9s infinite"></span>
+      <span class="wmd-label" style="position:absolute;left:50%;top:-32px;transform:translateX(-50%);font-size:12px;font-weight:600;letter-spacing:1px;white-space:nowrap;padding:4px 10px;border-radius:4px;background:currentColor;pointer-events:none;opacity:0"><span style="color:#fff">[CITY_4]</span></span>
+    </div>
+    <div class="wmd-dot" data-dot="4" data-pos-x="60%" data-pos-y="62%" style="position:absolute;left:60%;top:62%;width:12px;height:12px;border-radius:50%;background:currentColor;transform:translate(-50%,-50%);cursor:pointer">
+      <span class="wmd-pulse" aria-hidden="true" style="position:absolute;inset:0;border-radius:50%;background:currentColor;animation:wmd-pulse 2.4s ease-out 1.2s infinite"></span>
+      <span class="wmd-label" style="position:absolute;left:50%;top:-32px;transform:translateX(-50%);font-size:12px;font-weight:600;letter-spacing:1px;white-space:nowrap;padding:4px 10px;border-radius:4px;background:currentColor;pointer-events:none;opacity:0"><span style="color:#fff">[CITY_5]</span></span>
+    </div>
+  </div>
+
+  <div class="wmd-stats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:40px;max-width:900px;margin:60px auto 0;text-align:center">
+    <div><div style="font-size:clamp(36px,4vw,52px);font-weight:800;letter-spacing:-0.02em">[STAT_1]</div><div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;opacity:0.65;margin-top:6px">[LABEL_1]</div></div>
+    <div><div style="font-size:clamp(36px,4vw,52px);font-weight:800;letter-spacing:-0.02em">[STAT_2]</div><div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;opacity:0.65;margin-top:6px">[LABEL_2]</div></div>
+    <div><div style="font-size:clamp(36px,4vw,52px);font-weight:800;letter-spacing:-0.02em">[STAT_3]</div><div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;opacity:0.65;margin-top:6px">[LABEL_3]</div></div>
+  </div>
+</section>
+
+<style>
+@keyframes wmd-pulse {
+  0% { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(4); opacity: 0; }
+}
+.wmd-section .wmd-label { transition: opacity 0.2s ease; }
+.wmd-section .wmd-dot:hover .wmd-label { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .wmd-section .wmd-pulse { animation: none !important; opacity: 0 !important; }
+}
+</style>

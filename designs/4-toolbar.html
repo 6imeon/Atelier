@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atelier — Toolbar Redesign</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #f5f5f7; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 48px; padding: 60px; }
+
+  .toolbar-demo {
+    display: flex; align-items: center; gap: 8px;
+    padding: 20px 32px;
+    background: white; border-radius: 20px;
+    border: 1px solid rgba(0,0,0,0.04);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.03);
+  }
+
+  .tg {
+    display: flex; align-items: center;
+    background: #fafafa; border-radius: 10px; padding: 3px;
+  }
+  .tb {
+    width: 34px; height: 34px; border: none; border-radius: 8px;
+    background: transparent; color: #9ca3af; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; font-size: 15px;
+  }
+  .tb:hover { background: white; color: #6b7280; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .tb.active { background: white; color: #6366f1; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .tb svg { width: 16px; height: 16px; }
+
+  .tz {
+    padding: 0 10px; font-size: 12px; font-weight: 500; color: #9ca3af;
+    background: transparent; border: none; cursor: pointer;
+    font-family: inherit; min-width: 44px; text-align: center;
+    transition: color 0.15s;
+  }
+  .tz:hover { color: #6b7280; }
+
+  .sep { width: 1px; height: 24px; background: rgba(0,0,0,0.06); margin: 0 4px; }
+
+  .pill {
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 12px; border-radius: 8px;
+    background: #fafafa; font-size: 11px; font-weight: 500; color: #9ca3af;
+  }
+  .pill-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .pill-dot.green { background: #22c55e; }
+  .pill-dot.blue { background: #6366f1; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  h3 { font-size: 11px; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; text-align: center; }
+
+  .row { display: flex; flex-direction: column; align-items: center; }
+</style>
+</head>
+<body>
+
+<!-- Minimal toolbar -->
+<div class="row">
+  <h3>Minimal — Default</h3>
+  <div class="toolbar-demo">
+    <div class="tg">
+      <button class="tb" title="Select">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/></svg>
+      </button>
+      <button class="tb active" title="Hand tool">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 11V6a2 2 0 0 0-4 0m0 5V4a2 2 0 0 0-4 0v6m0 0V3a2 2 0 0 0-4 0v9m16 0a8 8 0 0 1-8 8h-1a8 8 0 0 1-8-8V9"/></svg>
+      </button>
+    </div>
+
+    <div class="sep"></div>
+
+    <div class="tg">
+      <button class="tb">&minus;</button>
+      <button class="tz">45%</button>
+      <button class="tb">+</button>
+    </div>
+
+    <div class="sep"></div>
+
+    <div class="pill">
+      <div class="pill-dot green"></div>
+      3 screens
+    </div>
+  </div>
+</div>
+
+<!-- Generating state -->
+<div class="row">
+  <h3>Generating State</h3>
+  <div class="toolbar-demo">
+    <div class="tg">
+      <button class="tb">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/></svg>
+      </button>
+      <button class="tb active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 11V6a2 2 0 0 0-4 0m0 5V4a2 2 0 0 0-4 0v6m0 0V3a2 2 0 0 0-4 0v9m16 0a8 8 0 0 1-8 8h-1a8 8 0 0 1-8-8V9"/></svg>
+      </button>
+    </div>
+
+    <div class="sep"></div>
+
+    <div class="tg">
+      <button class="tb">&minus;</button>
+      <button class="tz">45%</button>
+      <button class="tb">+</button>
+    </div>
+
+    <div class="sep"></div>
+
+    <div class="pill" style="color: #6366f1;">
+      <div class="pill-dot blue"></div>
+      Generating...
+    </div>
+  </div>
+</div>
+
+<!-- Compact variant -->
+<div class="row">
+  <h3>Compact — Zoom Only</h3>
+  <div class="toolbar-demo" style="padding: 12px 20px;">
+    <div class="tg">
+      <button class="tb" style="width:30px; height:30px;">&minus;</button>
+      <button class="tz" style="font-size:11px;">45%</button>
+      <button class="tb" style="width:30px; height:30px;">+</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

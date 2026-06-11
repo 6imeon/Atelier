@@ -1,0 +1,83 @@
+<!-- STICKY FEATURE LIST: Sticky media column; scrolling text items drive image swap -->
+<!-- Pattern: Left column sticky media; right column is scrolling feature blocks that activate the matching media -->
+<!-- Requires: GSAP + ScrollTrigger -->
+<!-- Ref: https://stripe.com/payments -->
+<!-- Ref: https://www.apple.com/iphone-15-pro/ -->
+<!-- Ref: https://linear.app/method -->
+
+<section class="sfl-section" style="position:relative;padding:80px 40px;max-width:1400px;margin:0 auto">
+  <header class="sfl-head" style="margin-bottom:60px;max-width:720px">
+    <span class="sfl-eyebrow" data-eyebrow="optional" style="font-size:12px;letter-spacing:3px;text-transform:uppercase">[EYEBROW]</span>
+    <h2 class="sfl-title" style="font-size:clamp(28px,3.6vw,56px);font-weight:700;margin:10px 0 0;line-height:1.1">[HEADLINE]</h2>
+  </header>
+
+  <div class="sfl-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:flex-start">
+    <div class="sfl-media-col" style="position:sticky;top:100px;height:min(560px, 70vh)">
+      <div class="sfl-media-stack" style="position:relative;width:100%;height:100%;border-radius:12px;overflow:hidden">
+        <div class="sfl-media is-active" data-media="0" style="position:absolute;inset:0;background-size:cover;background-position:center;opacity:1"></div>
+        <div class="sfl-media" data-media="1" style="position:absolute;inset:0;background-size:cover;background-position:center;opacity:0"></div>
+        <div class="sfl-media" data-media="2" style="position:absolute;inset:0;background-size:cover;background-position:center;opacity:0"></div>
+      </div>
+    </div>
+
+    <div class="sfl-text-col">
+      <article class="sfl-item is-active" data-item="0" style="padding:80px 0">
+        <span class="sfl-idx" style="font-size:13px;letter-spacing:3px;font-weight:600;opacity:0.55">[INDEX_1]</span>
+        <h3 style="font-size:clamp(24px,2.4vw,34px);font-weight:700;margin:12px 0 16px">[TITLE_1]</h3>
+        <p style="font-size:17px;line-height:1.6;margin:0">[BODY_1]</p>
+      </article>
+      <article class="sfl-item" data-item="1" style="padding:80px 0">
+        <span class="sfl-idx" style="font-size:13px;letter-spacing:3px;font-weight:600;opacity:0.55">[INDEX_2]</span>
+        <h3 style="font-size:clamp(24px,2.4vw,34px);font-weight:700;margin:12px 0 16px">[TITLE_2]</h3>
+        <p style="font-size:17px;line-height:1.6;margin:0">[BODY_2]</p>
+      </article>
+      <article class="sfl-item" data-item="2" style="padding:80px 0">
+        <span class="sfl-idx" style="font-size:13px;letter-spacing:3px;font-weight:600;opacity:0.55">[INDEX_3]</span>
+        <h3 style="font-size:clamp(24px,2.4vw,34px);font-weight:700;margin:12px 0 16px">[TITLE_3]</h3>
+        <p style="font-size:17px;line-height:1.6;margin:0">[BODY_3]</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+.sfl-section .sfl-media { transition: opacity 0.5s ease; }
+.sfl-section .sfl-item { transition: opacity 0.35s ease; opacity: 0.35; }
+.sfl-section .sfl-item.is-active { opacity: 1; }
+@media (max-width: 900px) {
+  .sfl-section .sfl-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+  .sfl-section .sfl-media-col { position: static !important; height: auto !important; aspect-ratio: 4/3; }
+  .sfl-section .sfl-item { padding: 40px 0 !important; opacity: 1 !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sfl-section .sfl-media, .sfl-section .sfl-item { transition: none !important; opacity: 1 !important; }
+  .sfl-section .sfl-media-col { position: static !important; height: auto !important; aspect-ratio: 4/3; }
+}
+</style>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const sflRoot = document.querySelector('.sfl-section');
+const sflPrefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+if (!sflPrefersReduced) {
+  const items = sflRoot.querySelectorAll('.sfl-item');
+  const medias = sflRoot.querySelectorAll('.sfl-media');
+  items.forEach((item, i) => {
+    ScrollTrigger.create({
+      trigger: item,
+      start: 'top center',
+      end: 'bottom center',
+      onToggle: (self) => {
+        if (self.isActive) {
+          items.forEach(x => x.classList.remove('is-active'));
+          medias.forEach(x => { x.classList.remove('is-active'); x.style.opacity = '0'; });
+          item.classList.add('is-active');
+          const m = medias[i];
+          if (m) { m.classList.add('is-active'); m.style.opacity = '1'; }
+        }
+      }
+    });
+  });
+}
+</script>

@@ -1,0 +1,53 @@
+<!-- MAGNETIC CTA: Button translates toward cursor within a radius, eases back on leave -->
+<!-- Pattern: Hero-scale CTA with pointer-tracked translate; subtle scale on hover -->
+<!-- Requires: Minimal JS (pointer tracking) -->
+<!-- Ref: https://www.awwwards.com/ -->
+<!-- Ref: https://www.framer.com/ -->
+<!-- Ref: https://linear.app/ -->
+
+<section class="mcta-section" style="position:relative;padding:140px 40px;max-width:1200px;margin:0 auto;text-align:center">
+  <header class="mcta-head" style="margin-bottom:48px;max-width:720px;margin-left:auto;margin-right:auto">
+    <span class="mcta-eyebrow" data-eyebrow="optional" style="font-size:12px;letter-spacing:3px;text-transform:uppercase">[EYEBROW]</span>
+    <h2 class="mcta-title" style="font-size:clamp(36px,5vw,72px);font-weight:700;margin:10px 0 16px;line-height:1.05">[HEADLINE]</h2>
+    <p class="mcta-body" style="font-size:clamp(16px,1.4vw,20px);line-height:1.6;margin:0 auto;max-width:560px;opacity:0.75">[BODY]</p>
+  </header>
+
+  <div class="mcta-wrap" data-magnetic="true" style="display:inline-block;position:relative">
+    <a class="mcta-btn" href="#" data-cta="primary" style="display:inline-flex;align-items:center;gap:10px;padding:20px 40px;border-radius:999px;background:currentColor;color:#fff;font-size:17px;font-weight:600;text-decoration:none;will-change:transform">
+      <span class="mcta-btn-label" style="color:#000">[CTA]</span>
+      <span class="mcta-btn-arrow" aria-hidden="true" style="color:#000;font-size:18px">→</span>
+    </a>
+  </div>
+</section>
+
+<style>
+.mcta-section .mcta-wrap { transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.mcta-section .mcta-btn { transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.mcta-section .mcta-wrap:hover .mcta-btn { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) {
+  .mcta-section .mcta-wrap, .mcta-section .mcta-btn { transition: none !important; transform: none !important; }
+}
+</style>
+
+<script>
+const mctaRoot = document.querySelector('.mcta-section');
+const mctaPrefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+if (!mctaPrefersReduced) {
+  mctaRoot.querySelectorAll('[data-magnetic="true"]').forEach(wrap => {
+    const btn = wrap.querySelector('.mcta-btn');
+    const strength = 0.35;
+    wrap.addEventListener('pointermove', (e) => {
+      const r = wrap.getBoundingClientRect();
+      const dx = (e.clientX - (r.left + r.width / 2)) * strength;
+      const dy = (e.clientY - (r.top + r.height / 2)) * strength;
+      wrap.style.transform = `translate(${dx}px, ${dy}px)`;
+      btn.style.transform = `translate(${dx * 0.3}px, ${dy * 0.3}px)`;
+    });
+    wrap.addEventListener('pointerleave', () => {
+      wrap.style.transform = '';
+      btn.style.transform = '';
+    });
+  });
+}
+</script>

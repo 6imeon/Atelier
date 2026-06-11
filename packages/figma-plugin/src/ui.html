@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', -apple-system, sans-serif; font-size: 12px; color: #333; background: var(--figma-color-bg, #fff); }
+    .container { padding: 16px; display: flex; flex-direction: column; gap: 12px; height: 100vh; }
+    
+    .header { display: flex; align-items: center; gap: 8px; }
+    .logo { width: 24px; height: 24px; background: linear-gradient(135deg, #E8FF59, #59FFD2); border-radius: 5px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; color: #0A0A0F; }
+    .title { font-size: 14px; font-weight: 600; }
+    
+    .input-group { display: flex; flex-direction: column; gap: 4px; }
+    .label { font-size: 11px; color: #666; font-weight: 500; }
+    input, select { padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 12px; outline: none; }
+    input:focus, select:focus { border-color: #59FFD2; box-shadow: 0 0 0 2px rgba(89,255,210,0.15); }
+    
+    .btn { padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-size: 12px; font-weight: 500; transition: all 0.15s; }
+    .btn-primary { background: #0A0A0F; color: #E8FF59; }
+    .btn-primary:hover { background: #1a1a25; }
+    .btn-secondary { background: #f0f0f0; color: #333; }
+    .btn-secondary:hover { background: #e0e0e0; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    
+    .screen-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+    .screen-card { padding: 10px; border: 1px solid #eee; border-radius: 8px; cursor: pointer; transition: all 0.15s; display: flex; gap: 10px; align-items: center; }
+    .screen-card:hover { border-color: #59FFD2; background: rgba(89,255,210,0.03); }
+    .screen-card.selected { border-color: #E8FF59; background: rgba(232,255,89,0.05); }
+    .screen-thumb { width: 48px; height: 36px; background: #f5f5f5; border-radius: 4px; flex-shrink: 0; overflow: hidden; }
+    .screen-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .screen-info { flex: 1; min-width: 0; }
+    .screen-prompt { font-size: 11px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .screen-meta { font-size: 10px; color: #999; margin-top: 2px; }
+    
+    .status { padding: 8px; border-radius: 6px; font-size: 11px; text-align: center; }
+    .status-success { background: rgba(89,255,210,0.1); color: #0a8a5e; }
+    .status-error { background: rgba(255,89,118,0.1); color: #c0392b; }
+    .status-loading { background: rgba(255,140,89,0.1); color: #e67e22; }
+    
+    .divider { height: 1px; background: #eee; }
+    .actions { display: flex; gap: 8px; }
+    .actions .btn { flex: 1; }
+    
+    .tab-bar { display: flex; border-bottom: 1px solid #eee; }
+    .tab { padding: 8px 16px; font-size: 11px; font-weight: 500; color: #888; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; }
+    .tab.active { color: #333; border-bottom-color: #E8FF59; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">A</div>
+      <span class="title">Atelier</span>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-bar">
+      <div class="tab active" data-tab="screens" onclick="switchTab('screens')">Screens</div>
+      <div class="tab" data-tab="generate" onclick="switchTab('generate')">Generate</div>
+      <div class="tab" data-tab="design" onclick="switchTab('design')">Design System</div>
+    </div>
+
+    <!-- Screens Tab -->
+    <div id="tab-screens">
+      <div class="input-group">
+        <label class="label">API Endpoint</label>
+        <input id="api-url" type="text" value="http://localhost:8080" placeholder="Atelier server URL" />
+      </div>
+
+      <div class="input-group">
+        <label class="label">Project ID</label>
+        <input id="project-id" type="text" placeholder="proj_xxxxx" />
+      </div>
+
+      <button class="btn btn-secondary" onclick="loadScreens()" style="width:100%">Load Screens</button>
+
+      <div class="divider"></div>
+
+      <div class="screen-list" id="screen-list">
+        <div style="color:#999; text-align:center; padding:20px; font-size:11px;">
+          Enter a project ID and click Load to see screens
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" id="import-btn" disabled onclick="importSelected()">
+          Import Selected
+        </button>
+        <button class="btn btn-secondary" id="import-all-btn" disabled onclick="importAll()">
+          Import All
+        </button>
+      </div>
+    </div>
+
+    <!-- Generate Tab -->
+    <div id="tab-generate" style="display:none">
+      <div class="input-group">
+        <label class="label">Describe a UI to generate</label>
+        <input id="gen-prompt" type="text" placeholder="A dark dashboard with KPI cards…" />
+      </div>
+
+      <div class="input-group">
+        <label class="label">Device</label>
+        <select id="gen-device">
+          <option value="DESKTOP">Desktop (1440×900)</option>
+          <option value="MOBILE">Mobile (390×844)</option>
+          <option value="TABLET">Tablet (820×1180)</option>
+        </select>
+      </div>
+
+      <button class="btn btn-primary" onclick="generateAndImport()" style="width:100%">
+        Generate & Import to Figma
+      </button>
+
+      <div id="gen-status"></div>
+    </div>
+
+    <!-- Design System Tab -->
+    <div id="tab-design" style="display:none">
+      <div class="input-group">
+        <label class="label">Extract design system from URL</label>
+        <input id="ds-url" type="text" placeholder="https://stripe.com" />
+      </div>
+
+      <button class="btn btn-primary" onclick="extractDesignSystem()" style="width:100%">
+        Extract & Import as Styles
+      </button>
+
+      <div id="ds-status"></div>
+    </div>
+
+    <div id="global-status"></div>
+  </div>
+
+  <script>
+    let screens = [];
+    let selectedScreenId = null;
+
+    // Tab switching
+    function switchTab(tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelector(`.tab[data-tab="${tab}"]`).classList.add('active');
+      document.querySelectorAll('[id^="tab-"]').forEach(el => el.style.display = 'none');
+      document.getElementById(`tab-${tab}`).style.display = '';
+    }
+
+    // API helper
+    async function apiFetch(path, opts = {}) {
+      const base = document.getElementById('api-url').value;
+      const res = await fetch(`${base}${path}`, {
+        headers: { 'Content-Type': 'application/json' },
+        ...opts,
+      });
+      if (!res.ok) throw new Error(`API error: ${res.status}`);
+      return res.json();
+    }
+
+    // Load screens
+    async function loadScreens() {
+      const projectId = document.getElementById('project-id').value;
+      if (!projectId) return;
+
+      showStatus('global-status', 'Loading screens…', 'loading');
+
+      try {
+        screens = await apiFetch(`/api/projects/${projectId}/screens`);
+        renderScreenList();
+        showStatus('global-status', `Loaded ${screens.length} screens`, 'success');
+        document.getElementById('import-all-btn').disabled = screens.length === 0;
+      } catch (e) {
+        showStatus('global-status', e.message, 'error');
+      }
+    }
+
+    // Render screen list
+    function renderScreenList() {
+      const list = document.getElementById('screen-list');
+      if (screens.length === 0) {
+        list.innerHTML = '<div style="color:#999;text-align:center;padding:20px;font-size:11px">No screens found</div>';
+        return;
+      }
+
+      list.innerHTML = screens.map(s => `
+        <div class="screen-card ${s.id === selectedScreenId ? 'selected' : ''}" onclick="selectScreen('${s.id}')">
+          <div class="screen-thumb">
+            ${s.screenshot ? `<img src="${document.getElementById('api-url').value}/api/assets/${s.screenshot}" />` : ''}
+          </div>
+          <div class="screen-info">
+            <div class="screen-prompt">${s.prompt}</div>
+            <div class="screen-meta">${s.deviceType} · ${s.id.slice(0, 12)}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Select screen
+    function selectScreen(id) {
+      selectedScreenId = id;
+      renderScreenList();
+      document.getElementById('import-btn').disabled = false;
+    }
+
+    // Import selected
+    function importSelected() {
+      const screen = screens.find(s => s.id === selectedScreenId);
+      if (!screen) return;
+      parent.postMessage({ pluginMessage: { type: 'import-screen', data: screen } }, '*');
+      showStatus('global-status', 'Importing to Figma…', 'loading');
+    }
+
+    // Import all
+    async function importAll() {
+      showStatus('global-status', `Importing ${screens.length} screens…`, 'loading');
+      for (const screen of screens) {
+        parent.postMessage({ pluginMessage: { type: 'import-screen', data: screen } }, '*');
+        await new Promise(r => setTimeout(r, 500)); // stagger
+      }
+    }
+
+    // Generate and import
+    async function generateAndImport() {
+      const prompt = document.getElementById('gen-prompt').value;
+      const device = document.getElementById('gen-device').value;
+      const projectId = document.getElementById('project-id').value || 'default';
+
+      if (!prompt) return;
+
+      showStatus('gen-status', 'Generating UI…', 'loading');
+
+      try {
+        const result = await apiFetch(`/api/projects/${projectId}/screens/generate`, {
+          method: 'POST',
+          body: JSON.stringify({ prompt, deviceType: device }),
+        });
+
+        parent.postMessage({
+          pluginMessage: {
+            type: 'import-screen',
+            data: { screenId: result.screenId, prompt, html: result.html, deviceType: device },
+          },
+        }, '*');
+
+        showStatus('gen-status', 'Generated & importing to Figma!', 'success');
+      } catch (e) {
+        showStatus('gen-status', e.message, 'error');
+      }
+    }
+
+    // Extract design system
+    async function extractDesignSystem() {
+      const url = document.getElementById('ds-url').value;
+      const projectId = document.getElementById('project-id').value || 'default';
+      if (!url) return;
+
+      showStatus('ds-status', 'Extracting design system…', 'loading');
+
+      try {
+        const system = await apiFetch(`/api/projects/${projectId}/design-system/extract`, {
+          method: 'POST',
+          body: JSON.stringify({ url }),
+        });
+
+        parent.postMessage({
+          pluginMessage: { type: 'import-design-system', data: system },
+        }, '*');
+
+        showStatus('ds-status', 'Design system imported as Figma styles!', 'success');
+      } catch (e) {
+        showStatus('ds-status', e.message, 'error');
+      }
+    }
+
+    // Status helper
+    function showStatus(id, msg, type) {
+      const el = document.getElementById(id);
+      el.className = `status status-${type}`;
+      el.textContent = msg;
+      if (type === 'success') setTimeout(() => el.textContent = '', 3000);
+    }
+
+    // Listen for messages from plugin backend
+    onmessage = (event) => {
+      const msg = event.data.pluginMessage;
+      if (!msg) return;
+      if (msg.type === 'import-complete') {
+        showStatus('global-status', `Imported ${msg.screenId}`, 'success');
+      }
+      if (msg.type === 'design-system-imported') {
+        showStatus('ds-status', 'Styles created in Figma!', 'success');
+      }
+    };
+  </script>
+</body>
+</html>

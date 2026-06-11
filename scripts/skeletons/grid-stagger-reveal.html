@@ -1,0 +1,78 @@
+<!-- GRID STAGGER REVEAL: Grid of cards staggers in on viewport entry (fade + translate up) -->
+<!-- Pattern: 3×2 grid; each card delays its entrance — feels choreographed, not simultaneous -->
+<!-- Requires: GSAP + ScrollTrigger (with IntersectionObserver fallback via reduced-motion) -->
+<!-- Ref: https://linear.app/ -->
+<!-- Ref: https://www.framer.com/ -->
+<!-- Ref: https://www.notion.so/ -->
+
+<section class="gsr-section" style="position:relative;padding:140px 40px;max-width:1400px;margin:0 auto">
+  <header class="gsr-head" style="text-align:center;margin-bottom:72px;max-width:720px;margin-left:auto;margin-right:auto">
+    <span class="gsr-eyebrow" data-eyebrow="optional" style="font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:600;opacity:0.65">[EYEBROW]</span>
+    <h2 class="gsr-title" style="font-size:clamp(32px,4.4vw,72px);font-weight:700;margin:12px 0 0;letter-spacing:-0.02em;line-height:1.05">[HEADLINE]</h2>
+  </header>
+
+  <div class="gsr-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px">
+    <article class="gsr-card" data-card="0" style="position:relative;padding:40px;border:1px solid currentColor;border-color:rgba(128,128,128,0.25);border-radius:12px;will-change:opacity,transform">
+      <div class="gsr-icon" aria-hidden="true" style="width:48px;height:48px;border-radius:10px;background:currentColor;opacity:0.08;margin-bottom:24px"></div>
+      <h3 style="font-size:22px;font-weight:700;margin:0 0 12px;letter-spacing:-0.01em">[TITLE_1]</h3>
+      <p style="font-size:15px;line-height:1.6;margin:0;opacity:0.75">[BODY_1]</p>
+    </article>
+    <article class="gsr-card" data-card="1" style="position:relative;padding:40px;border:1px solid currentColor;border-color:rgba(128,128,128,0.25);border-radius:12px;will-change:opacity,transform">
+      <div class="gsr-icon" aria-hidden="true" style="width:48px;height:48px;border-radius:10px;background:currentColor;opacity:0.08;margin-bottom:24px"></div>
+      <h3 style="font-size:22px;font-weight:700;margin:0 0 12px;letter-spacing:-0.01em">[TITLE_2]</h3>
+      <p style="font-size:15px;line-height:1.6;margin:0;opacity:0.75">[BODY_2]</p>
+    </article>
+    <article class="gsr-card" data-card="2" style="position:relative;padding:40px;border:1px solid currentColor;border-color:rgba(128,128,128,0.25);border-radius:12px;will-change:opacity,transform">
+      <div class="gsr-icon" aria-hidden="true" style="width:48px;height:48px;border-radius:10px;background:currentColor;opacity:0.08;margin-bottom:24px"></div>
+      <h3 style="font-size:22px;font-weight:700;margin:0 0 12px;letter-spacing:-0.01em">[TITLE_3]</h3>
+      <p style="font-size:15px;line-height:1.6;margin:0;opacity:0.75">[BODY_3]</p>
+    </article>
+    <article class="gsr-card" data-card="3" style="position:relative;padding:40px;border:1px solid currentColor;border-color:rgba(128,128,128,0.25);border-radius:12px;will-change:opacity,transform">
+      <div class="gsr-icon" aria-hidden="true" style="width:48px;height:48px;border-radius:10px;background:currentColor;opacity:0.08;margin-bottom:24px"></div>
+      <h3 style="font-size:22px;font-weight:700;margin:0 0 12px;letter-spacing:-0.01em">[TITLE_4]</h3>
+      <p style="font-size:15px;line-height:1.6;margin:0;opacity:0.75">[BODY_4]</p>
+    </article>
+    <article class="gsr-card" data-card="4" style="position:relative;padding:40px;border:1px solid currentColor;border-color:rgba(128,128,128,0.25);border-radius:12px;will-change:opacity,transform">
+      <div class="gsr-icon" aria-hidden="true" style="width:48px;height:48px;border-radius:10px;background:currentColor;opacity:0.08;margin-bottom:24px"></div>
+      <h3 style="font-size:22px;font-weight:700;margin:0 0 12px;letter-spacing:-0.01em">[TITLE_5]</h3>
+      <p style="font-size:15px;line-height:1.6;margin:0;opacity:0.75">[BODY_5]</p>
+    </article>
+    <article class="gsr-card" data-card="5" style="position:relative;padding:40px;border:1px solid currentColor;border-color:rgba(128,128,128,0.25);border-radius:12px;will-change:opacity,transform">
+      <div class="gsr-icon" aria-hidden="true" style="width:48px;height:48px;border-radius:10px;background:currentColor;opacity:0.08;margin-bottom:24px"></div>
+      <h3 style="font-size:22px;font-weight:700;margin:0 0 12px;letter-spacing:-0.01em">[TITLE_6]</h3>
+      <p style="font-size:15px;line-height:1.6;margin:0;opacity:0.75">[BODY_6]</p>
+    </article>
+  </div>
+</section>
+
+<style>
+.gsr-section .gsr-card { opacity: 0; transform: translateY(32px); }
+@media (max-width: 900px) { .gsr-section .gsr-grid { grid-template-columns: 1fr 1fr !important; } }
+@media (max-width: 560px) { .gsr-section .gsr-grid { grid-template-columns: 1fr !important; } }
+@media (prefers-reduced-motion: reduce) {
+  .gsr-section .gsr-card { opacity: 1 !important; transform: none !important; }
+}
+</style>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const gsrRoot = document.querySelector('.gsr-section');
+const gsrPrefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+if (!gsrPrefersReduced) {
+  gsap.to(gsrRoot.querySelectorAll('.gsr-card'), {
+    opacity: 1,
+    y: 0,
+    ease: 'power2.out',
+    duration: 0.65,
+    stagger: 0.09,
+    scrollTrigger: {
+      trigger: gsrRoot,
+      start: 'top 70%',
+      once: true,
+    }
+  });
+} else {
+  gsrRoot.querySelectorAll('.gsr-card').forEach(c => { c.style.opacity = '1'; c.style.transform = 'none'; });
+}
+</script>

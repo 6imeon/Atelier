@@ -1,0 +1,68 @@
+<!-- BENTO GRID HOVER: Asymmetric card grid with hover-scale media and reveal copy -->
+<!-- Pattern: 4-6 tiles of varying spans; hover lifts card, scales media, fades caption in -->
+<!-- Requires: CSS only -->
+<!-- Ref: https://www.apple.com/apple-intelligence/ -->
+<!-- Ref: https://linear.app/features -->
+<!-- Ref: https://vercel.com/home -->
+
+<section class="bgh-section" style="position:relative;padding:100px 40px;max-width:1400px;margin:0 auto">
+  <header class="bgh-head" style="margin-bottom:48px;max-width:720px">
+    <span class="bgh-eyebrow" data-eyebrow="optional" style="font-size:12px;letter-spacing:3px;text-transform:uppercase">[EYEBROW]</span>
+    <h2 class="bgh-title" style="font-size:clamp(28px,3.6vw,56px);font-weight:700;margin:10px 0 0;line-height:1.1">[HEADLINE]</h2>
+  </header>
+
+  <div class="bgh-grid" style="display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:minmax(220px,auto);gap:16px">
+    <article class="bgh-card" data-card="0" style="grid-column:span 4;grid-row:span 2;position:relative;border-radius:16px;overflow:hidden;background:#111;color:#fff;cursor:pointer">
+      <div class="bgh-card-media" style="position:absolute;inset:0;background-size:cover;background-position:center"></div>
+      <div class="bgh-card-copy" style="position:absolute;inset:auto 0 0 0;padding:32px;z-index:2">
+        <h3 style="font-size:clamp(22px,2.4vw,34px);font-weight:700;margin:0 0 8px">[TITLE_1]</h3>
+        <p class="bgh-card-desc" style="font-size:15px;line-height:1.5;margin:0;opacity:0.78">[BODY_1]</p>
+      </div>
+    </article>
+    <article class="bgh-card" data-card="1" style="grid-column:span 2;grid-row:span 1;position:relative;border-radius:16px;overflow:hidden;background:#1a1a1a;color:#fff;cursor:pointer">
+      <div class="bgh-card-media" style="position:absolute;inset:0;background-size:cover;background-position:center"></div>
+      <div class="bgh-card-copy" style="position:absolute;inset:auto 0 0 0;padding:24px;z-index:2">
+        <h3 style="font-size:clamp(18px,1.6vw,22px);font-weight:700;margin:0 0 6px">[TITLE_2]</h3>
+        <p class="bgh-card-desc" style="font-size:13px;line-height:1.5;margin:0;opacity:0.78">[BODY_2]</p>
+      </div>
+    </article>
+    <article class="bgh-card" data-card="2" style="grid-column:span 2;grid-row:span 1;position:relative;border-radius:16px;overflow:hidden;background:#1a1a1a;color:#fff;cursor:pointer">
+      <div class="bgh-card-media" style="position:absolute;inset:0;background-size:cover;background-position:center"></div>
+      <div class="bgh-card-copy" style="position:absolute;inset:auto 0 0 0;padding:24px;z-index:2">
+        <h3 style="font-size:clamp(18px,1.6vw,22px);font-weight:700;margin:0 0 6px">[TITLE_3]</h3>
+        <p class="bgh-card-desc" style="font-size:13px;line-height:1.5;margin:0;opacity:0.78">[BODY_3]</p>
+      </div>
+    </article>
+    <article class="bgh-card" data-card="3" style="grid-column:span 3;grid-row:span 1;position:relative;border-radius:16px;overflow:hidden;background:#1a1a1a;color:#fff;cursor:pointer">
+      <div class="bgh-card-media" style="position:absolute;inset:0;background-size:cover;background-position:center"></div>
+      <div class="bgh-card-copy" style="position:absolute;inset:auto 0 0 0;padding:24px;z-index:2">
+        <h3 style="font-size:clamp(20px,2vw,28px);font-weight:700;margin:0 0 6px">[TITLE_4]</h3>
+        <p class="bgh-card-desc" style="font-size:14px;line-height:1.5;margin:0;opacity:0.78">[BODY_4]</p>
+      </div>
+    </article>
+    <article class="bgh-card" data-card="4" style="grid-column:span 3;grid-row:span 1;position:relative;border-radius:16px;overflow:hidden;background:#1a1a1a;color:#fff;cursor:pointer">
+      <div class="bgh-card-media" style="position:absolute;inset:0;background-size:cover;background-position:center"></div>
+      <div class="bgh-card-copy" style="position:absolute;inset:auto 0 0 0;padding:24px;z-index:2">
+        <h3 style="font-size:clamp(20px,2vw,28px);font-weight:700;margin:0 0 6px">[TITLE_5]</h3>
+        <p class="bgh-card-desc" style="font-size:14px;line-height:1.5;margin:0;opacity:0.78">[BODY_5]</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<style>
+.bgh-section .bgh-card { transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.45s ease; }
+.bgh-section .bgh-card-media { transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.bgh-section .bgh-card-desc { transition: opacity 0.35s ease, transform 0.35s ease; }
+.bgh-section .bgh-card:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.25); }
+.bgh-section .bgh-card:hover .bgh-card-media { transform: scale(1.06); }
+@media (max-width: 900px) {
+  .bgh-section .bgh-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .bgh-section .bgh-card { grid-column: span 2 !important; grid-row: span 1 !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bgh-section .bgh-card, .bgh-section .bgh-card-media, .bgh-section .bgh-card-desc { transition: none !important; }
+  .bgh-section .bgh-card:hover { transform: none !important; }
+  .bgh-section .bgh-card:hover .bgh-card-media { transform: none !important; }
+}
+</style>

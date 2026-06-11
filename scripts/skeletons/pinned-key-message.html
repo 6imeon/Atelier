@@ -1,0 +1,45 @@
+<!-- PINNED KEY MESSAGE: Word-by-word headline reveal on scroll, pinned -->
+<!-- Pattern: Section pins, headline words fly in one-by-one as user scrubs -->
+<!-- Requires: GSAP + ScrollTrigger -->
+<!-- Ref: https://report.adidas-group.com/2023/en/ -->
+
+<section class="pkm-section" style="position:relative;height:100vh;overflow:hidden">
+  <div class="pkm-bg" data-parallax="bg" style="position:absolute;inset:-10%;background-size:cover;background-position:center;z-index:0"></div>
+  <div class="pkm-overlay" style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.2),rgba(0,0,0,0.6));z-index:1"></div>
+  <div class="pkm-content" style="position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 8vw;max-width:1400px;margin:0 auto">
+    <span class="pkm-eyebrow" data-eyebrow="optional" style="font-size:12px;letter-spacing:3px;text-transform:uppercase;opacity:0">[EYEBROW]</span>
+    <h2 class="pkm-headline" style="font-size:clamp(48px,9vw,160px);line-height:0.95;font-weight:800;margin:24px 0 0;display:flex;flex-wrap:wrap;gap:0.18em">
+      <span class="pkm-word" data-word="0" style="display:inline-block;opacity:0;transform:translateY(60px)">[WORD_1]</span>
+      <span class="pkm-word" data-word="1" style="display:inline-block;opacity:0;transform:translateY(60px)">[WORD_2]</span>
+      <span class="pkm-word" data-word="2" style="display:inline-block;opacity:0;transform:translateY(60px)">[WORD_3]</span>
+      <span class="pkm-word" data-word="3" style="display:inline-block;opacity:0;transform:translateY(60px)">[WORD_4]</span>
+      <span class="pkm-word" data-word="4" style="display:inline-block;opacity:0;transform:translateY(60px)">[WORD_5]</span>
+    </h2>
+  </div>
+</section>
+
+<style>
+@media (prefers-reduced-motion: reduce) {
+  .pkm-word, .pkm-eyebrow { opacity: 1 !important; transform: none !important; }
+  .pkm-bg { transform: none !important; }
+}
+</style>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const root = document.querySelector('.pkm-section');
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+if (!prefersReducedMotion) {
+  const words = root.querySelectorAll('.pkm-word');
+  const tl = gsap.timeline({
+    scrollTrigger: { trigger: root, pin: true, start: 'top top', end: '+=150%', scrub: 0.6 }
+  });
+  tl.to('.pkm-eyebrow', { opacity: 1, duration: 0.3 });
+  tl.to(words, { opacity: 1, y: 0, stagger: 0.1, duration: 0.5, ease: 'power3.out' });
+  gsap.to('.pkm-bg', {
+    yPercent: 15, scale: 1.1,
+    scrollTrigger: { trigger: root, start: 'top bottom', end: 'bottom top', scrub: true }
+  });
+}
+</script>

@@ -1,0 +1,35 @@
+import { StorageAdapter } from "./interface.js";
+import { ProjectData } from "../models/project.js";
+import { ScreenData } from "../models/screen.js";
+import { DesignSystem } from "../models/design-system.js";
+import type { UIComponentData, ComponentCategory } from "../models/component.js";
+export declare class MemoryStorage implements StorageAdapter {
+    private projects;
+    private screens;
+    private designSystems;
+    private assets;
+    private components;
+    initialize(): Promise<void>;
+    close(): Promise<void>;
+    createProject(d: ProjectData): Promise<void>;
+    getProject(id: string): Promise<ProjectData | null>;
+    listProjects(): Promise<ProjectData[]>;
+    updateProject(id: string, d: Partial<ProjectData>): Promise<void>;
+    deleteProject(id: string): Promise<void>;
+    createScreen(pid: string, d: ScreenData): Promise<void>;
+    getScreen(pid: string, sid: string): Promise<ScreenData | null>;
+    listScreens(pid: string): Promise<ScreenData[]>;
+    updateScreen(pid: string, sid: string, d: Partial<ScreenData>): Promise<void>;
+    deleteScreen(pid: string, sid: string): Promise<void>;
+    setDesignSystem(pid: string, ds: DesignSystem): Promise<void>;
+    getDesignSystem(pid: string): Promise<DesignSystem | null>;
+    saveAsset(key: string, data: Buffer | string): Promise<string>;
+    getAsset(key: string): Promise<string | Buffer<ArrayBufferLike> | null>;
+    deleteAsset(key: string): Promise<void>;
+    saveComponent(d: UIComponentData): Promise<void>;
+    getComponent(id: string): Promise<UIComponentData | null>;
+    listComponents(category?: ComponentCategory): Promise<UIComponentData[]>;
+    searchComponents(query: string): Promise<UIComponentData[]>;
+    deleteComponent(id: string): Promise<void>;
+    incrementComponentUsage(id: string): Promise<void>;
+}

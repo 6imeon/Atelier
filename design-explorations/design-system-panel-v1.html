@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design System Panel — 5 Explorations</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0a0a0c; color: #e4e4e7; font-family: 'Inter', system-ui, sans-serif; overflow-x: hidden; }
+
+.page-header { text-align: center; padding: 50px 20px 20px; }
+.page-header h1 { font-size: 28px; font-weight: 700; background: linear-gradient(135deg, #818cf8, #a78bfa, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.page-header p { color: #52525b; font-size: 13px; margin-top: 8px; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.7; }
+
+.exploration { display: flex; gap: 40px; padding: 40px; max-width: 1400px; margin: 0 auto 80px; align-items: flex-start; }
+.exploration .info { width: 260px; flex-shrink: 0; position: sticky; top: 40px; }
+.exploration .info .tag { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 10px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; background: rgba(129,140,248,0.12); color: #a5b4fc; margin-bottom: 10px; }
+.exploration .info h2 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #fafafa; }
+.exploration .info p { font-size: 12px; color: #71717a; line-height: 1.7; margin-bottom: 6px; }
+.exploration .info .features { list-style: none; margin-top: 12px; }
+.exploration .info .features li { font-size: 11px; color: #a1a1aa; padding: 4px 0; display: flex; gap: 6px; align-items: flex-start; }
+.exploration .info .features li::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: #818cf8; margin-top: 5px; flex-shrink: 0; }
+
+.panel-frame { flex: 1; display: flex; justify-content: center; }
+
+/* ═══════════════════════════════════════════════════════════
+   SHARED: Panel container
+   ═══════════════════════════════════════════════════════════ */
+.panel {
+  width: 340px; background: #141416; border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 20px; overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.03);
+}
+.panel * { font-family: 'Inter', system-ui, sans-serif; }
+
+hr.divider { border: none; height: 1px; background: rgba(255,255,255,0.06); margin: 0; }
+
+/* ═══════════════════════════════════════════════════════════
+   OPTION A: Layered Stack — Two-layer cards with active/reference split
+   ═══════════════════════════════════════════════════════════ */
+.panel-a .header {
+  padding: 16px 20px; display: flex; align-items: center; gap: 12px;
+  background: linear-gradient(135deg, rgba(129,140,248,0.06), rgba(167,139,250,0.04));
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.panel-a .header .brand-mark {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: linear-gradient(135deg, #c4856a, #967a4f);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: white;
+}
+.panel-a .header .brand-info h3 { font-size: 14px; font-weight: 600; color: #fafafa; }
+.panel-a .header .brand-info span { font-size: 10px; color: #71717a; }
+
+.panel-a .layer-tabs {
+  display: flex; padding: 12px 16px 0;
+}
+.panel-a .layer-tab {
+  flex: 1; padding: 8px; text-align: center; font-size: 11px; font-weight: 600;
+  border: none; background: none; cursor: pointer; color: #52525b;
+  border-bottom: 2px solid transparent; transition: all 0.2s;
+}
+.panel-a .layer-tab.active { color: #a5b4fc; border-bottom-color: #818cf8; }
+.panel-a .layer-tab:hover:not(.active) { color: #71717a; }
+
+.panel-a .layer-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 600;
+  letter-spacing: 0.3px; margin-left: 4px;
+}
+.panel-a .badge-active { background: rgba(74,222,128,0.12); color: #4ade80; }
+.panel-a .badge-ref { background: rgba(251,191,36,0.12); color: #fbbf24; }
+
+.panel-a .section { padding: 14px 20px; }
+.panel-a .section-label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #52525b; margin-bottom: 10px; }
+
+.panel-a .color-row { display: flex; gap: 6px; margin-bottom: 8px; align-items: center; }
+.panel-a .color-swatch {
+  width: 28px; height: 28px; border-radius: 8px; border: 1.5px solid rgba(255,255,255,0.08);
+  cursor: pointer; transition: all 0.2s; position: relative;
+}
+.panel-a .color-swatch:hover { transform: scale(1.1); border-color: rgba(255,255,255,0.2); }
+.panel-a .color-swatch.active { border-color: #818cf8; box-shadow: 0 0 0 2px rgba(129,140,248,0.3); }
+.panel-a .color-info { flex: 1; }
+.panel-a .color-info .role { font-size: 11px; font-weight: 500; color: #a1a1aa; }
+.panel-a .color-info .hex { font-size: 10px; color: #52525b; font-family: 'DM Sans', monospace; }
+.panel-a .color-actions { display: flex; gap: 2px; }
+.panel-a .color-action {
+  width: 22px; height: 22px; border-radius: 6px; border: none;
+  background: rgba(255,255,255,0.04); color: #52525b; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+}
+.panel-a .color-action:hover { background: rgba(129,140,248,0.12); color: #818cf8; }
+
+/* Shade strip */
+.panel-a .shade-strip { display: flex; gap: 2px; margin: 4px 0 6px; }
+.panel-a .shade { flex: 1; height: 6px; border-radius: 3px; cursor: pointer; transition: transform 0.15s; }
+.panel-a .shade:hover { transform: scaleY(2.5); }
+
+/* Font row */
+.panel-a .font-row {
+  display: flex; align-items: center; gap: 10px; padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.panel-a .font-row:last-child { border-bottom: none; }
+.panel-a .font-preview {
+  font-size: 18px; font-weight: 600; color: #fafafa; width: 28px; text-align: center; flex-shrink: 0;
+}
+.panel-a .font-meta { flex: 1; }
+.panel-a .font-meta .name { font-size: 12px; font-weight: 500; color: #e4e4e7; }
+.panel-a .font-meta .role-label { font-size: 9px; color: #52525b; text-transform: uppercase; letter-spacing: 0.5px; }
+.panel-a .font-chevron { color: #3f3f46; }
+
+/* Radius preview */
+.panel-a .radius-row { display: flex; gap: 6px; }
+.panel-a .radius-opt {
+  flex: 1; aspect-ratio: 1; background: rgba(255,255,255,0.04);
+  border: 1.5px solid rgba(255,255,255,0.06); cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 8px; color: #52525b; font-weight: 600;
+}
+.panel-a .radius-opt.active { border-color: #818cf8; background: rgba(129,140,248,0.08); color: #a5b4fc; }
+.panel-a .radius-opt:hover:not(.active) { border-color: rgba(255,255,255,0.12); }
+
+/* Status indicator */
+.panel-a .sync-status {
+  padding: 10px 20px; display: flex; align-items: center; gap: 8px;
+  background: rgba(74,222,128,0.04); border-top: 1px solid rgba(74,222,128,0.08);
+}
+.panel-a .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; animation: pulse 2s infinite; }
+.panel-a .sync-text { font-size: 10px; color: #4ade80; font-weight: 500; }
+
+/* ═══════════════════════════════════════════════════════════
+   OPTION B: Spectrum View — Color-centric with visual harmony
+   ═══════════════════════════════════════════════════════════ */
+.panel-b .header {
+  padding: 20px; position: relative; overflow: hidden;
+}
+.panel-b .header::before {
+  content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+  background: conic-gradient(from 0deg, #c4856a22, #4672ff22, #ff690022, #c4856a22);
+  animation: rotate-bg 20s linear infinite;
+}
+@keyframes rotate-bg { to { transform: rotate(360deg); } }
+.panel-b .header-content { position: relative; z-index: 1; }
+.panel-b .header h3 { font-size: 16px; font-weight: 700; color: #fafafa; margin-bottom: 2px; }
+.panel-b .header span { font-size: 10px; color: #71717a; }
+
+/* Color wheel representation */
+.panel-b .color-wheel-section { padding: 20px; display: flex; flex-direction: column; align-items: center; }
+.panel-b .wheel-container { position: relative; width: 180px; height: 180px; margin-bottom: 16px; }
+.panel-b .wheel-ring {
+  width: 180px; height: 180px; border-radius: 50%;
+  background: conic-gradient(#c4856a, #4672ff, #ff6900, #c4856a);
+  opacity: 0.15; position: absolute;
+}
+.panel-b .wheel-inner {
+  position: absolute; inset: 30px; border-radius: 50%;
+  background: #141416; display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 2px;
+}
+.panel-b .wheel-inner .theme-name { font-size: 11px; font-weight: 600; color: #a1a1aa; }
+.panel-b .wheel-inner .harmony { font-size: 9px; color: #52525b; }
+/* Color dots on wheel */
+.panel-b .wheel-dot {
+  width: 20px; height: 20px; border-radius: 50%; position: absolute;
+  border: 2px solid #141416; box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  cursor: pointer; transition: all 0.2s;
+}
+.panel-b .wheel-dot:hover { transform: scale(1.3); z-index: 2; }
+.panel-b .wheel-dot.dot-primary { background: #c4856a; top: 5px; left: 50%; transform: translateX(-50%); }
+.panel-b .wheel-dot.dot-secondary { background: #4672ff; right: 5px; top: 50%; transform: translateY(-50%); }
+.panel-b .wheel-dot.dot-tertiary { background: #ff6900; bottom: 5px; left: 50%; transform: translateX(-50%); }
+.panel-b .wheel-dot.dot-neutral { background: #e5e7eb; left: 5px; top: 50%; transform: translateY(-50%); }
+
+/* Color list below wheel */
+.panel-b .color-list { padding: 0 20px 16px; width: 100%; }
+.panel-b .color-item {
+  display: flex; align-items: center; gap: 10px; padding: 8px; margin-bottom: 2px;
+  border-radius: 10px; cursor: pointer; transition: all 0.15s;
+}
+.panel-b .color-item:hover { background: rgba(255,255,255,0.03); }
+.panel-b .color-chip { width: 32px; height: 24px; border-radius: 6px; flex-shrink: 0; }
+.panel-b .color-detail { flex: 1; }
+.panel-b .color-detail .label { font-size: 11px; font-weight: 500; color: #e4e4e7; }
+.panel-b .color-detail .value { font-size: 9px; color: #52525b; font-family: monospace; }
+.panel-b .color-detail .usage { font-size: 9px; color: #3f3f46; font-style: italic; }
+
+/* Harmony modes */
+.panel-b .harmony-modes { display: flex; gap: 4px; padding: 0 20px 16px; }
+.panel-b .harmony-pill {
+  flex: 1; padding: 6px; text-align: center; font-size: 9px; font-weight: 600;
+  border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);
+  background: none; color: #52525b; cursor: pointer; transition: all 0.15s;
+}
+.panel-b .harmony-pill.active { background: rgba(129,140,248,0.1); border-color: rgba(129,140,248,0.3); color: #a5b4fc; }
+.panel-b .harmony-pill:hover:not(.active) { border-color: rgba(255,255,255,0.1); color: #71717a; }
+
+/* Typography section */
+.panel-b .type-section { padding: 16px 20px; }
+.panel-b .type-card {
+  padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04); margin-bottom: 6px;
+  cursor: pointer; transition: all 0.2s;
+}
+.panel-b .type-card:hover { border-color: rgba(255,255,255,0.08); }
+.panel-b .type-sample { font-size: 20px; color: #fafafa; margin-bottom: 4px; line-height: 1.2; }
+.panel-b .type-meta { display: flex; gap: 8px; align-items: center; }
+.panel-b .type-meta span { font-size: 9px; color: #52525b; }
+.panel-b .type-meta .role-tag { padding: 1px 6px; border-radius: 4px; background: rgba(255,255,255,0.04); color: #71717a; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+
+/* ═══════════════════════════════════════════════════════════
+   OPTION C: Token Inspector — Dev-focused with live bindings
+   ═══════════════════════════════════════════════════════════ */
+.panel-c .header {
+  padding: 14px 16px; display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.panel-c .header .indicator { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 8px rgba(74,222,128,0.4); }
+.panel-c .header h3 { font-size: 13px; font-weight: 600; flex: 1; }
+.panel-c .header .screen-badge { padding: 2px 8px; border-radius: 5px; background: rgba(129,140,248,0.1); color: #818cf8; font-size: 9px; font-weight: 600; }
+
+.panel-c .token-group { padding: 12px 16px; }
+.panel-c .group-header {
+  display: flex; align-items: center; gap: 6px; margin-bottom: 8px;
+}
+.panel-c .group-header .dot { width: 3px; height: 3px; border-radius: 50%; }
+.panel-c .group-header span { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #3f3f46; }
+.panel-c .group-header .count { font-size: 9px; color: #27272a; margin-left: auto; }
+
+.panel-c .token-row {
+  display: flex; align-items: center; gap: 8px; padding: 6px 8px;
+  border-radius: 8px; margin-bottom: 2px; cursor: pointer; transition: all 0.15s;
+  border: 1px solid transparent;
+}
+.panel-c .token-row:hover { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.04); }
+.panel-c .token-row .preview {
+  width: 24px; height: 24px; border-radius: 6px; flex-shrink: 0;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.panel-c .token-row .token-key { font-size: 11px; font-weight: 500; color: #a1a1aa; flex: 1; }
+.panel-c .token-row .token-val {
+  font-size: 10px; color: #52525b; font-family: 'DM Sans', monospace;
+  padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.03);
+}
+.panel-c .token-row .binding-icon { color: #3f3f46; font-size: 10px; }
+.panel-c .token-row.bound .binding-icon { color: #4ade80; }
+.panel-c .token-row.unbound .binding-icon { color: #f87171; }
+
+/* Binding status bar */
+.panel-c .binding-bar {
+  margin: 4px 8px 0; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.04);
+  overflow: hidden;
+}
+.panel-c .binding-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, #4ade80, #818cf8); }
+
+/* Code preview */
+.panel-c .code-block {
+  margin: 8px; padding: 10px 12px; border-radius: 8px;
+  background: #0e0e10; border: 1px solid rgba(255,255,255,0.04);
+  font-family: 'DM Sans', monospace; font-size: 10px; line-height: 1.6; color: #71717a;
+}
+.panel-c .code-block .key { color: #818cf8; }
+.panel-c .code-block .val { color: #4ade80; }
+.panel-c .code-block .comment { color: #27272a; }
+
+/* ═══════════════════════════════════════════════════════════
+   OPTION D: Story Mode — Narrative design with persona context
+   ═══════════════════════════════════════════════════════════ */
+.panel-d .hero {
+  padding: 24px 20px; position: relative;
+  background: linear-gradient(180deg, rgba(196,133,106,0.08), transparent);
+}
+.panel-d .hero .persona-avatar {
+  width: 44px; height: 44px; border-radius: 12px; margin-bottom: 12px;
+  background: linear-gradient(135deg, #c4856a44, #96794f44);
+  border: 1px solid rgba(196,133,106,0.2);
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+}
+.panel-d .hero h3 { font-size: 16px; font-weight: 700; color: #fafafa; margin-bottom: 4px; }
+.panel-d .hero .persona-name { font-size: 11px; color: #c4856a; font-weight: 500; margin-bottom: 8px; }
+.panel-d .hero .ethos {
+  font-size: 11px; color: #71717a; line-height: 1.6; font-style: italic;
+  border-left: 2px solid rgba(196,133,106,0.2); padding-left: 12px;
+}
+
+.panel-d .narrative-section { padding: 16px 20px; }
+.panel-d .narrative-label {
+  font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
+  color: #3f3f46; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+}
+.panel-d .narrative-label::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.04); }
+
+/* Color story — large swatches with meaning */
+.panel-d .color-story { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.panel-d .color-card {
+  padding: 14px 12px; border-radius: 12px; cursor: pointer;
+  transition: all 0.2s; border: 1px solid transparent;
+}
+.panel-d .color-card:hover { border-color: rgba(255,255,255,0.1); transform: translateY(-2px); }
+.panel-d .color-card .swatch { width: 100%; height: 36px; border-radius: 8px; margin-bottom: 8px; }
+.panel-d .color-card .color-name { font-size: 11px; font-weight: 600; color: #e4e4e7; margin-bottom: 2px; }
+.panel-d .color-card .color-meaning { font-size: 9px; color: #52525b; line-height: 1.4; }
+.panel-d .color-card .color-hex { font-size: 9px; color: #3f3f46; font-family: monospace; margin-top: 4px; }
+
+/* Type pairing */
+.panel-d .type-pairing {
+  padding: 16px; border-radius: 12px; background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+}
+.panel-d .type-pairing .headline-sample {
+  font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 600;
+  color: #fafafa; margin-bottom: 4px; line-height: 1.2;
+}
+.panel-d .type-pairing .body-sample {
+  font-size: 12px; color: #71717a; line-height: 1.6; margin-bottom: 10px;
+}
+.panel-d .type-pairing .type-info {
+  display: flex; gap: 8px; font-size: 9px; color: #3f3f46;
+}
+.panel-d .type-tag { padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.03); }
+
+/* Page plan */
+.panel-d .page-list { list-style: none; }
+.panel-d .page-item {
+  display: flex; align-items: flex-start; gap: 10px; padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+.panel-d .page-item:last-child { border-bottom: none; }
+.panel-d .page-num {
+  width: 22px; height: 22px; border-radius: 6px; background: rgba(129,140,248,0.08);
+  color: #818cf8; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.panel-d .page-item .page-title { font-size: 11px; font-weight: 600; color: #e4e4e7; }
+.panel-d .page-item .page-desc { font-size: 10px; color: #52525b; line-height: 1.4; }
+
+/* ═══════════════════════════════════════════════════════════
+   OPTION E: Spatial Canvas — Tokens as draggable objects in a mini-canvas
+   ═══════════════════════════════════════════════════════════ */
+.panel-e .viewport {
+  height: 320px; background: #0e0e10; position: relative; overflow: hidden;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.panel-e .viewport .grid-dots {
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Floating token cards */
+.panel-e .token-float {
+  position: absolute; border-radius: 12px; background: #1c1c20;
+  border: 1px solid rgba(255,255,255,0.06); padding: 10px; cursor: grab;
+  transition: box-shadow 0.2s; user-select: none;
+}
+.panel-e .token-float:hover { box-shadow: 0 0 20px rgba(129,140,248,0.1); border-color: rgba(129,140,248,0.2); }
+.panel-e .token-float .float-label { font-size: 8px; color: #3f3f46; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-bottom: 6px; }
+
+/* Color tokens as large swatches */
+.panel-e .float-color { width: 64px; }
+.panel-e .float-color .swatch { width: 44px; height: 44px; border-radius: 10px; margin-bottom: 4px; }
+.panel-e .float-color .hex { font-size: 8px; color: #52525b; font-family: monospace; text-align: center; }
+
+/* Font tokens as text samples */
+.panel-e .float-font { width: 100px; }
+.panel-e .float-font .sample { font-size: 16px; color: #fafafa; margin-bottom: 2px; white-space: nowrap; overflow: hidden; }
+.panel-e .float-font .font-name { font-size: 9px; color: #52525b; }
+
+/* Radius token as shape */
+.panel-e .float-radius { width: 56px; text-align: center; }
+.panel-e .float-radius .shape { width: 36px; height: 36px; background: rgba(129,140,248,0.15); border: 1px solid rgba(129,140,248,0.3); margin: 0 auto 4px; }
+.panel-e .float-radius .val { font-size: 9px; color: #52525b; }
+
+/* Connection lines (SVG) */
+.panel-e .connections { position: absolute; inset: 0; pointer-events: none; }
+.panel-e .connections line { stroke: rgba(129,140,248,0.08); stroke-width: 1; stroke-dasharray: 4 4; }
+
+/* Bottom toolbar */
+.panel-e .toolbar {
+  padding: 12px 16px; display: flex; gap: 6px; align-items: center;
+}
+.panel-e .tool-btn {
+  padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);
+  background: none; color: #71717a; font-size: 10px; font-weight: 500; cursor: pointer;
+  transition: all 0.15s; font-family: inherit;
+}
+.panel-e .tool-btn:hover { border-color: rgba(129,140,248,0.3); color: #a5b4fc; }
+.panel-e .tool-btn.primary { background: rgba(129,140,248,0.1); border-color: rgba(129,140,248,0.2); color: #a5b4fc; }
+
+/* Original site ref */
+.panel-e .ref-section {
+  padding: 12px 16px; border-top: 1px solid rgba(255,255,255,0.06);
+}
+.panel-e .ref-toggle {
+  display: flex; align-items: center; gap: 6px; background: none; border: none;
+  color: #3f3f46; font-size: 10px; cursor: pointer; font-family: inherit; font-weight: 500;
+  width: 100%; padding: 6px 0;
+}
+.panel-e .ref-toggle:hover { color: #52525b; }
+.panel-e .ref-colors { display: flex; gap: 4px; margin-top: 8px; }
+.panel-e .ref-chip { width: 18px; height: 18px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.06); cursor: pointer; }
+.panel-e .ref-chip:hover { transform: scale(1.2); }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Design System Panel — 5 Explorations</h1>
+  <p>Each exploration reimagines the design system panel with the two-layer architecture: Active Tokens (from generated pages) as the primary controls, with Original Site Reference as a collapsible secondary layer.</p>
+</div>
+
+<!-- ═══ A: Layered Stack ═══ -->
+<div class="exploration">
+  <div class="info">
+    <span class="tag">Option A</span>
+    <h2>Layered Stack</h2>
+    <p>Two distinct layers with tab switching: Active (green badge) shows the generated page's actual tokens that you control. Reference (amber badge) shows the original site extraction.</p>
+    <p>Color rows have shade strips for quick variant selection. Sync status bar shows live binding health — green means all values match the screens.</p>
+    <ul class="features">
+      <li>Active/Reference tab switching</li>
+      <li>Shade gradient strips per color</li>
+      <li>Live sync status indicator</li>
+      <li>Inline hex editing</li>
+      <li>Binding health feedback</li>
+    </ul>
+  </div>
+  <div class="panel-frame">
+    <div class="panel panel-a">
+      <div class="header">
+        <div class="brand-mark">SC</div>
+        <div class="brand-info">
+          <h3>Stratton Craig</h3>
+          <span>strattoncraig.com</span>
+        </div>
+      </div>
+      <div class="layer-tabs">
+        <button class="layer-tab active">Active Tokens <span class="layer-badge badge-active">LIVE</span></button>
+        <button class="layer-tab">Reference <span class="layer-badge badge-ref">ORIG</span></button>
+      </div>
+      <div class="section">
+        <div class="section-label">Color Palette</div>
+        <div class="color-row">
+          <div class="color-swatch active" style="background: #c4856a;"></div>
+          <div class="color-info"><div class="role">Primary</div><div class="hex">#c4856a</div></div>
+          <div class="color-actions">
+            <button class="color-action"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          </div>
+        </div>
+        <div class="shade-strip">
+          <div class="shade" style="background: #f5e6dd;"></div>
+          <div class="shade" style="background: #e8c4b0;"></div>
+          <div class="shade" style="background: #d4a48a;"></div>
+          <div class="shade" style="background: #c4856a;"></div>
+          <div class="shade" style="background: #a66b52;"></div>
+          <div class="shade" style="background: #87523d;"></div>
+          <div class="shade" style="background: #6b3e2d;"></div>
+        </div>
+        <div class="color-row">
+          <div class="color-swatch" style="background: #2a2018;"></div>
+          <div class="color-info"><div class="role">Secondary</div><div class="hex">#2a2018</div></div>
+          <div class="color-actions"><button class="color-action"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></div>
+        </div>
+        <div class="color-row">
+          <div class="color-swatch" style="background: #f5f0eb;"></div>
+          <div class="color-info"><div class="role">Background</div><div class="hex">#f5f0eb</div></div>
+          <div class="color-actions"><button class="color-action"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></div>
+        </div>
+      </div>
+      <hr class="divider">
+      <div class="section">
+        <div class="section-label">Typography</div>
+        <div class="font-row">
+          <div class="font-preview" style="font-family: 'Playfair Display', serif;">Aa</div>
+          <div class="font-meta"><div class="name">Playfair Display</div><div class="role-label">Headline</div></div>
+          <svg class="font-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="font-row">
+          <div class="font-preview" style="font-family: 'Inter', sans-serif; font-weight: 400;">Aa</div>
+          <div class="font-meta"><div class="name">Inter</div><div class="role-label">Body</div></div>
+          <svg class="font-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="font-row">
+          <div class="font-preview" style="font-family: 'DM Sans', sans-serif; font-weight: 500;">Aa</div>
+          <div class="font-meta"><div class="name">DM Sans</div><div class="role-label">Label</div></div>
+          <svg class="font-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <hr class="divider">
+      <div class="section">
+        <div class="section-label">Corner Radius</div>
+        <div class="radius-row">
+          <div class="radius-opt" style="border-radius: 0;">0</div>
+          <div class="radius-opt" style="border-radius: 4px;">S</div>
+          <div class="radius-opt active" style="border-radius: 8px;">M</div>
+          <div class="radius-opt" style="border-radius: 12px;">L</div>
+          <div class="radius-opt" style="border-radius: 16px;">XL</div>
+          <div class="radius-opt" style="border-radius: 9999px;">●</div>
+        </div>
+      </div>
+      <div class="sync-status">
+        <div class="sync-dot"></div>
+        <span class="sync-text">All tokens synced to 1 screen</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ B: Spectrum View ═══ -->
+<div class="exploration">
+  <div class="info">
+    <span class="tag">Option B</span>
+    <h2>Spectrum View</h2>
+    <p>Color-centric design with a rotating conic gradient wheel. Palette dots orbit the wheel at their hue positions. Harmony mode selector (Complementary, Analogous, Triadic, Split) reshapes the palette relationships.</p>
+    <p>Typography shown as large card previews with actual font rendering. Everything feels like a living color space.</p>
+    <ul class="features">
+      <li>Animated color harmony wheel</li>
+      <li>Draggable hue dots on wheel</li>
+      <li>Harmony mode switching</li>
+      <li>Large type preview cards</li>
+      <li>Color usage annotations</li>
+    </ul>
+  </div>
+  <div class="panel-frame">
+    <div class="panel panel-b">
+      <div class="header">
+        <div class="header-content">
+          <h3>Stratton Craig</h3>
+          <span>Editorial Workspace — Warm Palette</span>
+        </div>
+      </div>
+      <div class="color-wheel-section">
+        <div class="wheel-container">
+          <div class="wheel-ring"></div>
+          <div class="wheel-inner">
+            <div class="theme-name">Warm Complementary</div>
+            <div class="harmony">4 colors · 2 pairs</div>
+          </div>
+          <div class="wheel-dot dot-primary"></div>
+          <div class="wheel-dot dot-secondary"></div>
+          <div class="wheel-dot dot-tertiary"></div>
+          <div class="wheel-dot dot-neutral"></div>
+        </div>
+      </div>
+      <div class="harmony-modes">
+        <button class="harmony-pill active">Complementary</button>
+        <button class="harmony-pill">Analogous</button>
+        <button class="harmony-pill">Triadic</button>
+        <button class="harmony-pill">Mono</button>
+      </div>
+      <div class="color-list">
+        <div class="color-item">
+          <div class="color-chip" style="background: #c4856a;"></div>
+          <div class="color-detail"><div class="label">Primary — Terracotta</div><div class="value">#c4856a</div><div class="usage">CTAs, links, hero accents</div></div>
+        </div>
+        <div class="color-item">
+          <div class="color-chip" style="background: #2a2018;"></div>
+          <div class="color-detail"><div class="label">Secondary — Deep Umber</div><div class="value">#2a2018</div><div class="usage">Headings, navigation, footer</div></div>
+        </div>
+        <div class="color-item">
+          <div class="color-chip" style="background: #f5f0eb;"></div>
+          <div class="color-detail"><div class="label">Surface — Warm White</div><div class="value">#f5f0eb</div><div class="usage">Page background, card fills</div></div>
+        </div>
+        <div class="color-item">
+          <div class="color-chip" style="background: #8a8078;"></div>
+          <div class="color-detail"><div class="label">Muted — Stone</div><div class="value">#8a8078</div><div class="usage">Body text, captions, borders</div></div>
+        </div>
+      </div>
+      <hr class="divider">
+      <div class="type-section">
+        <div class="type-card">
+          <div class="type-sample" style="font-family: 'Playfair Display', serif; font-weight: 600;">Words that connect.</div>
+          <div class="type-meta">
+            <span class="role-tag">Headline</span>
+            <span>Playfair Display · 600</span>
+          </div>
+        </div>
+        <div class="type-card">
+          <div class="type-sample" style="font-family: 'Inter', sans-serif; font-size: 13px; color: #a1a1aa;">We help ambitious brands find their voice and tell their stories.</div>
+          <div class="type-meta">
+            <span class="role-tag">Body</span>
+            <span>Inter · 400</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ C: Token Inspector ═══ -->
+<div class="exploration">
+  <div class="info">
+    <span class="tag">Option C</span>
+    <h2>Token Inspector</h2>
+    <p>Developer-focused view showing tokens as key-value pairs with live binding status. Each token shows whether it's actually bound to the screen HTML (green dot) or disconnected (red dot).</p>
+    <p>Code block at the bottom shows CSS custom properties. Binding health bar shows percentage of tokens that actually match the generated pages.</p>
+    <ul class="features">
+      <li>Live binding indicators per token</li>
+      <li>CSS variable code preview</li>
+      <li>Binding health percentage bar</li>
+      <li>Screen-specific token display</li>
+      <li>Monospace aesthetic for precision</li>
+    </ul>
+  </div>
+  <div class="panel-frame">
+    <div class="panel panel-c">
+      <div class="header">
+        <div class="indicator"></div>
+        <h3>Token Inspector</h3>
+        <span class="screen-badge">Screen 1</span>
+      </div>
+      <div class="token-group">
+        <div class="group-header">
+          <div class="dot" style="background: #c4856a;"></div>
+          <span>Colors</span>
+          <span class="count">4 tokens · 3 bound</span>
+        </div>
+        <div class="token-row bound">
+          <div class="preview" style="background: #c4856a;"></div>
+          <span class="token-key">--color-primary</span>
+          <span class="token-val">#c4856a</span>
+          <span class="binding-icon">●</span>
+        </div>
+        <div class="token-row bound">
+          <div class="preview" style="background: #2a2018;"></div>
+          <span class="token-key">--color-secondary</span>
+          <span class="token-val">#2a2018</span>
+          <span class="binding-icon">●</span>
+        </div>
+        <div class="token-row bound">
+          <div class="preview" style="background: #f5f0eb;"></div>
+          <span class="token-key">--color-surface</span>
+          <span class="token-val">#f5f0eb</span>
+          <span class="binding-icon">●</span>
+        </div>
+        <div class="token-row unbound">
+          <div class="preview" style="background: #8a8078;"></div>
+          <span class="token-key">--color-muted</span>
+          <span class="token-val">#8a8078</span>
+          <span class="binding-icon">●</span>
+        </div>
+        <div class="binding-bar"><div class="binding-fill" style="width: 75%;"></div></div>
+      </div>
+      <hr class="divider">
+      <div class="token-group">
+        <div class="group-header">
+          <div class="dot" style="background: #818cf8;"></div>
+          <span>Typography</span>
+          <span class="count">3 tokens · 2 bound</span>
+        </div>
+        <div class="token-row bound">
+          <div class="preview" style="background: #1c1c20; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display'; font-size: 12px; color: #fafafa;">Aa</div>
+          <span class="token-key">--font-headline</span>
+          <span class="token-val">Playfair Display</span>
+          <span class="binding-icon">●</span>
+        </div>
+        <div class="token-row bound">
+          <div class="preview" style="background: #1c1c20; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #fafafa;">Aa</div>
+          <span class="token-key">--font-body</span>
+          <span class="token-val">Inter</span>
+          <span class="binding-icon">●</span>
+        </div>
+        <div class="token-row unbound">
+          <div class="preview" style="background: #1c1c20; display: flex; align-items: center; justify-content: center; font-family: 'DM Sans'; font-size: 11px; color: #fafafa;">Aa</div>
+          <span class="token-key">--font-label</span>
+          <span class="token-val">DM Sans</span>
+          <span class="binding-icon">●</span>
+        </div>
+        <div class="binding-bar"><div class="binding-fill" style="width: 66%;"></div></div>
+      </div>
+      <hr class="divider">
+      <div class="code-block">
+        <span class="comment">/* Generated CSS Variables */</span><br>
+        <span class="key">--primary</span>: <span class="val">#c4856a</span>;<br>
+        <span class="key">--secondary</span>: <span class="val">#2a2018</span>;<br>
+        <span class="key">--surface</span>: <span class="val">#f5f0eb</span>;<br>
+        <span class="key">--font-heading</span>: <span class="val">'Playfair Display'</span>;<br>
+        <span class="key">--font-body</span>: <span class="val">'Inter'</span>;<br>
+        <span class="key">--radius</span>: <span class="val">8px</span>;
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ D: Story Mode ═══ -->
+<div class="exploration">
+  <div class="info">
+    <span class="tag">Option D</span>
+    <h2>Story Mode</h2>
+    <p>Narrative-driven design system that tells the story of the redesign. Opens with the persona's design philosophy as a quote. Colors are presented as a "palette story" with each color's emotional meaning. Typography shown as a live pairing preview.</p>
+    <p>Includes the proposed page plan at the bottom. Feels like reading a design brief, not just tweaking values.</p>
+    <ul class="features">
+      <li>Persona quote and design ethos</li>
+      <li>Color meaning annotations</li>
+      <li>Live type pairing preview</li>
+      <li>Proposed page plan</li>
+      <li>Editorial, brief-like feel</li>
+    </ul>
+  </div>
+  <div class="panel-frame">
+    <div class="panel panel-d">
+      <div class="hero">
+        <div class="persona-avatar">🎨</div>
+        <h3>Editorial Workspace</h3>
+        <div class="persona-name">by Camille Duval · warm-nude persona</div>
+        <div class="ethos">"Warmth, approachability, and human connection. Every element should feel like an invitation to slow down and engage with the content."</div>
+      </div>
+      <hr class="divider">
+      <div class="narrative-section">
+        <div class="narrative-label">Palette Story</div>
+        <div class="color-story">
+          <div class="color-card" style="background: rgba(196,133,106,0.06);">
+            <div class="swatch" style="background: #c4856a; border-radius: 8px;"></div>
+            <div class="color-name">Terracotta</div>
+            <div class="color-meaning">Warmth and craft. The primary voice of the brand.</div>
+            <div class="color-hex">#c4856a</div>
+          </div>
+          <div class="color-card" style="background: rgba(42,32,24,0.1);">
+            <div class="swatch" style="background: #2a2018; border-radius: 8px;"></div>
+            <div class="color-name">Deep Umber</div>
+            <div class="color-meaning">Authority and depth. Grounds the editorial voice.</div>
+            <div class="color-hex">#2a2018</div>
+          </div>
+          <div class="color-card" style="background: rgba(245,240,235,0.06);">
+            <div class="swatch" style="background: #f5f0eb; border-radius: 8px;"></div>
+            <div class="color-name">Warm White</div>
+            <div class="color-meaning">Space and breath. Lets content breathe.</div>
+            <div class="color-hex">#f5f0eb</div>
+          </div>
+          <div class="color-card" style="background: rgba(138,128,120,0.06);">
+            <div class="swatch" style="background: #8a8078; border-radius: 8px;"></div>
+            <div class="color-name">Stone</div>
+            <div class="color-meaning">Subtlety and nuance. The quiet supporting voice.</div>
+            <div class="color-hex">#8a8078</div>
+          </div>
+        </div>
+      </div>
+      <hr class="divider">
+      <div class="narrative-section">
+        <div class="narrative-label">Type Pairing</div>
+        <div class="type-pairing">
+          <div class="headline-sample">Words that connect.<br><em style="color: #c4856a;">Strategy</em> that delivers.</div>
+          <div class="body-sample">We help ambitious brands find their voice and tell their stories with clarity, warmth, and purpose.</div>
+          <div class="type-info">
+            <span class="type-tag">Playfair Display · Serif</span>
+            <span>×</span>
+            <span class="type-tag">Inter · Sans</span>
+          </div>
+        </div>
+      </div>
+      <hr class="divider">
+      <div class="narrative-section">
+        <div class="narrative-label">Page Plan</div>
+        <ul class="page-list">
+          <li class="page-item">
+            <span class="page-num">1</span>
+            <div><div class="page-title">Homepage</div><div class="page-desc">Hero with brand message, services overview, case studies, testimonials</div></div>
+          </li>
+          <li class="page-item">
+            <span class="page-num">2</span>
+            <div><div class="page-title">Services</div><div class="page-desc">Content strategy, copywriting, brand voice development</div></div>
+          </li>
+          <li class="page-item">
+            <span class="page-num">3</span>
+            <div><div class="page-title">Case Studies</div><div class="page-desc">Featured projects with before/after, client testimonials</div></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ E: Spatial Canvas ═══ -->
+<div class="exploration">
+  <div class="info">
+    <span class="tag">Option E</span>
+    <h2>Spatial Canvas</h2>
+    <p>Design tokens as draggable objects on a mini-canvas with dot grid. Colors are swatches, fonts are text samples, radius is a shape — all connected by dashed lines showing relationships.</p>
+    <p>Bottom toolbar lets you apply tokens, export as CSS, or inspect binding. Collapsible "Original Site" reference at the bottom. Feels like the main canvas but for tokens.</p>
+    <ul class="features">
+      <li>Draggable token objects</li>
+      <li>Relationship connection lines</li>
+      <li>Mini-canvas with dot grid</li>
+      <li>Collapsible original site ref</li>
+      <li>Apply / Export / Inspect toolbar</li>
+    </ul>
+  </div>
+  <div class="panel-frame">
+    <div class="panel panel-e">
+      <div class="viewport">
+        <div class="grid-dots"></div>
+        <svg class="connections" width="340" height="320" viewBox="0 0 340 320">
+          <line x1="75" y1="75" x2="185" y2="145"/>
+          <line x1="75" y1="75" x2="55" y2="180"/>
+          <line x1="185" y1="145" x2="260" y2="65"/>
+          <line x1="185" y1="145" x2="230" y2="230"/>
+          <line x1="185" y1="145" x2="60" y2="265"/>
+        </svg>
+        <!-- Color tokens -->
+        <div class="token-float float-color" style="left: 30px; top: 40px;">
+          <div class="float-label">Primary</div>
+          <div class="swatch" style="background: #c4856a;"></div>
+          <div class="hex">#c4856a</div>
+        </div>
+        <div class="token-float float-color" style="left: 20px; top: 160px;">
+          <div class="float-label">Secondary</div>
+          <div class="swatch" style="background: #2a2018;"></div>
+          <div class="hex">#2a2018</div>
+        </div>
+        <div class="token-float float-color" style="left: 225px; top: 30px;">
+          <div class="float-label">Surface</div>
+          <div class="swatch" style="background: #f5f0eb;"></div>
+          <div class="hex">#f5f0eb</div>
+        </div>
+        <!-- Font tokens -->
+        <div class="token-float float-font" style="left: 140px; top: 120px;">
+          <div class="float-label">Headline</div>
+          <div class="sample" style="font-family: 'Playfair Display', serif; font-weight: 600;">Playfair</div>
+          <div class="font-name">Display · Serif</div>
+        </div>
+        <div class="token-float float-font" style="left: 190px; top: 210px;">
+          <div class="float-label">Body</div>
+          <div class="sample" style="font-family: 'Inter', sans-serif;">Inter</div>
+          <div class="font-name">Sans-serif · 400</div>
+        </div>
+        <!-- Radius token -->
+        <div class="token-float float-radius" style="left: 30px; top: 250px;">
+          <div class="float-label">Radius</div>
+          <div class="shape" style="border-radius: 8px;"></div>
+          <div class="val">8px · M</div>
+        </div>
+      </div>
+      <div class="toolbar">
+        <button class="tool-btn primary">Apply to screens</button>
+        <button class="tool-btn">Export CSS</button>
+        <button class="tool-btn">Inspect</button>
+      </div>
+      <div class="ref-section">
+        <button class="ref-toggle">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          Original Site Reference
+        </button>
+        <div class="ref-colors">
+          <div class="ref-chip" style="background: #cf0011;"></div>
+          <div class="ref-chip" style="background: #4672ff;"></div>
+          <div class="ref-chip" style="background: #ff6900;"></div>
+          <div class="ref-chip" style="background: #2a2a2a;"></div>
+          <div class="ref-chip" style="background: #ffffff; border-color: rgba(255,255,255,0.15);"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

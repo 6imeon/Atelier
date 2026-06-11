@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atelier — Logo Concepts</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Sora:wght@300;400;500;600;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0a;
+      color: #e5e5e5;
+      min-height: 100vh;
+      padding: 60px 40px;
+    }
+
+    .page-title {
+      text-align: center;
+      margin-bottom: 16px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #666;
+    }
+    .page-subtitle {
+      text-align: center;
+      margin-bottom: 60px;
+      font-size: 13px;
+      color: #555;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .concept {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 20px;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .concept:hover { border-color: #444; }
+
+    .concept-header {
+      padding: 24px 28px 12px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .concept-label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #666;
+    }
+    .concept-style {
+      font-size: 11px;
+      color: #555;
+      font-style: italic;
+    }
+
+    .concept-preview {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 28px;
+      min-height: 200px;
+    }
+
+    .concept-details {
+      padding: 20px 28px 28px;
+      border-top: 1px solid #1a1a1a;
+    }
+    .concept-name {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #ccc;
+    }
+    .concept-desc {
+      font-size: 12px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .favicon-row {
+      display: flex;
+      gap: 16px;
+      margin-top: 16px;
+      align-items: center;
+    }
+    .favicon-label {
+      font-size: 10px;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .favicon-box {
+      width: 32px; height: 32px;
+      background: #0a0a0a;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid #222;
+    }
+    .favicon-box.light {
+      background: #fff;
+    }
+
+    /* ── Concept A: Geometric Mark ── */
+    .logo-a {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .logo-a .mark {
+      position: relative;
+      width: 56px; height: 56px;
+    }
+    .logo-a .mark .outer {
+      width: 56px; height: 56px;
+      border: 2.5px solid #e5e5e5;
+      border-radius: 14px;
+      transform: rotate(45deg);
+      position: absolute;
+      top: 0; left: 0;
+    }
+    .logo-a .mark .inner {
+      width: 24px; height: 24px;
+      background: #e5e5e5;
+      border-radius: 6px;
+      transform: rotate(45deg);
+      position: absolute;
+      top: 16px; left: 16px;
+    }
+    .logo-a .wordmark {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 32px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      color: #e5e5e5;
+    }
+
+    /* ── Concept B: Serif Luxury ── */
+    .logo-b {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .logo-b .mark {
+      width: 52px; height: 52px;
+      border: 2px solid #c9a96e;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .logo-b .mark-letter {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 600;
+      color: #c9a96e;
+      line-height: 1;
+    }
+    .logo-b .wordmark {
+      font-family: 'Playfair Display', serif;
+      font-size: 34px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      color: #e5e5e5;
+    }
+    .logo-b .wordmark span {
+      color: #c9a96e;
+    }
+
+    /* ── Concept C: Minimal Monogram ── */
+    .logo-c {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-c .monogram {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .logo-c .mono-a {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 64px;
+      font-weight: 300;
+      color: #e5e5e5;
+      line-height: 1;
+    }
+    .logo-c .mono-t {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 64px;
+      font-weight: 600;
+      color: #e5e5e5;
+      line-height: 1;
+      margin-left: -4px;
+    }
+    .logo-c .wordmark {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 8px;
+      text-transform: uppercase;
+      color: #888;
+    }
+
+    /* ── Concept D: Stacked Bars ── */
+    .logo-d {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .logo-d .mark {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .logo-d .bar {
+      height: 4px;
+      border-radius: 2px;
+      background: #e5e5e5;
+    }
+    .logo-d .bar:nth-child(1) { width: 32px; }
+    .logo-d .bar:nth-child(2) { width: 24px; background: #888; }
+    .logo-d .bar:nth-child(3) { width: 40px; }
+    .logo-d .bar:nth-child(4) { width: 16px; background: #888; }
+    .logo-d .bar:nth-child(5) { width: 36px; }
+    .logo-d .wordmark {
+      font-family: 'Sora', sans-serif;
+      font-size: 30px;
+      font-weight: 600;
+      letter-spacing: -1px;
+      color: #e5e5e5;
+    }
+    .logo-d .wordmark .dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      background: #6366f1;
+      border-radius: 50%;
+      margin-left: 2px;
+      vertical-align: middle;
+    }
+
+    /* ── Concept E: Brush / Canvas ── */
+    .logo-e {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .logo-e .mark {
+      position: relative;
+      width: 48px; height: 48px;
+    }
+    .logo-e .canvas-frame {
+      width: 44px; height: 44px;
+      border: 2px solid #e5e5e5;
+      border-radius: 4px;
+      position: absolute;
+      top: 2px; left: 0;
+    }
+    .logo-e .brush-stroke {
+      position: absolute;
+      bottom: 0; right: -4px;
+      width: 28px; height: 20px;
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      border-radius: 10px 4px 10px 4px;
+      transform: rotate(-15deg);
+    }
+    .logo-e .wordmark {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 30px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      color: #e5e5e5;
+    }
+    .logo-e .wordmark .ai {
+      font-weight: 300;
+      color: #8b5cf6;
+      margin-left: 6px;
+      font-size: 22px;
+    }
+
+    /* ── Concept F: Pen Nib / Precision ── */
+    .logo-f {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .logo-f .mark {
+      width: 44px; height: 52px;
+      position: relative;
+    }
+    .logo-f .nib {
+      width: 0; height: 0;
+      border-left: 22px solid transparent;
+      border-right: 22px solid transparent;
+      border-top: 36px solid #e5e5e5;
+      position: absolute;
+      top: 0; left: 0;
+    }
+    .logo-f .nib-slit {
+      width: 2px; height: 18px;
+      background: #0a0a0a;
+      position: absolute;
+      top: 4px; left: 21px;
+    }
+    .logo-f .nib-dot {
+      width: 4px; height: 4px;
+      background: #10b981;
+      border-radius: 50%;
+      position: absolute;
+      bottom: 8px; left: 20px;
+    }
+    .logo-f .wordmark {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 500;
+      color: #e5e5e5;
+      letter-spacing: 1px;
+    }
+    .logo-f .sub {
+      display: block;
+      font-size: 10px;
+      color: #10b981;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* ── Concept G: Overlapping Panels ── */
+    .logo-g {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .logo-g .mark {
+      position: relative;
+      width: 52px; height: 44px;
+    }
+    .logo-g .panel {
+      position: absolute;
+      border-radius: 6px;
+      border: 1.5px solid;
+    }
+    .logo-g .panel:nth-child(1) {
+      width: 30px; height: 36px;
+      border-color: #e5e5e5;
+      top: 0; left: 0;
+      background: rgba(255,255,255,0.03);
+    }
+    .logo-g .panel:nth-child(2) {
+      width: 30px; height: 36px;
+      border-color: #888;
+      top: 4px; left: 12px;
+      background: rgba(255,255,255,0.05);
+    }
+    .logo-g .panel:nth-child(3) {
+      width: 30px; height: 36px;
+      border-color: #555;
+      top: 8px; left: 24px;
+      background: rgba(255,255,255,0.07);
+    }
+    .logo-g .wordmark {
+      font-family: 'Inter', sans-serif;
+      font-size: 30px;
+      font-weight: 700;
+      color: #e5e5e5;
+      letter-spacing: -1px;
+    }
+
+    /* ── Concept H: Abstract A ── */
+    .logo-h {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .logo-h .mark {
+      width: 52px; height: 52px;
+      position: relative;
+    }
+    .logo-h .mark svg {
+      width: 52px; height: 52px;
+    }
+    .logo-h .wordmark {
+      font-family: 'Sora', sans-serif;
+      font-size: 30px;
+      font-weight: 500;
+      color: #e5e5e5;
+      letter-spacing: 0.5px;
+    }
+
+    /* Favicons */
+    .fav-a .outer { width: 20px; height: 20px; border: 2px solid #e5e5e5; border-radius: 5px; transform: rotate(45deg); }
+    .fav-a .inner { width: 8px; height: 8px; background: #e5e5e5; border-radius: 2px; transform: rotate(45deg); position: absolute; top: 6px; left: 6px; }
+    .fav-a { position: relative; }
+
+    .fav-b { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 600; color: #c9a96e; }
+    .fav-b.dark { color: #c9a96e; }
+
+    .fav-c { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: #e5e5e5; }
+    .fav-c.on-light { color: #111; }
+
+    .fav-d { display: flex; flex-direction: column; gap: 2px; }
+    .fav-d .b { height: 2.5px; border-radius: 1px; background: #e5e5e5; }
+    .fav-d .b:nth-child(1) { width: 14px; }
+    .fav-d .b:nth-child(2) { width: 10px; }
+    .fav-d .b:nth-child(3) { width: 16px; }
+    .fav-d .b:nth-child(4) { width: 8px; }
+
+    .fav-e { position: relative; width: 20px; height: 20px; }
+    .fav-e .f-frame { width: 18px; height: 18px; border: 1.5px solid #e5e5e5; border-radius: 2px; }
+    .fav-e .f-stroke { position: absolute; bottom: -1px; right: -2px; width: 12px; height: 8px; background: linear-gradient(135deg, #8b5cf6, #6366f1); border-radius: 4px 2px 4px 2px; transform: rotate(-15deg); }
+
+    .fav-f { position: relative; }
+    .fav-f-nib { width: 0; height: 0; border-left: 9px solid transparent; border-right: 9px solid transparent; border-top: 16px solid #e5e5e5; }
+
+    .fav-g { position: relative; width: 22px; height: 18px; }
+    .fav-g .p { position: absolute; width: 12px; height: 14px; border-radius: 3px; border: 1.5px solid; }
+    .fav-g .p:nth-child(1) { border-color: #e5e5e5; top: 0; left: 0; }
+    .fav-g .p:nth-child(2) { border-color: #888; top: 2px; left: 5px; }
+    .fav-g .p:nth-child(3) { border-color: #555; top: 4px; left: 10px; }
+  </style>
+</head>
+<body>
+  <div class="page-title">Atelier — Logo Concepts</div>
+  <div class="page-subtitle">8 directions for logo + favicon. Pick your favorite(s) and we'll refine.</div>
+
+  <div class="grid">
+
+    <!-- A: Geometric Mark -->
+    <div class="concept">
+      <div class="concept-header">
+        <span class="concept-label">Concept A</span>
+        <span class="concept-style">Geometric / Modern</span>
+      </div>
+      <div class="concept-preview">
+        <div class="logo-a">
+          <div class="mark">
+            <div class="outer"></div>
+            <div class="inner"></div>
+          </div>
+          <span class="wordmark">atelier</span>
+        </div>
+      </div>
+      <div class="concept-details">
+        <div class="concept-name">Diamond Frame</div>
+        <div class="concept-desc">Rotated square with nested solid — suggests a canvas/artboard. Clean tech aesthetic with the geometric precision of a design tool. Space Grotesk typeface.</div>
+        <div class="favicon-row">
+          <span class="favicon-label">Favicon:</span>
+          <div class="favicon-box">
+            <div class="fav-a">
+              <div class="outer"></div>
+              <div class="inner"></div>
+            </div>
+          </div>
+          <div class="favicon-box light">
+            <div class="fav-a">
+              <div class="outer" style="border-color:#111"></div>
+              <div class="inner" style="background:#111"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- B: Serif Luxury -->
+    <div class="concept">
+      <div class="concept-header">
+        <span class="concept-label">Concept B</span>
+        <span class="concept-style">Serif / Luxury</span>
+      </div>
+      <div class="concept-preview">
+        <div class="logo-b">
+          <div class="mark">
+            <span class="mark-letter">A</span>
+          </div>
+          <span class="wordmark"><span>A</span>telier</span>
+        </div>
+      </div>
+      <div class="concept-details">
+        <div class="concept-name">Gold Monogram</div>
+        <div class="concept-desc">Circled "A" in warm gold with Playfair Display serif. Evokes the French atelier tradition — a master craftsman's studio. Premium, editorial feel.</div>
+        <div class="favicon-row">
+          <span class="favicon-label">Favicon:</span>
+          <div class="favicon-box">
+            <span class="fav-b">A</span>
+          </div>
+          <div class="favicon-box light">
+            <span class="fav-b" style="color:#967A4F">A</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- C: Minimal Monogram -->
+    <div class="concept">
+      <div class="concept-header">
+        <span class="concept-label">Concept C</span>
+        <span class="concept-style">Minimal / Typographic</span>
+      </div>
+      <div class="concept-preview">
+        <div class="logo-c">
+          <div class="monogram">
+            <span class="mono-a">A</span>
+            <span class="mono-t">t</span>
+          </div>
+          <span class="wordmark">Atelier</span>
+        </div>
+      </div>
+      <div class="concept-details">
+        <div class="concept-name">Light & Bold Pair</div>
+        <div class="concept-desc">Oversized "At" ligature in Cormorant Garamond — light A meets bold t. Pure typography, no symbol. Understated and confident, like a fashion house logotype.</div>
+        <div class="favicon-row">
+          <span class="favicon-label">Favicon:</span>
+          <div class="favicon-box">
+            <span class="fav-c">At</span>
+          </div>
+          <div class="favicon-box light">
+            <span class="fav-c on-light">At</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- D: Stacked Bars -->
+    <div class="concept">
+      <div class="concept-header">
+        <span class="concept-label">Concept D</span>
+        <span class="concept-style">Abstract / Tech</span>
+      </div>
+      <div class="concept-preview">
+        <div class="logo-d">
+          <div class="mark">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+          </div>
+          <span class="wordmark">atelier<span class="dot"></span></span>
+        </div>
+      </div>
+      <div class="concept-details">
+        <div class="concept-name">Layout Lines</div>
+        <div class="concept-desc">Stacked bars of varying width suggest UI layout blocks / wireframe layers. Sora typeface with an indigo dot. Reads as "design system" at a glance.</div>
+        <div class="favicon-row">
+          <span class="favicon-label">Favicon:</span>
+          <div class="favicon-box">
+            <div class="fav-d">
+              <div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div>
+            </div>
+          </div>
+          <div class="favicon-box light">
+            <div class="fav-d">
+              <div class="b" style="background:#111"></div><div class="b" style="background:#666"></div><div class="b" style="background:#111"></div><div class="b" style="background:#666"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E: Canvas + Brush -->
+    <div class="concept">
+      <div class="concept-header">
+        <span class="concept-label">Concept E</span>
+        <span class="concept-style">Creative / Playful</span>
+      </div>
+      <div class="concept-preview">
+        <div class="logo-e">
+          <div class="mark">
+            <div class="canvas-frame"></div>
+            <div class="brush-stroke"></div>
+          </div>
+          <span class="wordmark">atelier<span class="ai">ai</span></span>
+        </div>
+      </div>
+      <div class="concept-details">
+        <div class="concept-name">Canvas Stroke</div>
+        <div class="concept-desc">Rectangular frame (canvas/artboard) with a purple brush stroke breaking free. "ai" suffix in light purple. Bridges art and technology.</div>
+        <div class="favicon-row">
+          <span class="favicon-label">Favicon:</span>
+          <div class="favicon-box">
+            <div class="fav-e">
+              <div class="f-frame"></div>
+              <div class="f-stroke"></div>
+            </div>
+          </div>
+          <div class="favicon-box light">
+            <div class="fav-e">
+              <div class="f-frame" style="border-color:#111"></div>
+              <div class="f-stroke"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- F: Pen Nib -->
+    <div class="concept">
+      <div class="concept-header">
+        <span class="concept-label">Concept F</span>
+        <span class="concept-style">Craft / Precision</span>
+      </div>
+      <div class="concept-preview">
+        <div class="logo-f">
+          <div class="mark">
+            <div class="nib"></div>
+            <div class="nib-slit"></div>
+            <div class="nib-dot"></div>
+          </div>
+          <div>
+            <span class="wordmark">Atelier</span>
+            <span class="sub">Design Studio</span>
+          </div>
+        </div>
+      </div>
+      <div class="concept-details">
+        <div class="concept-name">Pen Nib</div>
+        <div class="concept-desc">Calligraphy nib with an emerald ink dot — references the hand-crafted origin of "atelier." Green accent adds a modern twist. "Design Studio" tagline optional.</div>
+        <div class="favicon-row">
+          <span class="favicon-label">Favicon:</span>
+          <div class="favicon-box">
+            <div class="fav-f"><div class="fav-f-nib"></div></div>
+          </div>
+          <div class="favicon-box light">
+            <div class="fav-f"><div class="fav-f-nib" style="border-top-color:#111"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- G: Overlapping Panels -->
+    <div class="concept">
+      <div class="concept-header">
+        <span class="concept-label">Concept G</span>
+        <span class="concept-style">Product / UI</span>
+      </div>
+      <div class="concept-preview">
+        <div class="logo-g">
+          <div class="mark">
+            <div class="panel"></div>
+            <div class="panel"></div>
+            <div class="panel"></div>
+          </div>
+          <span class="wordmark">atelier</span>
+        </div>
+      </div>
+      <div class="concept-details">
+        <div class="concept-name">Layered Screens</div>
+        <div class="concept-desc">Three overlapping panels — screens on a canvas. Directly represents the product metaphor. Inter Bold, tight tracking. Clean product identity.</div>
+        <div class="favicon-row">
+          <span class="favicon-label">Favicon:</span>
+          <div class="favicon-box">
+            <div class="fav-g">
+              <div class="p"></div><div class="p"></div><div class="p"></div>
+            </div>
+          </div>
+          <div class="favicon-box light">
+            <div class="fav-g">
+              <div class="p" style="border-color:#111"></div><div class="p" style="border-color:#888"></div><div class="p" style="border-color:#bbb"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- H: Abstract A -->
+    <div class="concept">
+      <div class="concept-header">
+        <span class="concept-label">Concept H</span>
+        <span class="concept-style">Geometric / Bold</span>
+      </div>
+      <div class="concept-preview">
+        <div class="logo-h">
+          <div class="mark">
+            <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Abstract A made of triangular shapes -->
+              <path d="M26 4L48 44H36L26 24L16 44H4L26 4Z" fill="#e5e5e5"/>
+              <rect x="16" y="32" width="20" height="3" rx="1.5" fill="#0a0a0a"/>
+              <circle cx="26" cy="16" r="3" fill="#6366f1"/>
+            </svg>
+          </div>
+          <span class="wordmark">atelier</span>
+        </div>
+      </div>
+      <div class="concept-details">
+        <div class="concept-name">Prism A</div>
+        <div class="concept-desc">Geometric "A" with a crossbar cutout and an indigo dot at the apex — the AI eye. Bold, ownable mark that scales from 16px favicon to billboard.</div>
+        <div class="favicon-row">
+          <span class="favicon-label">Favicon:</span>
+          <div class="favicon-box">
+            <svg width="20" height="20" viewBox="0 0 52 52" fill="none">
+              <path d="M26 4L48 44H36L26 24L16 44H4L26 4Z" fill="#e5e5e5"/>
+              <rect x="16" y="32" width="20" height="3" rx="1.5" fill="#0a0a0a"/>
+              <circle cx="26" cy="16" r="3" fill="#6366f1"/>
+            </svg>
+          </div>
+          <div class="favicon-box light">
+            <svg width="20" height="20" viewBox="0 0 52 52" fill="none">
+              <path d="M26 4L48 44H36L26 24L16 44H4L26 4Z" fill="#111"/>
+              <rect x="16" y="32" width="20" height="3" rx="1.5" fill="#fff"/>
+              <circle cx="26" cy="16" r="3" fill="#6366f1"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!-- IMAGE CAROUSEL: Full-width swiper with parallax inner images -->
+<!-- Pattern: Swiper slides with parallax background, pagination + nav -->
+<!-- Requires: Swiper CSS/JS -->
+<!-- Ref: https://report.adidas-group.com/2024/en/ -->
+
+<section class="carousel-section" style="position:relative;overflow:hidden">
+  <div class="swiper carousel-swiper" style="width:100%;height:80vh">
+    <div class="swiper-wrapper">
+      <!-- Slide 1 -->
+      <div class="swiper-slide" style="position:relative;overflow:hidden">
+        <div class="slide-bg" data-swiper-parallax="-30%" style="position:absolute;inset:-15%;background-size:cover;background-position:center"></div>
+        <div class="slide-overlay" style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.6) 0%,transparent 50%)"></div>
+        <div class="slide-content" style="position:absolute;bottom:80px;left:60px;right:60px;z-index:2">
+          <span class="slide-tag" data-eyebrow="optional" data-swiper-parallax="-100" style="font-size:12px;letter-spacing:3px;text-transform:uppercase">[EYEBROW_1]</span>
+          <h3 class="slide-title" data-swiper-parallax="-200" style="font-size:clamp(28px,4vw,56px);font-weight:700;margin:12px 0;line-height:1.1">[HEADLINE_1]</h3>
+          <p class="slide-desc" data-swiper-parallax="-300" style="font-size:16px;max-width:500px;line-height:1.5;opacity:0.85">[BODY_1]</p>
+        </div>
+      </div>
+      <!-- Slide 2 -->
+      <div class="swiper-slide" style="position:relative;overflow:hidden">
+        <div class="slide-bg" data-swiper-parallax="-30%" style="position:absolute;inset:-15%;background-size:cover;background-position:center"></div>
+        <div class="slide-overlay" style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.6) 0%,transparent 50%)"></div>
+        <div class="slide-content" style="position:absolute;bottom:80px;left:60px;right:60px;z-index:2">
+          <span class="slide-tag" data-eyebrow="optional" data-swiper-parallax="-100" style="font-size:12px;letter-spacing:3px;text-transform:uppercase">[EYEBROW_2]</span>
+          <h3 class="slide-title" data-swiper-parallax="-200" style="font-size:clamp(28px,4vw,56px);font-weight:700;margin:12px 0;line-height:1.1">[HEADLINE_2]</h3>
+          <p class="slide-desc" data-swiper-parallax="-300" style="font-size:16px;max-width:500px;line-height:1.5;opacity:0.85">[BODY_2]</p>
+        </div>
+      </div>
+      <!-- Slide 3 -->
+      <div class="swiper-slide" style="position:relative;overflow:hidden">
+        <div class="slide-bg" data-swiper-parallax="-30%" style="position:absolute;inset:-15%;background-size:cover;background-position:center"></div>
+        <div class="slide-overlay" style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.6) 0%,transparent 50%)"></div>
+        <div class="slide-content" style="position:absolute;bottom:80px;left:60px;right:60px;z-index:2">
+          <span class="slide-tag" data-eyebrow="optional" data-swiper-parallax="-100" style="font-size:12px;letter-spacing:3px;text-transform:uppercase">[EYEBROW_3]</span>
+          <h3 class="slide-title" data-swiper-parallax="-200" style="font-size:clamp(28px,4vw,56px);font-weight:700;margin:12px 0;line-height:1.1">[HEADLINE_3]</h3>
+          <p class="slide-desc" data-swiper-parallax="-300" style="font-size:16px;max-width:500px;line-height:1.5;opacity:0.85">[BODY_3]</p>
+        </div>
+      </div>
+    </div>
+    <div class="swiper-pagination" style="position:absolute;bottom:30px;z-index:10"></div>
+    <div class="swiper-button-prev" style="color:#fff"></div>
+    <div class="swiper-button-next" style="color:#fff"></div>
+  </div>
+</section>
+
+<style>
+@media (prefers-reduced-motion: reduce) {
+  .carousel-swiper .swiper-wrapper { transition: none !important; }
+}
+</style>
+
+<script>
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+new Swiper('.carousel-swiper', {
+  speed: prefersReducedMotion ? 0 : 800,
+  parallax: !prefersReducedMotion,
+  loop: true,
+  autoplay: prefersReducedMotion ? false : { delay: 5000, disableOnInteraction: false },
+  pagination: { el: '.swiper-pagination', clickable: true },
+  navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+});
+</script>

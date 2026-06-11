@@ -1,0 +1,90 @@
+<!-- COUNTER DASHBOARD: KPI stats grid with count-up animation on scroll -->
+<!-- Pattern: 3-column stat cards, numbers animate from 0 on viewport entry -->
+<!-- Requires: GSAP + ScrollTrigger -->
+<!-- Ref: https://report.adidas-group.com/2024/en/ -->
+
+<section class="dashboard-section" style="padding:100px 40px;position:relative">
+  <div class="dashboard-header" style="text-align:center;margin-bottom:60px">
+    <span class="dash-eyebrow" data-eyebrow="optional" style="font-size:12px;letter-spacing:3px;text-transform:uppercase;opacity:0">[EYEBROW]</span>
+    <h2 class="dash-title" style="font-size:clamp(32px,4vw,56px);font-weight:700;margin:16px 0;opacity:0">[HEADLINE]</h2>
+  </div>
+
+  <div class="dashboard-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:32px;max-width:1200px;margin:0 auto">
+    <!-- Card 1 -->
+    <div class="stat-card" data-stat="0" style="padding:48px 32px;text-align:center;position:relative;opacity:0;transform:translateY(40px)">
+      <div class="stat-number" data-target="0" data-suffix="" style="font-size:clamp(40px,5vw,72px);font-weight:800;line-height:1">0</div>
+      <div class="stat-unit" style="font-size:14px;letter-spacing:2px;text-transform:uppercase;margin-top:8px">[LABEL_1]</div>
+      <p class="stat-desc" style="font-size:15px;line-height:1.5;margin-top:16px;opacity:0.7">[DESC_1]</p>
+    </div>
+    <!-- Card 2 -->
+    <div class="stat-card" data-stat="1" style="padding:48px 32px;text-align:center;position:relative;opacity:0;transform:translateY(40px)">
+      <div class="stat-number" data-target="0" data-suffix="" style="font-size:clamp(40px,5vw,72px);font-weight:800;line-height:1">0</div>
+      <div class="stat-unit" style="font-size:14px;letter-spacing:2px;text-transform:uppercase;margin-top:8px">[LABEL_2]</div>
+      <p class="stat-desc" style="font-size:15px;line-height:1.5;margin-top:16px;opacity:0.7">[DESC_2]</p>
+    </div>
+    <!-- Card 3 -->
+    <div class="stat-card" data-stat="2" style="padding:48px 32px;text-align:center;position:relative;opacity:0;transform:translateY(40px)">
+      <div class="stat-number" data-target="0" data-suffix="" style="font-size:clamp(40px,5vw,72px);font-weight:800;line-height:1">0</div>
+      <div class="stat-unit" style="font-size:14px;letter-spacing:2px;text-transform:uppercase;margin-top:8px">[LABEL_3]</div>
+      <p class="stat-desc" style="font-size:15px;line-height:1.5;margin-top:16px;opacity:0.7">[DESC_3]</p>
+    </div>
+  </div>
+</section>
+
+<style>
+@media (prefers-reduced-motion: reduce) {
+  .dash-eyebrow, .dash-title, .stat-card { opacity: 1 !important; transform: none !important; }
+}
+</style>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const section = document.querySelector('.dashboard-section');
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// Header reveal
+const headerTl = gsap.timeline({
+  scrollTrigger: { trigger: section, start: 'top 75%', toggleActions: 'play none none reverse' }
+});
+headerTl.to('.dash-eyebrow', { opacity: 1, duration: 0.5 })
+  .to('.dash-title', { opacity: 1, duration: 0.6 }, '-=0.2');
+
+// Cards stagger in
+const cards = document.querySelectorAll('.stat-card');
+cards.forEach((card, i) => {
+  gsap.to(card, {
+    opacity: 1, y: 0, duration: 0.7, ease: 'power2.out',
+    scrollTrigger: { trigger: card, start: 'top 80%', toggleActions: 'play none none reverse' },
+    delay: i * 0.15,
+  });
+});
+
+// Count-up animation
+if (!prefersReducedMotion) {
+  document.querySelectorAll('.stat-number').forEach(el => {
+    const target = parseFloat(el.dataset.target);
+    const suffix = el.dataset.suffix || '';
+    const isDecimal = String(target).includes('.');
+    ScrollTrigger.create({
+      trigger: el,
+      start: 'top 85%',
+      onEnter: () => {
+        gsap.to({ val: 0 }, {
+          val: target,
+          duration: 2,
+          ease: 'power1.out',
+          onUpdate() { el.textContent = (isDecimal ? this.targets()[0].val.toFixed(1) : Math.round(this.targets()[0].val)) + suffix; },
+        });
+      },
+      once: true,
+    });
+  });
+} else {
+  document.querySelectorAll('.stat-number').forEach(el => {
+    const target = parseFloat(el.dataset.target);
+    const suffix = el.dataset.suffix || '';
+    const isDecimal = String(target).includes('.');
+    el.textContent = (isDecimal ? target.toFixed(1) : Math.round(target)) + suffix;
+  });
+}
+</script>

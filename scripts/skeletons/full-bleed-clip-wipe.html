@@ -1,0 +1,45 @@
+<!-- FULL BLEED CLIP WIPE: Full-viewport image wipes open from center via clip-path on scroll entry -->
+<!-- Pattern: Section enters viewport; clip-path inset(0 50% 0 50%) → inset(0 0 0 0); headline fades in after -->
+<!-- Requires: GSAP + ScrollTrigger -->
+<!-- Ref: https://www.apple.com/mac/ -->
+<!-- Ref: https://www.rivian.com/ -->
+<!-- Ref: https://www.nike.com/ -->
+
+<section class="fbcw-section" style="position:relative;padding:100px 0">
+  <div class="fbcw-stage" data-stage="true" style="position:relative;width:100%;height:80vh;overflow:hidden">
+    <div class="fbcw-media" data-media="bg" style="position:absolute;inset:0;background-size:cover;background-position:center;clip-path:inset(0 50% 0 50%);will-change:clip-path"></div>
+    <div class="fbcw-scrim" aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.5),transparent 60%);pointer-events:none;z-index:2"></div>
+    <div class="fbcw-content" style="position:absolute;inset:auto 0 0 0;padding:60px 6vw;color:#fff;z-index:3;opacity:0;transform:translateY(20px);will-change:opacity,transform">
+      <span class="fbcw-eyebrow" data-eyebrow="optional" style="font-size:12px;letter-spacing:3px;text-transform:uppercase">[EYEBROW]</span>
+      <h2 class="fbcw-title" style="font-size:clamp(36px,6vw,88px);font-weight:700;margin:10px 0 16px;line-height:1.05;max-width:900px">[HEADLINE]</h2>
+      <p class="fbcw-body" style="font-size:clamp(16px,1.4vw,20px);line-height:1.55;margin:0;max-width:620px;opacity:0.9">[BODY]</p>
+    </div>
+  </div>
+</section>
+
+<style>
+@media (prefers-reduced-motion: reduce) {
+  .fbcw-section .fbcw-media { clip-path: inset(0 0 0 0) !important; }
+  .fbcw-section .fbcw-content { opacity: 1 !important; transform: none !important; }
+}
+</style>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const fbcwRoot = document.querySelector('.fbcw-section');
+const fbcwPrefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+if (!fbcwPrefersReduced) {
+  const media = fbcwRoot.querySelector('.fbcw-media');
+  const content = fbcwRoot.querySelector('.fbcw-content');
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: fbcwRoot,
+      start: 'top 70%',
+      toggleActions: 'play none none reverse',
+    }
+  });
+  tl.to(media, { clipPath: 'inset(0 0% 0 0%)', duration: 1.1, ease: 'power3.out' })
+    .to(content, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, '-=0.4');
+}
+</script>

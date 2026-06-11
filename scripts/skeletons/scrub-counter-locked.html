@@ -1,0 +1,65 @@
+<!-- SCRUB COUNTER LOCKED: Numbers scrub to scroll position (not viewport-once trigger) -->
+<!-- Pattern: Pinned section; as user scrolls, big numbers count up in sync with scroll progress -->
+<!-- Requires: GSAP + ScrollTrigger -->
+<!-- Ref: https://report.adidas-group.com/2024/en/ -->
+
+<section class="scl-section" style="position:relative;height:250vh">
+  <div class="scl-sticky" style="position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center">
+    <div class="scl-inner" style="max-width:1200px;width:100%;padding:0 6vw">
+      <header class="scl-head" style="text-align:center;margin-bottom:40px">
+        <span class="scl-eyebrow" data-eyebrow="optional" style="font-size:12px;letter-spacing:3px;text-transform:uppercase">[EYEBROW]</span>
+        <h2 class="scl-title" style="font-size:clamp(28px,3.6vw,56px);font-weight:700;margin:10px 0 0">[HEADLINE]</h2>
+      </header>
+      <div class="scl-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:40px">
+        <div class="scl-cell" data-cell="0" style="text-align:center">
+          <div class="scl-num" data-target="0" data-suffix="" style="font-size:clamp(64px,10vw,160px);font-weight:800;line-height:1;font-variant-numeric:tabular-nums">0</div>
+          <div class="scl-label" style="font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-top:12px">[LABEL_1]</div>
+        </div>
+        <div class="scl-cell" data-cell="1" style="text-align:center">
+          <div class="scl-num" data-target="0" data-suffix="" style="font-size:clamp(64px,10vw,160px);font-weight:800;line-height:1;font-variant-numeric:tabular-nums">0</div>
+          <div class="scl-label" style="font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-top:12px">[LABEL_2]</div>
+        </div>
+        <div class="scl-cell" data-cell="2" style="text-align:center">
+          <div class="scl-num" data-target="0" data-suffix="" style="font-size:clamp(64px,10vw,160px);font-weight:800;line-height:1;font-variant-numeric:tabular-nums">0</div>
+          <div class="scl-label" style="font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-top:12px">[LABEL_3]</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+@media (prefers-reduced-motion: reduce) {
+  .scl-section { height: auto !important; }
+  .scl-sticky { position: static !important; height: auto !important; padding: 80px 0 !important; }
+}
+</style>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const root = document.querySelector('.scl-section');
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+root.querySelectorAll('.scl-num').forEach(el => {
+  const target = parseFloat(el.dataset.target);
+  const suffix = el.dataset.suffix || '';
+  const isDecimal = String(target).includes('.');
+  const format = (v) => (isDecimal ? v.toFixed(1) : Math.round(v).toLocaleString()) + suffix;
+  if (prefersReducedMotion || !Number.isFinite(target)) {
+    el.textContent = Number.isFinite(target) ? format(target) : '0';
+    return;
+  }
+  const obj = { val: 0 };
+  gsap.to(obj, {
+    val: target,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: root,
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: 0.5,
+    },
+    onUpdate() { el.textContent = format(obj.val); }
+  });
+});
+</script>

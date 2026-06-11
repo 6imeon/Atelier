@@ -1,0 +1,80 @@
+name: atelier
+
+services:
+  crawl4ai:
+    image: unclecode/crawl4ai:0.7.4
+    container_name: atelier-crawl4ai
+    ports:
+      - "${CRAWL4AI_PORT:-11235}:11235"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11235/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  api-server:
+    build:
+      context: .
+      dockerfile: packages/api-server/Dockerfile
+    image: atelier-api-server:local
+    container_name: atelier-api-server
+    ports:
+      - "${API_PORT:-8080}:8080"
+    env_file:
+      - .env
+    environment:
+      - CRAWL4AI_URL=http://crawl4ai:11235
+      - ATELIER_STORAGE=sqlite
+      - ATELIER_STORAGE_PATH=/data/canvas.db
+    volumes:
+      - atelier-data:/data
+    depends_on:
+      crawl4ai:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:8080/api/health').then(r=>{if(!r.ok)throw 1}).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  web-ui:
+    build:
+      context: .
+      dockerfile: packages/web-ui/Dockerfile
+    image: atelier-web-ui:local
+    container_name: atelier-web-ui
+    ports:
+      - "${WEB_PORT:-8090}:80"
+    depends_on:
+      api-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:80/"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  atelier-data:
+    name: atelier_atelier-data
+    external: true

@@ -1,0 +1,75 @@
+<!-- STICKY SIDEBAR TOC: Left-rail table of contents with scroll-synced active state -->
+<!-- Pattern: Sticky nav on left, sections on right; active TOC item tracks viewport -->
+<!-- Requires: GSAP + ScrollTrigger -->
+<!-- Ref: https://report.adidas-group.com/2022/en/ -->
+
+<section class="toc-section" style="position:relative;display:grid;grid-template-columns:280px 1fr;gap:60px;padding:80px 40px;max-width:1400px;margin:0 auto">
+  <aside class="toc-nav" style="position:sticky;top:80px;align-self:start;height:fit-content">
+    <span class="toc-eyebrow" data-eyebrow="optional" style="font-size:12px;letter-spacing:3px;text-transform:uppercase;display:block;margin-bottom:20px">[EYEBROW]</span>
+    <ul class="toc-list" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:14px">
+      <li class="toc-item" data-target="0"><a href="#" style="text-decoration:none;font-size:15px;display:flex;align-items:center;gap:10px;opacity:0.55"><span class="toc-bullet" style="width:6px;height:6px;border-radius:50%;background:currentColor"></span>[ITEM_1]</a></li>
+      <li class="toc-item" data-target="1"><a href="#" style="text-decoration:none;font-size:15px;display:flex;align-items:center;gap:10px;opacity:0.55"><span class="toc-bullet" style="width:6px;height:6px;border-radius:50%;background:currentColor"></span>[ITEM_2]</a></li>
+      <li class="toc-item" data-target="2"><a href="#" style="text-decoration:none;font-size:15px;display:flex;align-items:center;gap:10px;opacity:0.55"><span class="toc-bullet" style="width:6px;height:6px;border-radius:50%;background:currentColor"></span>[ITEM_3]</a></li>
+      <li class="toc-item" data-target="3"><a href="#" style="text-decoration:none;font-size:15px;display:flex;align-items:center;gap:10px;opacity:0.55"><span class="toc-bullet" style="width:6px;height:6px;border-radius:50%;background:currentColor"></span>[ITEM_4]</a></li>
+    </ul>
+  </aside>
+
+  <div class="toc-content" style="display:flex;flex-direction:column;gap:80px">
+    <article class="toc-block" data-block="0">
+      <h3 style="font-size:clamp(28px,3.2vw,44px);font-weight:700;margin:0 0 16px">[HEADLINE_1]</h3>
+      <p style="font-size:17px;line-height:1.6;margin:0">[BODY_1]</p>
+    </article>
+    <article class="toc-block" data-block="1">
+      <h3 style="font-size:clamp(28px,3.2vw,44px);font-weight:700;margin:0 0 16px">[HEADLINE_2]</h3>
+      <p style="font-size:17px;line-height:1.6;margin:0">[BODY_2]</p>
+    </article>
+    <article class="toc-block" data-block="2">
+      <h3 style="font-size:clamp(28px,3.2vw,44px);font-weight:700;margin:0 0 16px">[HEADLINE_3]</h3>
+      <p style="font-size:17px;line-height:1.6;margin:0">[BODY_3]</p>
+    </article>
+    <article class="toc-block" data-block="3">
+      <h3 style="font-size:clamp(28px,3.2vw,44px);font-weight:700;margin:0 0 16px">[HEADLINE_4]</h3>
+      <p style="font-size:17px;line-height:1.6;margin:0">[BODY_4]</p>
+    </article>
+  </div>
+</section>
+
+<style>
+.toc-section .toc-item a { transition: opacity 0.3s ease; }
+.toc-section .toc-item.is-active a { opacity: 1; font-weight: 600; }
+@media (max-width: 760px) {
+  .toc-section { grid-template-columns: 1fr; }
+  .toc-nav { position: static; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .toc-section .toc-item a { transition: none !important; }
+}
+</style>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const root = document.querySelector('.toc-section');
+const blocks = root.querySelectorAll('.toc-block');
+const items = root.querySelectorAll('.toc-item');
+
+blocks.forEach((block, i) => {
+  ScrollTrigger.create({
+    trigger: block,
+    start: 'top center',
+    end: 'bottom center',
+    onToggle: (self) => {
+      if (self.isActive) {
+        items.forEach(x => x.classList.remove('is-active'));
+        items[i]?.classList.add('is-active');
+      }
+    }
+  });
+});
+
+items.forEach((item, i) => {
+  item.querySelector('a')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    blocks[i]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>

@@ -1,0 +1,83 @@
+<!-- VIDEO PLAYLIST HOVER: Grid of video tiles; muted video auto-plays on hover, pauses on leave -->
+<!-- Pattern: 3×2 grid of <video> with poster; pointerenter plays, pointerleave pauses + resets -->
+<!-- Requires: Minimal JS (pointer events) -->
+<!-- Ref: https://www.apple.com/tv/ -->
+<!-- Ref: https://www.netflix.com/ -->
+<!-- Ref: https://www.framer.com/ -->
+
+<section class="vph-section" style="position:relative;padding:140px 40px;max-width:1400px;margin:0 auto">
+  <header class="vph-head" style="margin-bottom:60px;display:flex;justify-content:space-between;align-items:flex-end">
+    <div>
+      <span class="vph-eyebrow" data-eyebrow="optional" style="font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:600;opacity:0.65">[EYEBROW]</span>
+      <h2 class="vph-title" style="font-size:clamp(32px,4.4vw,72px);font-weight:700;margin:12px 0 0;letter-spacing:-0.02em;line-height:1">[HEADLINE]</h2>
+    </div>
+    <a class="vph-cta" href="#" style="font-size:13px;letter-spacing:2px;text-transform:uppercase;font-weight:600;text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:4px">[CTA]</a>
+  </header>
+
+  <div class="vph-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px">
+    <figure class="vph-tile" data-tile="0" style="margin:0;position:relative;overflow:hidden;border-radius:8px;cursor:pointer">
+      <video class="vph-video" data-video="true" muted loop playsinline preload="metadata" poster="" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block"></video>
+      <figcaption class="vph-cap" style="padding:20px 0 0">
+        <span style="font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;opacity:0.6">[CATEGORY_1]</span>
+        <h3 style="font-size:18px;font-weight:600;margin:6px 0 0">[TITLE_1]</h3>
+        <p style="font-size:14px;margin:6px 0 0;opacity:0.7">[DURATION_1]</p>
+      </figcaption>
+    </figure>
+    <figure class="vph-tile" data-tile="1" style="margin:0;position:relative;overflow:hidden;border-radius:8px;cursor:pointer">
+      <video class="vph-video" data-video="true" muted loop playsinline preload="metadata" poster="" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block"></video>
+      <figcaption class="vph-cap" style="padding:20px 0 0">
+        <span style="font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;opacity:0.6">[CATEGORY_2]</span>
+        <h3 style="font-size:18px;font-weight:600;margin:6px 0 0">[TITLE_2]</h3>
+        <p style="font-size:14px;margin:6px 0 0;opacity:0.7">[DURATION_2]</p>
+      </figcaption>
+    </figure>
+    <figure class="vph-tile" data-tile="2" style="margin:0;position:relative;overflow:hidden;border-radius:8px;cursor:pointer">
+      <video class="vph-video" data-video="true" muted loop playsinline preload="metadata" poster="" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block"></video>
+      <figcaption class="vph-cap" style="padding:20px 0 0">
+        <span style="font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;opacity:0.6">[CATEGORY_3]</span>
+        <h3 style="font-size:18px;font-weight:600;margin:6px 0 0">[TITLE_3]</h3>
+        <p style="font-size:14px;margin:6px 0 0;opacity:0.7">[DURATION_3]</p>
+      </figcaption>
+    </figure>
+    <figure class="vph-tile" data-tile="3" style="margin:0;position:relative;overflow:hidden;border-radius:8px;cursor:pointer">
+      <video class="vph-video" data-video="true" muted loop playsinline preload="metadata" poster="" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block"></video>
+      <figcaption class="vph-cap" style="padding:20px 0 0">
+        <span style="font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;opacity:0.6">[CATEGORY_4]</span>
+        <h3 style="font-size:18px;font-weight:600;margin:6px 0 0">[TITLE_4]</h3>
+        <p style="font-size:14px;margin:6px 0 0;opacity:0.7">[DURATION_4]</p>
+      </figcaption>
+    </figure>
+    <figure class="vph-tile" data-tile="4" style="margin:0;position:relative;overflow:hidden;border-radius:8px;cursor:pointer">
+      <video class="vph-video" data-video="true" muted loop playsinline preload="metadata" poster="" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block"></video>
+      <figcaption class="vph-cap" style="padding:20px 0 0">
+        <span style="font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;opacity:0.6">[CATEGORY_5]</span>
+        <h3 style="font-size:18px;font-weight:600;margin:6px 0 0">[TITLE_5]</h3>
+        <p style="font-size:14px;margin:6px 0 0;opacity:0.7">[DURATION_5]</p>
+      </figcaption>
+    </figure>
+    <figure class="vph-tile" data-tile="5" style="margin:0;position:relative;overflow:hidden;border-radius:8px;cursor:pointer">
+      <video class="vph-video" data-video="true" muted loop playsinline preload="metadata" poster="" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block"></video>
+      <figcaption class="vph-cap" style="padding:20px 0 0">
+        <span style="font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;opacity:0.6">[CATEGORY_6]</span>
+        <h3 style="font-size:18px;font-weight:600;margin:6px 0 0">[TITLE_6]</h3>
+        <p style="font-size:14px;margin:6px 0 0;opacity:0.7">[DURATION_6]</p>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+@media (max-width: 900px) { .vph-section .vph-grid { grid-template-columns: 1fr 1fr !important; } }
+@media (max-width: 560px) { .vph-section .vph-grid { grid-template-columns: 1fr !important; } }
+</style>
+
+<script>
+const vphRoot = document.querySelector('.vph-section');
+const vphPrefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+vphRoot.querySelectorAll('.vph-tile').forEach(tile => {
+  const v = tile.querySelector('.vph-video');
+  if (!v) return;
+  tile.addEventListener('pointerenter', () => { if (!vphPrefersReduced) v.play().catch(() => {}); });
+  tile.addEventListener('pointerleave', () => { v.pause(); v.currentTime = 0; });
+});
+</script>

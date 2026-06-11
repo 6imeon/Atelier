@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atelier — Full Layout Redesign</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #f5f5f7; color: #1d1d1f; height: 100vh; overflow: hidden; }
+
+  .app { display: flex; height: 100vh; }
+
+  /* Canvas */
+  .canvas {
+    flex: 1; position: relative; overflow: hidden;
+    background: #f5f5f7;
+    cursor: grab;
+  }
+  .canvas-grid {
+    position: absolute; inset: 0;
+    background-size: 24px 24px;
+    background-image: radial-gradient(circle, rgba(0,0,0,0.04) 1px, transparent 1px);
+  }
+  .canvas-content {
+    position: absolute;
+    transform: translate(80px, 80px) scale(0.45);
+    transform-origin: 0 0;
+  }
+
+  /* Screen cards */
+  .screen-card {
+    position: absolute; cursor: grab;
+    animation: fadeUp 0.4s ease both;
+  }
+  .screen-card:nth-child(2) { animation-delay: 0.1s; }
+  .screen-card:nth-child(3) { animation-delay: 0.2s; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  .screen-frame {
+    border-radius: 12px; overflow: hidden;
+    background: white;
+    border: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+    transition: box-shadow 0.2s, border-color 0.2s;
+  }
+  .screen-card.selected .screen-frame {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99,102,241,0.15), 0 4px 16px rgba(0,0,0,0.06);
+  }
+  .screen-card:hover:not(.selected) .screen-frame {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.04);
+  }
+
+  /* Card label — only on hover */
+  .screen-label {
+    margin-top: 10px; font-size: 12px; color: #9ca3af; font-weight: 500;
+    opacity: 0; transition: opacity 0.2s;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .screen-card:hover .screen-label, .screen-card.selected .screen-label { opacity: 1; }
+  .screen-card.selected .screen-label { color: #6366f1; }
+
+  /* Card actions — only on selection */
+  .screen-actions {
+    display: flex; gap: 4px; margin-top: 8px;
+    opacity: 0; transition: opacity 0.15s;
+  }
+  .screen-card.selected .screen-actions { opacity: 1; }
+  .screen-actions button {
+    padding: 5px 10px; font-size: 11px; font-weight: 500; font-family: inherit;
+    background: white; border: 1px solid rgba(0,0,0,0.1); border-radius: 6px;
+    color: #6b7280; cursor: pointer; display: flex; align-items: center; gap: 4px;
+    transition: all 0.15s;
+  }
+  .screen-actions button:hover { background: #f9fafb; border-color: rgba(0,0,0,0.15); color: #374151; }
+  .screen-actions button svg { width: 12px; height: 12px; }
+
+  /* Floating chat input — bottom center */
+  .chat-input-float {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    width: 560px; z-index: 100;
+    animation: fadeUp 0.5s ease 0.3s both;
+  }
+  .chat-input-container {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 8px 8px 20px;
+    background: white;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 8px 32px rgba(0,0,0,0.06);
+    transition: box-shadow 0.2s, border-color 0.2s;
+  }
+  .chat-input-container:focus-within {
+    border-color: rgba(99,102,241,0.3);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 8px 32px rgba(0,0,0,0.08), 0 0 0 3px rgba(99,102,241,0.08);
+  }
+  .chat-input {
+    flex: 1; border: none; outline: none; font-size: 14px; font-family: inherit;
+    color: #1d1d1f; background: transparent;
+  }
+  .chat-input::placeholder { color: #c4c4c6; }
+  .chat-send {
+    width: 36px; height: 36px; border-radius: 12px; border: none;
+    background: #6366f1; color: white; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+    flex-shrink: 0;
+  }
+  .chat-send:hover { background: #4f46e5; }
+  .chat-send svg { width: 16px; height: 16px; }
+
+  /* Toolbar — top left */
+  .toolbar {
+    position: fixed; top: 16px; left: 16px; z-index: 90;
+    display: flex; align-items: center; gap: 6px;
+    animation: fadeUp 0.4s ease 0.2s both;
+  }
+  .toolbar-group {
+    display: flex; align-items: center;
+    background: white;
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    padding: 4px;
+  }
+  .toolbar-btn {
+    width: 32px; height: 32px; border: none; border-radius: 8px;
+    background: transparent; color: #9ca3af; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; font-size: 14px;
+  }
+  .toolbar-btn:hover { background: #f5f5f7; color: #6b7280; }
+  .toolbar-btn.active { background: #eef2ff; color: #6366f1; }
+  .toolbar-zoom {
+    padding: 0 8px; font-size: 12px; font-weight: 500; color: #9ca3af;
+    background: transparent; border: none; cursor: pointer;
+    font-family: inherit; min-width: 40px; text-align: center;
+  }
+  .toolbar-sep { width: 1px; height: 20px; background: rgba(0,0,0,0.06); margin: 0 2px; }
+
+  /* Top right — project info */
+  .top-bar {
+    position: fixed; top: 16px; right: 16px; z-index: 90;
+    display: flex; align-items: center; gap: 8px;
+    animation: fadeUp 0.4s ease 0.2s both;
+  }
+  .top-bar-pill {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 14px; background: white;
+    border: 1px solid rgba(0,0,0,0.06); border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    font-size: 12px; font-weight: 500; color: #6b7280;
+  }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; }
+
+  /* Fake screens inside iframes */
+  .fake-screen { width: 100%; height: 100%; overflow: hidden; pointer-events: none; }
+
+  /* Dashboard */
+  .ds-nav { height: 56px; background: #fff; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; padding: 0 24px; gap: 24px; }
+  .ds-logo { width: 28px; height: 28px; border-radius: 8px; background: #6366f1; }
+  .ds-nav-item { height: 8px; border-radius: 4px; background: #e5e7eb; }
+  .ds-body { display: flex; height: calc(100% - 56px); }
+  .ds-side { width: 220px; background: #fafafa; border-right: 1px solid #f0f0f0; padding: 24px 16px; }
+  .ds-side-item { height: 10px; border-radius: 5px; margin-bottom: 16px; background: #e5e7eb; }
+  .ds-side-item.active { background: #6366f1; opacity: 0.7; }
+  .ds-main { flex: 1; padding: 32px; background: #fafafa; }
+  .ds-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 28px; }
+  .ds-card { background: white; border-radius: 12px; padding: 20px; border: 1px solid #f0f0f0; }
+  .ds-card-label { height: 8px; width: 50%; border-radius: 4px; background: #e5e7eb; margin-bottom: 12px; }
+  .ds-card-value { height: 24px; width: 40%; border-radius: 4px; background: #1d1d1f; margin-bottom: 8px; }
+  .ds-card-delta { height: 6px; width: 25%; border-radius: 3px; }
+  .ds-card:nth-child(1) .ds-card-delta { background: #22c55e; }
+  .ds-card:nth-child(2) .ds-card-delta { background: #6366f1; }
+  .ds-card:nth-child(3) .ds-card-delta { background: #f59e0b; }
+  .ds-chart { background: white; border-radius: 12px; padding: 24px; border: 1px solid #f0f0f0; }
+  .ds-chart-label { height: 10px; width: 100px; border-radius: 4px; background: #e5e7eb; margin-bottom: 20px; }
+  .ds-bars { display: flex; align-items: flex-end; gap: 10px; height: 140px; }
+  .ds-bar { flex: 1; border-radius: 6px 6px 0 0; background: #6366f1; opacity: 0.8; }
+
+  /* Mobile */
+  .mb-status { height: 48px; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #1d1d1f; }
+  .mb-hero { padding: 32px 24px; background: linear-gradient(135deg, #6366f1, #8b5cf6); }
+  .mb-hero-title { height: 18px; width: 65%; border-radius: 4px; background: rgba(255,255,255,0.9); margin-bottom: 10px; }
+  .mb-hero-sub { height: 10px; width: 85%; border-radius: 4px; background: rgba(255,255,255,0.4); }
+  .mb-list { padding: 16px; background: #fafafa; flex: 1; }
+  .mb-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: white; border-radius: 14px; margin-bottom: 10px; border: 1px solid #f0f0f0; }
+  .mb-avatar { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; }
+  .mb-text-line { height: 8px; border-radius: 4px; background: #e5e7eb; margin-bottom: 6px; }
+  .mb-text-line:last-child { width: 55%; margin-bottom: 0; }
+  .mb-tabs { height: 52px; background: white; border-top: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-around; }
+  .mb-tab { width: 20px; height: 20px; border-radius: 6px; background: #e5e7eb; }
+  .mb-tab.active { background: #6366f1; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="canvas">
+    <div class="canvas-grid"></div>
+    <div class="canvas-content">
+
+      <!-- Dashboard — selected -->
+      <div class="screen-card selected" style="left: 0; top: 0; width: 360px;">
+        <div class="screen-frame" style="width: 360px; height: 225px;">
+          <div class="fake-screen" style="width: 1440px; height: 900px; transform: scale(0.25); transform-origin: top left;">
+            <div class="ds-nav">
+              <div class="ds-logo"></div>
+              <div class="ds-nav-item" style="width:48px"></div>
+              <div class="ds-nav-item" style="width:56px"></div>
+              <div class="ds-nav-item" style="width:44px"></div>
+            </div>
+            <div class="ds-body">
+              <div class="ds-side">
+                <div class="ds-side-item active" style="width:75%"></div>
+                <div class="ds-side-item" style="width:60%"></div>
+                <div class="ds-side-item" style="width:70%"></div>
+                <div class="ds-side-item" style="width:50%"></div>
+              </div>
+              <div class="ds-main">
+                <div class="ds-cards">
+                  <div class="ds-card"><div class="ds-card-label"></div><div class="ds-card-value"></div><div class="ds-card-delta"></div></div>
+                  <div class="ds-card"><div class="ds-card-label"></div><div class="ds-card-value"></div><div class="ds-card-delta"></div></div>
+                  <div class="ds-card"><div class="ds-card-label"></div><div class="ds-card-value"></div><div class="ds-card-delta"></div></div>
+                </div>
+                <div class="ds-chart">
+                  <div class="ds-chart-label"></div>
+                  <div class="ds-bars">
+                    <div class="ds-bar" style="height:60%"></div><div class="ds-bar" style="height:85%"></div>
+                    <div class="ds-bar" style="height:45%"></div><div class="ds-bar" style="height:92%"></div>
+                    <div class="ds-bar" style="height:70%"></div><div class="ds-bar" style="height:55%"></div>
+                    <div class="ds-bar" style="height:78%"></div><div class="ds-bar" style="height:65%"></div>
+                    <div class="ds-bar" style="height:88%"></div><div class="ds-bar" style="height:50%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-label">Analytics dashboard</div>
+        <div class="screen-actions">
+          <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>
+          <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="9" height="9" rx="2"/><rect x="13" y="13" width="9" height="9" rx="2"/><path d="M13 2h4.5A2.5 2.5 0 0 1 20 4.5V9"/><path d="M2 13v4.5A2.5 2.5 0 0 0 4.5 20H9"/></svg>Variants</button>
+          <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export</button>
+        </div>
+      </div>
+
+      <!-- Mobile screen -->
+      <div class="screen-card" style="left: 400px; top: 0; width: 97px;">
+        <div class="screen-frame" style="width: 97px; height: 211px;">
+          <div class="fake-screen" style="width: 390px; height: 844px; transform: scale(0.25); transform-origin: top left; display: flex; flex-direction: column;">
+            <div class="mb-status">9:41</div>
+            <div class="mb-hero"><div class="mb-hero-title"></div><div class="mb-hero-sub"></div></div>
+            <div class="mb-list" style="flex:1">
+              <div class="mb-item"><div class="mb-avatar" style="background:linear-gradient(135deg,#f472b6,#ec4899)"></div><div style="flex:1"><div class="mb-text-line" style="width:75%"></div><div class="mb-text-line"></div></div></div>
+              <div class="mb-item"><div class="mb-avatar" style="background:linear-gradient(135deg,#34d399,#10b981)"></div><div style="flex:1"><div class="mb-text-line" style="width:65%"></div><div class="mb-text-line"></div></div></div>
+              <div class="mb-item"><div class="mb-avatar" style="background:linear-gradient(135deg,#60a5fa,#3b82f6)"></div><div style="flex:1"><div class="mb-text-line" style="width:85%"></div><div class="mb-text-line"></div></div></div>
+            </div>
+            <div class="mb-tabs"><div class="mb-tab active"></div><div class="mb-tab"></div><div class="mb-tab"></div><div class="mb-tab"></div></div>
+          </div>
+        </div>
+        <div class="screen-label">Social feed</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Toolbar -->
+<div class="toolbar">
+  <div class="toolbar-group">
+    <button class="toolbar-btn" title="Select">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/></svg>
+    </button>
+    <button class="toolbar-btn active" title="Hand">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 11V6a2 2 0 0 0-4 0v1M14 10V4a2 2 0 0 0-4 0v6m0 0V3a2 2 0 0 0-4 0v9m16 0a8 8 0 0 1-8 8h-1a8 8 0 0 1-8-8V9"/></svg>
+    </button>
+  </div>
+  <div class="toolbar-group">
+    <button class="toolbar-btn" title="Zoom out">&minus;</button>
+    <button class="toolbar-zoom">45%</button>
+    <button class="toolbar-btn" title="Zoom in">+</button>
+  </div>
+</div>
+
+<!-- Top bar -->
+<div class="top-bar">
+  <div class="top-bar-pill">
+    <div class="status-dot"></div>
+    2 screens
+  </div>
+</div>
+
+<!-- Chat input -->
+<div class="chat-input-float">
+  <div class="chat-input-container">
+    <input class="chat-input" placeholder="Describe a UI to generate..." />
+    <button class="chat-send">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
+</body>
+</html>
