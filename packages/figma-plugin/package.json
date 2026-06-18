@@ -8,8 +8,8 @@
     "dev": "esbuild src/code.ts --bundle --outfile=dist/code.js --target=es2020 --watch"
   },
   "devDependencies": {
-    "@figma/plugin-typings": "^1.90.0",
-    "esbuild": "^0.24.0",
+    "@figma/plugin-typings": "^1.128.0",
+    "esbuild": "^0.28.0",
     "typescript": "^5.7.0"
   }
 }
